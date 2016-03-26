@@ -1,3 +1,9 @@
+# Editor files (Phil's)
+*.swp
+*.swo
+*.fel
+*.fvl
+
 # Object files
 *.o
 *.ko
