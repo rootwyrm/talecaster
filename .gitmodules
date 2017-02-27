@@ -1,0 +1,8 @@
+[submodule "docker/tc_docker"]
+	path = docker/tc_docker
+	url = https://github.com/rootwyrm/tc_docker.git
+	branch = master
+[submodule "docker/tc_transmission"]
+	path = docker/tc_transmission
+	url = https://github.com/rootwyrm/tc_transmission.git
+	branch = master
