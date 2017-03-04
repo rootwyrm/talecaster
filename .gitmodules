@@ -6,3 +6,11 @@
 	path = docker/tc_transmission
 	url = https://github.com/rootwyrm/tc_transmission.git
 	branch = master
+[submodule "docker/tc_sickrage"]
+	path = docker/tc_sickrage
+	url = https://github.com/rootwyrm/tc_sickrage
+	branch = master
+[submodule "docker/tc_headphones"]
+	path = docker/tc_headphones
+	url = https://github.com/rootwyrm/tc_headphones
+	branch = master
