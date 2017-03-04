@@ -12,8 +12,11 @@ net-p2p/sonarr
 net-p2p/couchpotato
 
 multimedia/kodi
+multimedia/emby-server
+multimedia/plexmediaserver
 
 net-p2p/torrentcheck
 net-p2p/torrentsniff
 
 multimedia/ffmpeg
+
