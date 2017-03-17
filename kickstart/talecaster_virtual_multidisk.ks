@@ -97,8 +97,8 @@ logvol /talecaster/shared --fstype="xfs" --thin --poolname=tcpool0 --vgname="tal
 logvol /talecaster/downloads --fstype="xfs" --thin --poolname=tcpool0 --vgname="talecastervg" --name="downloadlv" --size=51200
 ## XXX: these are only for self-hosted MusicBrainz! Do not enable unless
 ##      you really know what you're doing!
-#logvol /talecaster/musicbrainz --fstype="jfs2" --thin --poolname=tcpool0 --vgname="talecastervg" --name="mblv" --size=65536
-#logvol /talecaster/musicbrainz/db --fstype="jfs2" --thin --poolname=tcpool0 --vgname="talecastervg" --name="mbdblv" --size=65536
+#logvol /talecaster/musicbrainz --fstype="jfs2" --thin --poolname=tcpool0 --vgname="talecastervg" --name="mblv" --size=102400
+#logvol /talecaster/musicbrainz/db --fstype="jfs2" --thin --poolname=tcpool0 --vgname="talecastervg" --name="mbdblv" --size=102400
 
 ## It is presumed that you will be NETWORK MOUNTING /talecaster/media
 ## which for most users will be in the neighborhood of 20TB+
