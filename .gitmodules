@@ -14,3 +14,7 @@
 	path = docker/tc_headphones
 	url = https://github.com/rootwyrm/tc_headphones
 	branch = master
+[submodule "docker/tc_couchpotato"]
+	path = docker/tc_couchpotato
+	url = https://github.com/rootwyrm/tc_couchpotato
+	branch = master
