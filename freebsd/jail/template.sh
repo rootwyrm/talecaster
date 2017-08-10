@@ -31,16 +31,18 @@ retrieve_base()
 
 	## Validate packages.
 	for a in `cat $LOCALSTORE/$VERSION/MANIFEST | awk '{print $1}'`; do
-		local worksum=$(cat $LOCALHOST/$VERSION/MANIFEST | grep ^$a | awk '{print $2}')
-		test -f $LOCALSTORE/$VERSION/$a
+		test -f $LOCALSTORE/$VERSION/$a > /dev/null
 		if [ $? -eq 0 ]; then
+		local worksum=$(cat $LOCALSTORE/$VERSION/MANIFEST | grep ^$a | awk '{print $2}')
 			if [[ $(sha256 -q $LOCALSTORE/$VERSION/$a) -eq $worksum ]]; then
-				## Checksum past.
+				## Checksum passed.
 				echo "$a: Checksum Validated."
 			else
 				echo "$a: Invalid checksum!"
 				exit 1
 			fi
+		else
+			echo "not_present" >> /dev/null
 		fi
 	done
 }
