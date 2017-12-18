@@ -1,0 +1,52 @@
+#!/bin/sh
+# talecaster: freebsd/rc.d/talecaster
+
+# PROVIDE: talecaster
+# REQUIRE: DAEMON LOGIN
+# KEYWORD: shutdown
+
+# /etc/rc.conf configuration:
+# talecaster_enable (bool):		Set to YES to enable TaleCaster
+#								Default: NO
+# talecaster_torrent (str):		Set to a valid torrent service provider
+#								Default: disabled
+# talecaster_nzb (str):			Set to a valid nzb service provider
+#								Default: disabled
+# talecaster_tv (str):			Set to a valid TV service provider
+#								Default: disabled
+# talecaster_movies (str):		Set to a valid movie service provider
+#								Default: disabled
+# talecaster_music (str):		Set to a valid music service provider
+#								Default: disabled
+# talecaster_books (str):		Set to a valid book service provider
+#								Default: disabled
+# talecaster_comics (str):		Set to a valid comic service provider
+#								Default: disabled
+# talecaster_ldap (bool): 		Set to YES to use LDAP
+#								Default: NO
+# talecaster_winbind (bool):	Set to YES to enable winbindd
+#								Default: NO
+
+. /etc/rc.subr
+
+name="talecaster"
+rcvar=talecaster_enable
+
+load_rc_config $name
+
+[ -z "$talecaster_enable" ]			&& talecaster_enable="NO"
+[ -z "$talecaster_support" ]		&& talecaster_debug_log="NO"
+[ -z "$talecaster_license" ]		&& talecaster_licensed="NO"
+
+## Safety check
+if [ ! -d /opt/talecaster ]; then
+	echo "[FATAL] TaleCaster not properly installed."
+	exit 1
+fi
+if [ ! -f /opt/talecaster/talecaster.conf ]; then
+	echo "[FATAL] TaleCaster not configured."
+	exit 1
+fi
+
+## Start talecaster
+
