@@ -18,3 +18,7 @@
 	path = docker/tc_couchpotato
 	url = https://github.com/rootwyrm/tc_couchpotato
 	branch = master
+[submodule "tc_docker"]
+	path = docker/tc_docker
+	url = https://github.com/rootwyrm/tc_docker.git
+	branch = master
