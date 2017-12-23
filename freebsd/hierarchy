@@ -1,0 +1,36 @@
+ZFS			Mount					Purpose
+talecaster	/opt/talecaster
+talecaster	/opt/talecaster/base	FreeBSD Base System Files
+talecaster	/opt/talecaster/bin		TaleCaster Binaries
+talecaster	/opt/talecaster/etc		TaleCaster System Configuration
+talecaster	/opt/talecaster/license	TaleCaster License Data
+talecaster	/opt/talecaster/pdr		TaleCaster Poudriere Area
+talecaster	/opt/talecaster/scripts	TaleCaster User Scripts
+
+talecaster	/opt/talecaster/jail0	TaleCaster Template Jail
+
+tcstore		/talecaster/download	Download Area
+tcstore		/talecaster/television	Television Files
+tcstore		/talecaster/movies		Movie Files
+tcstore		/talecaster/music		Music Files
+tcstore		/talecaster/books		Book Files
+tcstore		/talecaster/comics		Comic Files
+
+IP HIERARCHY
+TALECASTER NETWORK: 172.17.0.0/24
+
+172.17.0.1		System (aliased to lo0)
+172.17.0.5		MusicBrainz [optional]
+172.17.0.6		TVdb [optional]
+172.17.0.10		NNTP Service
+172.17.0.11		Torrent Service
+172.17.0.12		Television Service
+172.17.0.13		Movie Service
+172.17.0.14		Music Service
+172.17.0.15		Book Service
+172.17.0.16		Comic Service
+172.17.0.100	[RESERVED] Special Firewall/VPN
+172.17.0.101	[RESERVED] Special Firewall/VPN
+172.17.0.200	[RESERVED] Cluster Control (NYI)
+172.17.0.250	[RESERVED] Advanced DNS/Ad Block
+172.17.0.251	[RESERVED] Advanced DNS/Ad Block
