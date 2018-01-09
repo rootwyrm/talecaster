@@ -92,6 +92,7 @@ part pv.11 --fstype="lvmpv" --ondisk=sdd --size=1 --grow
 part pv.12 --fstype="lvmpv" --ondisk=sde --size=1 --grow
 volgroup talecastervg --pesize=4096 pv.10 pv.11 pv.12
 logvol none --fstype="none" --thinpool --name=tcpool0 --chunksize=4 --vgname="talecastervg" --size=1 --grow
+logvol /talecaster --fstype="xfs" --thin --poolname=tcpool0 --vgname="talecastervg" --name="tcroot" --size=4096
 logvol /talecaster/config --fstype="xfs" --thin --poolname=tcpool0 --vgname="talecastervg" --name="configlv" --size=4096
 logvol /talecaster/shared --fstype="xfs" --thin --poolname=tcpool0 --vgname="talecastervg" --name="sharedlv" --size=4096
 logvol /talecaster/downloads --fstype="xfs" --thin --poolname=tcpool0 --vgname="talecastervg" --name="downloadlv" --size=51200
@@ -116,24 +117,24 @@ logvol /talecaster/downloads --fstype="xfs" --thin --poolname=tcpool0 --vgname="
 @core
 kexec-tools
 # Nuke firmware because we're on virtual
--aic94xx-firmware
--iwl100-firmware
--iwl1000-firmware
--iwl105-firmware
--iwl135-firmware
--iwl2000-firmware
--iwl2030-firmware
--iwl3160-firmware
--iwl3945-firmware
--iwl4965-firmware
--iwl5000-firmware
--iwl5150-firmware
--iwl6000-firmware
--iwl6000g2a-firmware
--iwl6000g2b-firmware
--iwl6050-firmware
--iwl7260-firmware
--iwl7265-firmware
+#-aic94xx-firmware
+#-iwl100-firmware
+#-iwl1000-firmware
+#-iwl105-firmware
+#-iwl135-firmware
+#-iwl2000-firmware
+#-iwl2030-firmware
+#-iwl3160-firmware
+#-iwl3945-firmware
+#-iwl4965-firmware
+#-iwl5000-firmware
+#-iwl5150-firmware
+#-iwl6000-firmware
+#-iwl6000g2a-firmware
+#-iwl6000g2b-firmware
+#-iwl6050-firmware
+#-iwl7260-firmware
+#-iwl7265-firmware
 
 ## XXX: NEVER PUT BIOSDEVNAME IN. It will just fuck everything up.
 -biosdevname
