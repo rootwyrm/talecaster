@@ -4,6 +4,7 @@ talecaster	/opt/talecaster/base	FreeBSD Base System Files
 talecaster	/opt/talecaster/bin		TaleCaster Binaries
 talecaster	/opt/talecaster/etc		TaleCaster System Configuration
 talecaster	/opt/talecaster/license	TaleCaster License Data
+talecaster	/opt/talecaster/log		TaleCaster Application and Jail Logs
 talecaster	/opt/talecaster/pdr		TaleCaster Poudriere Area
 talecaster	/opt/talecaster/scripts	TaleCaster User Scripts
 
