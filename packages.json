@@ -1,0 +1,4 @@
+{ "dependencies" :
+  { "git+https://SickRage/SickRage.git"
+  }
+}

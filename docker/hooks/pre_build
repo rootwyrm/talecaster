@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Using the pre-build to edit the Dockerfile so we can cut down our 
+# layer count.
+# ---
+# ./Dockerfile
+# ./README.md
+# ./hooks/
+# ./sv/
+# etc.
+
+build_variables()
+{
+	touch ./build/pre_build.run
+	if [ $? -ne 0 ]; then
+		echo "[FATAL] could not create ./build/pre_build.run"
+		exit 1
+	fi
+	
+	RUNFILE="./build/pre_build.run"
+
+	GIT_REV=$(git rev-parse HEAD)
+	GIT_REV_SHORT=$(git rev-parse --short HEAD)
+	GIT_REV_HASH=$(git rev-parse HEAD | sha256sum | awk '{print $1}')
+	DATE_FANCY=$(date)
+	DATE_HASH=$(date +%d%m%y-%H%MZ | sha256sum | awk '{print $1}')
+
+	## NOTE: Do not place space
+	printf 'LS_SCHEMAVERSION=%s\n' "1.0" >> $RUNFILE
+	printf 'LS_VENDOR=%s\n' "TaleCaster" >> $RUNFILE
+	printf 'LS_NAME=%s\n' "TaleCaster_base" >> $RUNFILE
+	printf 'LS_URL=%s\n' "https://github.com/rootwyrm/talecaster" >> $RUNFILE
+	printf 'LS_BLDDATE=%s\n' "$DATE_FANCY" >> $RUNFILE
+	printf 'VCS_REF=%s\n' $GIT_REV_SHORT >> $RUNFILE
+	printf 'RW_VCSHASH=%s\n' $GIT_REV_HASH >> $RUNFILE
+	printf 'RW_BLDHASH=%s\n' $GIT_REV_HASH >> $RUNFILE
+	printf 'LS_BLDDATE=%s\n' $DATE_HASH >> $RUNFILE
+
+	# get releaseid from /application/id.release
+	# get servicename from /application/id.service
+}
+
+plug_variable_dockerfile()
+{
+	## XXX: use , separator due to URL
+	sed -i -e 's,\$'$1','$2',' Dockerfile
+}
+
+## Be more vocal about what is going on in builds.
+HEADER="[phase:pre_build]"
+echo "$HEADER create ./build"
+mkdir ./build
+if [ $? -ne 0 ]; then
+	echo "[FATAL] Could not mkdir ./build!"
+	exit 1
+fi
+
+echo "$HEADER build_variables()"
+build_variables
+echo "$HEADER printing pre_build.run"
+cat ./build/pre_build.run
+echo "---END OF FILE---"
+
+echo "$HEADER performing replacement in Dockerfile"
+for v in `cat ./build/pre_build.run`; do
+	plug_variable_dockerfile $(echo $v | cut -d = -f 1) $(echo $v | cut -d = -f 2)
+done
