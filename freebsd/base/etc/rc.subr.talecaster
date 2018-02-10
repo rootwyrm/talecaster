@@ -1,0 +1,53 @@
+# $TaleCaster: base/etc/rc.subr.talecaster	R1V1U0
+#
+# Copyright (c) 2017-* Phillip R. Jaenke
+# All rights reserved.
+#
+# SEE /LICENSE FOR LICENSE DETAILS
+#
+
+# rc.subr.talecaster
+# 	functions specific to TaleCaster RC scripts
+
+# XXX: do not remove; RCTC_PID != RC_PID
+: ${RCTC_PID:=$$}; export RCTC_PID
+
+######################################################################
+# Critical Variables
+######################################################################
+
+if [ -z "${_rc_subr_talecaster_loaded}" ]; then
+_rc_subr_talecaster_loaded="YES"
+
+TCBASE="/opt/talecaster"
+TCVAR="/opt/talecaster/var"
+TCLOG="/opt/talecaster/log"
+TC_AD_UID="/usr/bin/id"			# AD should return from getent()
+TC_AD_GID="/usr/bin/id"			# AD should return from getent()
+TC_AD_UID_TEST="if [ -x $ID ]; then $ID -un; fi"
+
+# Networking Magic
+SETFIB="/usr/sbin/setfib"
+RUNFIB="/usr/sbin/setfib ${ACTIVE_FIB} ${cmd} ${arg}"
+TC_BASE_FIB="0"			# Base level system FIB is always 0
+TC_JAIL_FIB=""			# Unset global JAIL_FIB
+TC_JAIL_VPN_FIB="100"	# VPN FIB is always 100
+
+######################################################################
+# VPN FIB Functions
+######################################################################
+## Set jail to use VPN exclusive with killswitch
+tc_jail_vpn_enforce()
+{
+	checkyesno ${rcname}_vpn
+	if [ $? -eq 0 ]; then
+		## ${rcname}_vpn is set yes/true/on/1
+		/opt/talecaster/bin/jail_set ${rcname} fib=$TC_JAIL_VPN_FIB
+		if [ $? -ne 0 ]; then
+			# An error was encountered.
+			warn "\$${1} was unable to update the FIB."
+			return 1
+		fi
+	fi
+}
+		
