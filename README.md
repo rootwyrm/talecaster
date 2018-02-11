@@ -3,9 +3,11 @@ TaleCaster - The Ultimate Media Management Solution
 
 All credit goes to sgallagh for the name :)
 
-Our primary development virtual environment, hosted on `shuhalo.rootwyrm.com`, `taunka.rootwyrm.com`, and `yaungol.rootwyrm.com` runs on VMware ESXi provided by Phillip R. Jaenke, and BabyDragon Gen.5 hardware from Dragon North Enterprise Systems.
+Our primary development virtual environment, hosted on `shuhalo.rootwyrm.com`, `taunka.rootwyrm.com`, and `yaungol.rootwyrm.com` runs on VMware ESXi provided by Phillip R. Jaenke, and BabyDragon Gen.5 hardware from [Dragon North Enterprise Systems](https://www.dragonnorth.systems).
 
 Our primary development hardware, named `popcorn.rootwyrm.com`, is a Dell 2950-II generously donated by [ABCS-IT](https://www.reddit.com/user/abcs-it) with upgraded processors and additional memory from [sms552](https://www.reddit.com/user/sms552). 
+
+Our secondary development hardware, named `alexandria.dragonnorth.systems`, is a Dragon North RedTail Gen.7B provided by [Dragon North Enterprise Systems](https://www.dragonnorth.systems).
 
 ## WARNING: Under active development. Pre-release software.
 
