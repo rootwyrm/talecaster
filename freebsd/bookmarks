@@ -1,0 +1,6 @@
+This is to hold various bookmarks relevant to TaleCaster specifically on FreeBSD. Mostly it's technical stuff. Some is internal (not internet accessible.)
+
+https://wiki.freebsd.org/VIMAGE/VNETSamples
+http://www.jasonvanpatten.com/2015/12/29/freebsd-jails-filesystems-and-fibs/
+https://notespace/VNET_kernel_leverage
+https://notespace/tengig_sysctl
