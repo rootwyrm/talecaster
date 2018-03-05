@@ -1,0 +1,389 @@
+# User color function
+__user_color() {
+	local uc=
+		if [[ $EUID -eq '0' ]]; then
+			echo -n "$CLR_USER_ROOT"
+		else
+			echo -n "$CLR_USER"
+		fi
+}
+
+# Git/Subversion prompt function
+__git_svn_ps1() {
+	local s=
+		if [[ -d ".svn" ]] ; then
+			local r=`__svn_rev`
+			local b=`__svn_branch`
+			s=" [$b:$r] \n"
+		elif [[ -d .git ]] ; then
+			s=`__git_ps1`
+		fi
+	echo -n "$s"
+}
+
+# https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+__git_ps1 ()
+{
+	# preserve exit status
+	local exit=$?
+	local pcmode=no
+	local detached=no
+	local ps1pc_start='\u@\h:\w '
+	local ps1pc_end='\$ '
+	local printf_format=' (%s)'
+
+	case "$#" in
+		2|3)	pcmode=yes
+			ps1pc_start="$1"
+			ps1pc_end="$2"
+			printf_format="${3:-$printf_format}"
+			# set PS1 to a plain prompt so that we can
+			# simply return early if the prompt should not
+			# be decorated
+			PS1="$ps1pc_start$ps1pc_end"
+		;;
+		0|1)	printf_format="${1:-$printf_format}"
+		;;
+		*)	return $exit
+		;;
+	esac
+
+	# ps1_expanded:  This variable is set to 'yes' if the shell
+	# subjects the value of PS1 to parameter expansion:
+	#
+	#   * bash does unless the promptvars option is disabled
+	#   * zsh does not unless the PROMPT_SUBST option is set
+	#   * POSIX shells always do
+	#
+	# If the shell would expand the contents of PS1 when drawing
+	# the prompt, a raw ref name must not be included in PS1.
+	# This protects the user from arbitrary code execution via
+	# specially crafted ref names.  For example, a ref named
+	# 'refs/heads/$(IFS=_;cmd=sudo_rm_-rf_/;$cmd)' might cause the
+	# shell to execute 'sudo rm -rf /' when the prompt is drawn.
+	#
+	# Instead, the ref name should be placed in a separate global
+	# variable (in the __git_ps1_* namespace to avoid colliding
+	# with the user's environment) and that variable should be
+	# referenced from PS1.  For example:
+	#
+	#     __git_ps1_foo=$(do_something_to_get_ref_name)
+	#     PS1="...stuff...\${__git_ps1_foo}...stuff..."
+	#
+	# If the shell does not expand the contents of PS1, the raw
+	# ref name must be included in PS1.
+	#
+	# The value of this variable is only relevant when in pcmode.
+	#
+	# Assume that the shell follows the POSIX specification and
+	# expands PS1 unless determined otherwise.  (This is more
+	# likely to be correct if the user has a non-bash, non-zsh
+	# shell and safer than the alternative if the assumption is
+	# incorrect.)
+	#
+	local ps1_expanded=yes
+	[ -z "${ZSH_VERSION-}" ] || [[ -o PROMPT_SUBST ]] || ps1_expanded=no
+	[ -z "${BASH_VERSION-}" ] || shopt -q promptvars || ps1_expanded=no
+
+	local repo_info rev_parse_exit_code
+	repo_info="$(git rev-parse --git-dir --is-inside-git-dir \
+		--is-bare-repository --is-inside-work-tree \
+		--short HEAD 2>/dev/null)"
+	rev_parse_exit_code="$?"
+
+	if [ -z "$repo_info" ]; then
+		return $exit
+	fi
+
+	local short_sha=""
+	if [ "$rev_parse_exit_code" = "0" ]; then
+		short_sha="${repo_info##*$'\n'}"
+		repo_info="${repo_info%$'\n'*}"
+	fi
+	local inside_worktree="${repo_info##*$'\n'}"
+	repo_info="${repo_info%$'\n'*}"
+	local bare_repo="${repo_info##*$'\n'}"
+	repo_info="${repo_info%$'\n'*}"
+	local inside_gitdir="${repo_info##*$'\n'}"
+	local g="${repo_info%$'\n'*}"
+
+	if [ "true" = "$inside_worktree" ] &&
+	   [ -n "${GIT_PS1_HIDE_IF_PWD_IGNORED-}" ] &&
+	   [ "$(git config --bool bash.hideIfPwdIgnored)" != "false" ] &&
+	   git check-ignore -q .
+	then
+		return $exit
+	fi
+
+	local r=""
+	local b=""
+	local step=""
+	local total=""
+	if [ -d "$g/rebase-merge" ]; then
+		__git_eread "$g/rebase-merge/head-name" b
+		__git_eread "$g/rebase-merge/msgnum" step
+		__git_eread "$g/rebase-merge/end" total
+		if [ -f "$g/rebase-merge/interactive" ]; then
+			r="|REBASE-i"
+		else
+			r="|REBASE-m"
+		fi
+	else
+		if [ -d "$g/rebase-apply" ]; then
+			__git_eread "$g/rebase-apply/next" step
+			__git_eread "$g/rebase-apply/last" total
+			if [ -f "$g/rebase-apply/rebasing" ]; then
+				__git_eread "$g/rebase-apply/head-name" b
+				r="|REBASE"
+			elif [ -f "$g/rebase-apply/applying" ]; then
+				r="|AM"
+			else
+				r="|AM/REBASE"
+			fi
+		elif [ -f "$g/MERGE_HEAD" ]; then
+			r="|MERGING"
+		elif [ -f "$g/CHERRY_PICK_HEAD" ]; then
+			r="|CHERRY-PICKING"
+		elif [ -f "$g/REVERT_HEAD" ]; then
+			r="|REVERTING"
+		elif [ -f "$g/BISECT_LOG" ]; then
+			r="|BISECTING"
+		fi
+
+		if [ -n "$b" ]; then
+			:
+		elif [ -h "$g/HEAD" ]; then
+			# symlink symbolic ref
+			b="$(git symbolic-ref HEAD 2>/dev/null)"
+		else
+			local head=""
+			if ! __git_eread "$g/HEAD" head; then
+				return $exit
+			fi
+			# is it a symbolic ref?
+			b="${head#ref: }"
+			if [ "$head" = "$b" ]; then
+				detached=yes
+				b="$(
+				case "${GIT_PS1_DESCRIBE_STYLE-}" in
+				(contains)
+					git describe --contains HEAD ;;
+				(branch)
+					git describe --contains --all HEAD ;;
+				(tag)
+					git describe --tags HEAD ;;
+				(describe)
+					git describe HEAD ;;
+				(* | default)
+					git describe --tags --exact-match HEAD ;;
+				esac 2>/dev/null)" ||
+
+				b="$short_sha..."
+				b="($b)"
+			fi
+		fi
+	fi
+
+	if [ -n "$step" ] && [ -n "$total" ]; then
+		r="$r $step/$total"
+	fi
+
+	local w=""
+	local i=""
+	local s=""
+	local u=""
+	local c=""
+	local p=""
+
+	if [ "true" = "$inside_gitdir" ]; then
+		if [ "true" = "$bare_repo" ]; then
+			c="BARE:"
+		else
+			b="GIT_DIR!"
+		fi
+	elif [ "true" = "$inside_worktree" ]; then
+		if [ -n "${GIT_PS1_SHOWDIRTYSTATE-}" ] &&
+		   [ "$(git config --bool bash.showDirtyState)" != "false" ]
+		then
+			git diff --no-ext-diff --quiet || w="*"
+			git diff --no-ext-diff --cached --quiet || i="+"
+			if [ -z "$short_sha" ] && [ -z "$i" ]; then
+				i="#"
+			fi
+		fi
+		if [ -n "${GIT_PS1_SHOWSTASHSTATE-}" ] &&
+		   git rev-parse --verify --quiet refs/stash >/dev/null
+		then
+			s="$"
+		fi
+
+		if [ -n "${GIT_PS1_SHOWUNTRACKEDFILES-}" ] &&
+		   [ "$(git config --bool bash.showUntrackedFiles)" != "false" ] &&
+		   git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
+		then
+			u="%${ZSH_VERSION+%}"
+		fi
+
+		if [ -n "${GIT_PS1_SHOWUPSTREAM-}" ]; then
+			__git_ps1_show_upstream
+		fi
+	fi
+
+	local z="${GIT_PS1_STATESEPARATOR-" "}"
+
+	# NO color option unless in PROMPT_COMMAND mode
+	if [ $pcmode = yes ] && [ -n "${GIT_PS1_SHOWCOLORHINTS-}" ]; then
+		__git_ps1_colorize_gitstring
+	fi
+
+	b=${b##refs/heads/}
+	if [ $pcmode = yes ] && [ $ps1_expanded = yes ]; then
+		__git_ps1_branch_name=$b
+		b="\${__git_ps1_branch_name}"
+	fi
+
+	local f="$w$i$s$u"
+	local gitstring="$c$b${f:+$z$f}$r$p"
+
+	if [ $pcmode = yes ]; then
+		if [ "${__git_printf_supports_v-}" != yes ]; then
+			gitstring=$(printf -- "$printf_format" "$gitstring")
+		else
+			printf -v gitstring -- "$printf_format" "$gitstring"
+		fi
+		PS1="$ps1pc_start$gitstring$ps1pc_end"
+	else
+		printf -- "$printf_format" "$gitstring"
+	fi
+
+	return $exit
+}
+
+__svn_branch() {
+	local url=
+		if [[ -d .svn ]]; then
+			url=`svn info | awk '/URL:/ {print $2}'`
+			if [[ $url =~ trunk ]]; then
+				echo trunk
+			elif [[ $url =~ /branches/ ]]; then
+				echo $url | sed -e 's#^.*/\(branches/.*\)/.*$#\1#'
+			elif [[ $url =~ /tags/ ]]; then
+				echo $url | sed -e 's#^.*/\(tags/.*\)/.*$#\1#'
+			fi
+		fi
+}
+
+__svn_rev() {
+	local r=$(svn info | awk '/Revision:/ {print $2}')
+		if [ ! -z $SVN_SHOWDIRTYSTATE ]; then
+			local svnst flag
+			svnst=$(svn status | grep '^\s*[?ACDMR?!]')
+			[ -z "$svnst" ] && flag=*
+			r=$r$flag
+		fi
+	echo $r
+}
+
+__return_nonzero() {
+	local RETVAL=$?
+	if [ $RETVAL -eq 146 ]; then
+		echo "(Stopped Job)"
+		return 0
+	elif [ $RETVAL -ne 0 ]; then
+		echo "RC: $RETVAL"
+	fi
+}
+
+__ostype() {
+	case $(uname) in
+		FreeBSD)
+			## Do TaleCaster check
+			if [ -d /opt/talecaster ]; then
+				HOST_OS=TaleCaster
+				RELEASE=$(uname -r | cut -d - -f 1)
+				OSTYPE_PROMPT="$CLR_NULL$CLR_TALECASTER""TaleCaster FreeBSD $RELEASE$CLR_NULL"
+			else
+				HOST_OS=FreeBSD
+				RELEASE=$(uname -r | cut -d - -f 1)
+				OSTYPE_PROMPT="$CLR_NULL$CLR_FREEBSD""FreeBSD $RELEASE$CLR_NULL"
+			fi
+			;;
+		Linux)
+			HOST_OS=Linux
+			if [ -f /usr/bin/lsb_release ]; then
+				DISTRO=$(/usr/bin/lsb_release -i -s)
+				RELEASE=$(/usr/bin/lsb_release -r -s)
+			else
+				RELEASE=$(rpm -qa --queryformat '%{RELEASE}\n' '(redhat|sl|slf|centos|oraclelinux)-release(|-server|-workstation|-client|-computenode)')
+			fi
+			if [ ! -z $DISTRO ]; then
+				OSTYPE_PROMPT="$CLR_LINUX$DISTRO $RELEASE$CLR_NULL"
+			elif [ -f /etc/centos-release ]; then
+				CENTOS_RELEASE=$(cat /etc/centos-release | sed 's/Linux release //')
+				OSTYPE_PROMPT="$CLR_NULL$CLR_CENTOS$CENTOS_RELEASE$CLR_NULL"
+			elif [ -f /etc/redhat-release ]; then
+				OSTYPE_PROMPT=""$CLR_RHEL"RHEL $RELEASE$CLR_NULL"
+				#OSTYPE_PROMPT="\e[7;47;31mRHEL $RELEASE$CLR_NULL"
+			elif [ -f /etc/suseservers ]; then
+				OSTYPE_PROMPT="\e[1;49;32mSuSE$CLR_NULL"
+			else
+				OSTYPE_PROMPT="\e[0;49;91mLinux$CLR_NULL"
+			fi
+			;;
+		AIX)
+			HOST_OS=AIX
+			RELEASE=$(oslevel -s | cut -d - -f 1)
+			OSTYPE_PROMPT="\e[7;107;34mAIX $RELEASE$CLR_NULL"
+			;;
+		Solaris)
+			HOST_OS=SunOS
+			RELEASE=$(uname -r)
+			OSTYPE_PROMPT="\e[38;5;129mSolaris $RELEASE$CLR_NULL"
+			;;
+		*)
+			## Set nothing so it's blank.
+			;;
+	esac
+}
+
+## ssh functions
+__ssh_start_agent() {
+	echo "Initialising new SSH agent... "
+	## Fix for non-Linux
+	if [ $(echo $SHELL | grep bash > /dev/null ; echo $?) != 0 ]; then
+		if [ $(echo $BASH > /dev/null ; echo $?) -eq 0 ]; then
+			## We are running bash
+			/usr/bin/ssh-agent -s | sed 's/^echo/#echo/' > "${SSH_ENV}"
+		else
+			## We are NOT running bash.
+			/usr/bin/ssh-agent > "${SSH_ENV}"
+		fi
+	else
+		/usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+	fi
+	chmod 600 "${SSH_ENV}"
+	. "${SSH_ENV}" > /dev/null
+	/usr/bin/ssh-add;
+	echo "$SSH_AGENT_PID"
+}
+
+__ssh_stop_agent() {
+	## This gets called only on logout.
+	if [ -f "${SSH_AGENT_PID}" ]; then
+		## Work around annoying behavior in wc
+		if [[ $(w | grep $USER | wc -l | awk '{print $1}') -ge 2 ]]; then
+			## Not the last session.
+			return 0
+		else
+			## We are the last session, clean up on our way out.
+			kill -9 "${SSH_AGENT_PID}"
+			if [ $? -ne 0 ]; then
+				## We don't care.
+				exit 0
+			fi
+		fi
+	else
+		## Just return zero and clean up quickly.
+		return 0
+	fi
+}
