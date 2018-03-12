@@ -158,7 +158,7 @@ pdr_config_generate()
 		mirror_type: "srv",
 		signature_type: "pubkey",
 		pubkey: "/opt/talecaster/etc/poudriere/talecaster.pub"
-	EOF 
+	EOF
 	echo '}' >> $PDR_REPO
 	log_tc "Updated $PDR_REPO" m
 }
