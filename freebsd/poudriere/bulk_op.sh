@@ -10,11 +10,7 @@
 ## $2 = set
 ## $3 = options
 
-export CONFDIR=/opt/talecaster/poudriere/etc
-
-if [ -f ${CONFDIR}/poudriere.env ]; then
-	. ${CONFDIR}/poudriere.env
-fi
+export CONFDIR=/opt/talecaster/etc/poudriere
 
 function log()
 {
@@ -58,29 +54,29 @@ function lock_place()
 
 function pkg_list_build()
 {
-	if [ ! -d ${CONFDIR} ]; then
-		log "${CONFDIR} does not exist!" e 10
+	if [ ! -d ${CONFDIR}/${1} ]; then
+		log "${CONFDIR}/${1} does not exist!" e 10
 	fi
 	if [ -f /tmp/${1}.pkg ]; then
 		rm /tmp/${1}.pkg
 	fi
 	
-	for pl in `ls ${CONFDIR}/*.pkg`; do
+	for pl in `ls ${CONFDIR}/${1}/*.pkg`; do
 		cat $pl | grep -v ^# | sort | uniq >> /tmp/${1}.pkg
 	done
 }
 
 function check_set_jails()
 {
-	if [ ! -f ${CONFDIR}/jails ]; then
-		log "${CONFDIR}/jails does not exist!" e 10
+	if [ ! -f ${CONFDIR}/${1}/jails ]; then
+		log "${CONFDIR}/${1}/jails does not exist!" e 10
 	fi
 	## First make sure the jails actually exist.
 	poudriere jail -q -l > /tmp/avail.jail
-	for jl in `cat ${CONFDIR}/jails | grep -v ^#`; do
+	for jl in `cat ${CONFDIR}/${1}/jails | grep -v ^#`; do
 		grep ${jl} /tmp/avail.jail > /dev/null
 		if [ $? -ne 0 ]; then
-			log "${CONFDIR}/jails has invalid jail" e 20
+			log "${CONFDIR}/${1}/jails has invalid jail" e 20
 		fi
 	done
 	## Tidy up
@@ -89,7 +85,7 @@ function check_set_jails()
 
 function test_set_jails()
 {
-	for js in `cat ${CONFDIR}/jails | grep -v ^#`; do
+	for js in `cat ${CONFDIR}/${1}/jails | grep -v ^#`; do
 		if [ ! -z $(poudriere jail -i -j $js | grep Status | cut -d : -f 2) ]; then
 			## Handle stopped jails correctly.
 			if [ -z $(poudriere jail -i -j $js | grep Status | cut -d : -f 2 | grep stopped) ] ;then
@@ -177,6 +173,9 @@ function print_help()
 ## Main loop.
 case $1 in
 	[Cc][Ll][Ee][Aa][Nn]*)
+		if [ -f ${CONFDIR}/${1}/poudriere.env ]; then
+			. ${CONFDIR}/${1}/poudriere.env
+		fi
 		lock_test
 		lock_place
 		pkg_list_build $2
@@ -186,6 +185,9 @@ case $1 in
 		lock_clear
 		;;
 	[Nn][Oo][Cc][Ll][Ee][Aa][Nn]*)
+		if [ -f ${CONFDIR}/${1}/poudriere.env ]; then
+			. ${CONFDIR}/${1}/poudriere.env
+		fi
 		lock_test
 		lock_place
 		pkg_list_build $2
