@@ -20,3 +20,16 @@ net-p2p/torrentsniff
 
 multimedia/ffmpeg
 
+shells/bash
+shells/ksh93
+editors/nano
+editors/vim-console
+lang/python27
+lang/python36
+net/socat
+ports-mgmt/jailaudit
+ports-mgmt/pkg
+ports-mgmt/poudriere
+security/openssl
+security/openvpn
+security/tor
