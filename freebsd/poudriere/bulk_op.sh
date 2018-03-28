@@ -22,7 +22,7 @@ function log()
 		[Ww])
 			echo "$(date) [WARNING] ${1}"
 			;;
-		Nn)
+		[Nn])
 			echo "$(date) [NOTICE] ${1}"
 			;;
 	esac
