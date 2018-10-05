@@ -6,7 +6,7 @@
     REALROOT=/release
 
     /release/ccache     - ccache, never cleared (duh)
-    /release/src/releng/${MAJOR}.${MINOR}     - snapshot when used
+    /release/src/release/${MAJOR}.${MINOR}    - snapshot when used
         @${BUILDID}
     /release/src/stable/${MAJOR}              - snapshot when used
         @${BUILDID}
