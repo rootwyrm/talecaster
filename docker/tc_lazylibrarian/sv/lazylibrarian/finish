@@ -1,0 +1,7 @@
+#!/bin/bash
+## headphones/finish
+
+echo "[APPLICATION] LazyLibrarian shutting down."
+
+kill -9 $(ps ax | grep LazyLibrarian.py | awk '{print $1}' | grep -v grep)
+wait $!

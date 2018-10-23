@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Using the pre-build to edit the Dockerfile so we can cut down our 
+# layer count.
+# ---
+# ./Dockerfile
+# ./README.md
+# ./hooks/
+# ./sv/
+# etc.
+
+build_variables()
+{
+	touch pre_build.run
+	printf 'GIT_REV,%s\n' "$(git rev-parse HEAD)" >> pre_build.run
+	printf 'GIT_REV_SHORT,%s\n' "$(git rev-parse --short HEAD)" >> pre_build.run
+	printf 'GIT_BRANCH,%s\n' "$(git rev-parse --short HEAD)" >> pre_build.run
+	printf 'DATE_HASH,%s\n' "$(date +%d%m%y-%H%MZ | sha256sum | awk '{print $1}')" >> pre_build.run
+	printf 'BLD_DATE,%s\n' "$(date +%d%m%y-%H%MZ)" >> pre_build.run
+	#printf 'RELEASE,%s\n' "$(cat /application/id.release)" >> pre_build.run
+	# get releaseid from /application/id.release
+	# get servicename from /application/id.service
+}
+
+plug_variable_dockerfile()
+{
+	sed -i -e 's/'$1'/'$2'/g' Dockerfile
+}
+
+build_variables
+for v in `cat pre_build.run`; do
+	plug_variable_dockerfile $(echo $v | cut -d , -f 1) $(echo $v | cut -d , -f 2)
+done

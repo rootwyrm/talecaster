@@ -1,0 +1,26 @@
+#!/bin/bash
+# Talecaster OpenVPN script.
+
+OVPNPID="/var/run/openvpn-$(hostname -s).pid"
+if [ -z $VPNPROFILE ]; then
+	OVPNCONF="/config/openvpn/default.ovpn"
+else
+	OVPNCONF="/config/openvpn/${VPNPROFILE}.conf"
+fi
+
+## Don't try to start if there's no configuration.
+if [ ! -f ${OVPNCONF} ]; then
+	echo "[NOTICE] No OpenVPN configuration present, not starting."
+	exit 0
+fi
+
+## Make sure we have tun/tap available
+if [ ! -e /dev/net/tun ]; then
+	echo "[FATAL] Unable to start OpenVPN due to missing tun(4) device."
+	echo "See the TaleCaster documentation for how to correct this."
+	echo ""
+	exit 1
+fi
+
+echo "[OpenVPN] Starting ${OVPNCONF}..."
+/usr/sbin/openvpn --writepid "${OVPNPID}" --config "${OVPNCONF}"

@@ -1,0 +1,21 @@
+#!/bin/sh
+## transmission/run
+
+export tcuser=$(grep "TaleCaster User" /etc/passwd | cut -d : -f 1)
+export tcgroup=$(getent group $tcuser | cut -d : -f 1)
+
+## Generate a random password if a file doesn't exist.
+## NOTE: This must be owned by root in root's home directory to prevent
+## exposure if transmission is breached.
+if [ ! -f /root/transmission.pw ]; then
+	head -c 500 /dev/urandom | tr -dc a-zA-Z0-9 | head -c 12 > /root/transmission.pw
+fi
+export randpass=$(cat /root/transmission.pw)
+
+echo "[APPLICATION] Starting transmission as $tcuser:$tcgroup"
+echo "[APPLICATION] Logging to /var/log/transmission/transmission-daemon.log" 
+echo " "
+echo "[APPLICATION] Web UI login -> $tcuser:$randpass"
+echo " "
+## NOTE: Cannot use backtick to format nicely.
+exec chpst -u $tcuser:$tcgroup /usr/bin/transmission-daemon --blocklist --foreground --username $tcuser --password $randpass --portmap --watch-dir /downloads/blackhole --config-dir /config --download-dir /downloads --incomplete-dir /downloads/incomplete --pid-file /var/run/transmission/transmission-daemon.pid -e /var/log/transmission/transmission-daemon.log

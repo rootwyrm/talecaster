@@ -1,0 +1,27 @@
+#!/bin/bash
+
+## $IMAGE_NAME is injected by Hub
+#export RW_BLDHASH=$(date | sha256sum | awk '{print $1}')
+#export RW_VCSHASH=$(git rev-parse HEAD)
+#export LS_VCSREF=$(git rev-parse --short HEAD)
+#export LS_BLDDATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ"
+export LS_SCHEMA="http://label-schema.org/rc1"
+export LS_SCHEMAVERSION="1.0.0-rc.1"
+export LS_NAME="tc_docker"
+export LS_URL="https://github.com/rootwyrm/tc_docker"
+
+docker build \
+	--build-arg RW_BLDHASH=`date | sha256sum | awk '{print $1}'` \
+	--build-arg RW_VCSHASH=`git rev-parse HEAD` \
+	--build-arg RW_VCSBRANCH=`git rev-parse --abbrev-ref HEAD` \
+	--build-arg LS_VCSREF=`git rev-parse --short HEAD` \
+	--build-arg LS_BLDDATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+	--build-arg LS_VENDOR="RootWyrm.com" \
+	--build-arg LS_SCHEMA=$LS_SCHEMA \
+	--build-arg LS_SCHEMAVERSION=$LS_SCHEMAVERSION \
+	--build-arg LS_NAME=$LS_NAME \
+	--build-arg LS_URL=$LS_URL \
+	-t $IMAGE_NAME .
+	
+## NYI
+#	--build-arg LS_VERSION=`./get_version.sh` \

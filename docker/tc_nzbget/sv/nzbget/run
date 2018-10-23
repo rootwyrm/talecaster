@@ -1,0 +1,13 @@
+#!/bin/sh
+## transmission/run
+
+export tcuser=$(grep "TaleCaster User" /etc/passwd | cut -d : -f 1)
+export tcgroup=$(getent group $tcuser | cut -d : -f 1)
+
+cat /etc/motd
+
+echo "[APPLICATION] Starting nzbget as $tcuser:$tcgroup"
+echo "[APPLICATION] Logging to /config/nzbget.log" 
+echo " "
+## NOTE: Cannot use backtick to format nicely.
+exec chpst -u $tcuser:$tcgroup /opt/nzbget/nzbget -c /config/nzbget.conf -s

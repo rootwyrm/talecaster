@@ -1,0 +1,13 @@
+#!/bin/sh
+## headphones/run
+
+export tcuser=$(grep "TaleCaster User" /etc/passwd | cut -d : -f 1)
+export tcgroup=$(getent group $tcuser | cut -d : -f 1)
+
+cat /etc/motd
+
+echo "[APPLICATION] Starting Sonarr as $tcuser:$tcgroup"
+echo " "
+export MONO_TLS_PROVIDER=legacy
+## NOTE: Cannot use backtick to format nicely.
+exec chpst -u $tcuser:$tcgroup mono /opt/talecaster/NzbDrone/NzbDrone.exe --datadir=/config

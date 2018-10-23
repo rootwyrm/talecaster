@@ -1,0 +1,11 @@
+#!/bin/sh
+## transmission/finish
+
+echo "[APPLICATION] Stopping transmission..."
+sleep 2
+
+if [ -f /var/run/transmission/transmission-daemon.pid ]; then
+	exec /bin/kill -s SIGKILL `cat /var/run/transmission/transmission-daemon.pid`
+else
+	exec /bin/pkill -9 transmission-daemon
+fi

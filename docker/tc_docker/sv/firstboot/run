@@ -1,0 +1,7 @@
+#!/bin/sh
+## Execute firstboot...
+
+if [ -f /firstboot ]; then
+	echo "[START] First Boot deployment tasks running..."
+	exec /opt/talecaster/deploy.sh
+fi

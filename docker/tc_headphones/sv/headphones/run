@@ -1,0 +1,12 @@
+#!/bin/sh
+## headphones/run
+
+export tcuser=$(grep "TaleCaster User" /etc/passwd | cut -d : -f 1)
+export tcgroup=$(getent group $tcuser | cut -d : -f 1)
+
+cat /etc/motd
+
+echo "[APPLICATION] Starting headphones as $tcuser:$tcgroup"
+echo " "
+## NOTE: Cannot use backtick to format nicely.
+exec chpst -u $tcuser:$tcgroup /opt/headphones/Headphones.py --datadir=/config

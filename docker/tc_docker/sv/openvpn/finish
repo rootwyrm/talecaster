@@ -1,0 +1,11 @@
+#!/bin/bash
+# TaleCaster OpenVPN script.
+
+OVPNPID="/var/run/openvpn-$(hostname -s).pid"
+
+if [ -f ${OVPNPID} ]; then
+	ps | grep $(cat ${OVPNPID}) | grep -v grep
+	if [ $? -eq 0 ]; then
+		kill -9 $(cat ${OVPNPID})
+	fi
+fi

@@ -1,0 +1,7 @@
+#!/bin/bash
+## headphones/finish
+
+echo "[APPLICATION] Headphones shutting down."
+
+kill -9 $(ps ax | grep Headphones.py | awk '{print $1}')
+wait $!
