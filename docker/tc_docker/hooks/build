@@ -12,8 +12,8 @@
 
 docker build \
 	-t $IMAGE_NAME .
-	#--build-arg RW_BLDHASH=`date | sha256sum | awk '{print $1}'` \
-	#--build-arg RW_VCSHASH=`git rev-parse HEAD` \
+	#--build-arg RW_BLDHASH=$RW_BLDHASH \
+	#--build-arg RW_VCSHASH=$
 	#--build-arg RW_VCSBRANCH=`git rev-parse --abbrev-ref HEAD` \
 	#--build-arg LS_VCSREF=`git rev-parse --short HEAD` \
 	#--build-arg LS_BLDDATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \

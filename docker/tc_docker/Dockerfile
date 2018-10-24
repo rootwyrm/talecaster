@@ -1,19 +1,8 @@
-FROM	alpine:3.7
+FROM	alpine:3.8
 
 MAINTAINER	Phillip "RootWyrm" Jaenke <talecaster@rootwyrm.com>
 
 ## Set up our labels
-#ARG RW_BLDHASH
-#ARG RW_VCSHASH
-#ARG RW_VCSBRANCH
-#ARG LS_VCSREF
-#ARG LS_BLDDATE
-#ARG LS_VENDOR
-#ARG LS_SCHEMA
-#ARG LS_SCHEMAVERSION
-#ARG LS_NAME
-#ARG LS_URL
-
 LABEL	com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.project="tc_docker" \
 		com.rootwyrm.status="" \
@@ -22,12 +11,12 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.nvd.release="0" \
 		com.rootwyrm.nvd.version="0" \
 		com.rootwyrm.nvd.update="0" \
-		com.rootwyrm.nvd.update_sub="$RW_VCSHASH" \
-		com.rootwyrm.nvd.build_time="$LS_BLDDATE" \
+		com.rootwyrm.nvd.update_sub="$RW_BLDHASH"
+		com.rootwyrm.nvd.build_time=$LS_BLDDATE
 
-		com.rootwyrm.talecaster.provides="base" \
+		com.rootwyrm.talecaster.provides="$TC_PROVIDES" \
 		com.rootwyrm.talecaster.depends="" \
-		com.rootwyrm.talecaster.service="" \
+		com.rootwyrm.talecaster.service="$TC_SERVICE" \
 		com.rootwyrm.talecaster.ports_tcp="" \
 		com.rootwyrm.talecaster.ports_udp="" \
 		com.rootwyrm.talecaster.synology="0" \
@@ -39,8 +28,8 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		org.label-schema.name="$LS_NAME" \
 		org.label-schema.url="$LS_URL" \
 		org.label-schema.vcs-ref="$VCS_REF" \
-		org.label-schema.version="$RW_BLDHASH" \
-		org.label-schema.build-date="$LS_BLDDATE"
+		org.label-schema.version="$RW_VCSHASH" \
+		org.label-schema.build-date=$LS_BLDDATE
 
 ENV pkg_common="runit file dcron apk-cron openssl bash openvpn"
 
@@ -51,9 +40,6 @@ RUN mkdir -p /opt/talecaster/defaults && \
 	mkdir -p /opt/talecaster/build && \
 	mkdir -p /var/log/runit && \
 	touch /firstboot ; \
-	mv /etc/apk/repositories /etc/apk/repositories.bak && \
-	echo "http://dl-cdn.alpinelinux.org/alpine/v3.7/main" >> /etc/apk/repositories && \
-	echo "http://dl-cdn.alpinelinux.org/alpine/v3.7/community" >> /etc/apk/repositories && \
 	apk update && \
 	apk upgrade && \
 	export pkg_common="runit file dcron apk-cron openssl bash openvpn" && \
