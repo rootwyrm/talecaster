@@ -11,8 +11,8 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.nvd.release="0" \
 		com.rootwyrm.nvd.version="0" \
 		com.rootwyrm.nvd.update="0" \
-		com.rootwyrm.nvd.update_sub="$RW_BLDHASH"
-		com.rootwyrm.nvd.build_time=$LS_BLDDATE
+		com.rootwyrm.nvd.update_sub="$RW_BLDHASH" \
+		com.rootwyrm.nvd.build_time=$LS_BLDDATE \
 
 		com.rootwyrm.talecaster.provides="$TC_PROVIDES" \
 		com.rootwyrm.talecaster.depends="" \
