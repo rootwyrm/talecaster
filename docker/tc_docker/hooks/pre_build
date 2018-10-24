@@ -45,12 +45,12 @@ build_variables()
 
 	# XXX: get releaseid from /application/id.release
 	if [ -f ./application/id.service ]; then
-		printf 'TC_SERVICE=%s\n' $(cat /application/id.service) >> $RUNFILE
+		printf 'TC_SERVICE=%s\n' $(cat ./application/id.service) >> $RUNFILE
 	else
 		printf 'TC_SERVICE=%s\n' "UNDEFINED" >> $RUNFILE
 	fi
 	if [ -f ./application/id.provide ]; then
-		printf 'TC_PROVIDES=%s\n' $(cat /application/id.provides) >> $RUNFILE
+		printf 'TC_PROVIDES=%s\n' $(cat ./application/id.provides) >> $RUNFILE
 	else
 		printf 'TC_PROVIDES=%s\n' "UNDEFINED" >> $RUNFILE
 	fi
@@ -76,4 +76,6 @@ done
 if [[ $DEBUG -eq 'true' ]]; then
 	echo "[phase:pre_build] ./build/pre_build.run"
 	cat ./build/pre_build.run
+	echo "[phase:pre_build] ./Dockerfile"
+	cat ./Dockerfile
 fi
