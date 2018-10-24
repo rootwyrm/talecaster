@@ -13,7 +13,7 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.nvd.update="0" \
 		com.rootwyrm.nvd.update_sub="$RW_BLDHASH" \
 		com.rootwyrm.nvd.build_time=$LS_BLDDATE \
-
+		# Talecaster Settings
 		com.rootwyrm.talecaster.provides="$TC_PROVIDES" \
 		com.rootwyrm.talecaster.depends="" \
 		com.rootwyrm.talecaster.service="$TC_SERVICE" \
@@ -22,7 +22,7 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.talecaster.synology="0" \
 		com.rootwyrm.talecaster.qnap="0" \
 		com.rootwyrm.talecaster.vpn="1" \
-
+		# Label Schema
 		org.label-schema.schema-version="$LS_SCHEMAVERSION" \
 		org.label-schema.vendor="$LS_VENDOR" \
 		org.label-schema.name="$LS_NAME" \
@@ -66,4 +66,3 @@ ONBUILD RUN apk update ; apk upgrade
 # http://dl-cdn.alpinelinux.org/alpine/v3.5/main
 # http://dl-cdn.alpinelinux.org/alpine/v3.5/community
 # http://dl-cdn.alpinelinux.org/alpine/v3.5/testing
-
