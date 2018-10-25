@@ -9,24 +9,26 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.nvd.release="0" \
 		com.rootwyrm.nvd.version="0" \
 		com.rootwyrm.nvd.update="0" \
-		com.rootwyrm.nvd.update_sub="$RW_VCSHASH" \
-		com.rootwyrm.nvd.build_time="$LS_BLDDATE" \
-
-		com.rootwyrm.talecaster.provides="mono" \
+		com.rootwyrm.nvd.update_sub="$RW_BLDHASH" \
+		com.rootwyrm.nvd.build_time=$LS_BLDDATE \
+		# Talecaster Settings
+		com.rootwyrm.talecaster.provides="$TC_PROVIDES" \
 		com.rootwyrm.talecaster.depends="" \
-		com.rootwyrm.talecaster.service="" \
+		com.rootwyrm.talecaster.service="$TC_SERVICE" \
 		com.rootwyrm.talecaster.ports_tcp="" \
 		com.rootwyrm.talecaster.ports_udp="" \
 		com.rootwyrm.talecaster.synology="0" \
 		com.rootwyrm.talecaster.qnap="0" \
-
+		com.rootwyrm.talecaster.vpn="1" \
+		# Label Schema
 		org.label-schema.schema-version="$LS_SCHEMAVERSION" \
 		org.label-schema.vendor="$LS_VENDOR" \
 		org.label-schema.name="$LS_NAME" \
 		org.label-schema.url="$LS_URL" \
 		org.label-schema.vcs-ref="$VCS_REF" \
-		org.label-schema.version="$RW_BLDHASH" \
-		org.label-schema.build-date="$LS_BLDDATE"
+		org.label-schema.version="$RW_VCSHASH" \
+		org.label-schema.build-date=$LS_BLDDATE
+
 
 ## Create common elements
 COPY [ "application/", "/opt/talecaster" ]

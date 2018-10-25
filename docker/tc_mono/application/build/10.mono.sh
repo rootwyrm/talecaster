@@ -16,13 +16,13 @@ export BUILDNAME="mono"
 
 ## Build
 export vbpkg="mono_build"
-export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev"
+export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev ninja"
 ## Runtime
 export vrpkg="mono_run"
-export vrpkg_content="curl gettext linux-headers python2 openssl"
+export vrpkg_content="curl gettext linux-headers python2 openssl jemalloc pax-utils llvm5-dev llvm5-static"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-export monov="5.8.0.108"
+export monov="5.16.0.179"
 
 install_runtime()
 {
@@ -67,7 +67,13 @@ build_mono()
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Configuring..."
 	## XXX: This got a lot more complex to get the size down...
 	MONO_PREFIX=/usr/local
-	./autogen.sh --prefix=/usr/local --sysconfdir=/usr/local/etc --mandir=/usr/share/man --infodir=/usr/share/info --localstatedir=/var --disable-rpath --disable-boehm --enable-parallel-mark --with-mcs-docs=no --without-sigaltstack > /dev/null 2>&1
+	./autogen.sh \
+		--prefix=/usr/local --sysconfdir=/usr/local/etc --mandir=/usr/share/man \
+		--infodir=/usr/share/info --localstatedir=/var \
+		--disable-rpath --disable-boehm \
+		--enable-hybrid-suspend --enable-parallel-mark --with-sigaltstack=no \
+		--with-bitcode=yes --with-spectre-mitigation=yes \
+		--with-mcs-docs=no > /dev/null 2&>1
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."
 
