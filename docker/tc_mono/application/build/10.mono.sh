@@ -73,7 +73,7 @@ build_mono()
 		--disable-rpath --disable-boehm \
 		--enable-hybrid-suspend --enable-parallel-mark --with-sigaltstack=no \
 		--with-bitcode=yes --with-spectre-mitigation=yes \
-		--with-mcs-docs=no > /dev/null 2&>1
+		--with-mcs-docs=no 
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."
 
