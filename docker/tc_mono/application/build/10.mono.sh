@@ -19,7 +19,7 @@ export vbpkg="mono_build"
 export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev ninja"
 ## Runtime
 export vrpkg="mono_run"
-export vrpkg_content="curl gettext linux-headers python2 openssl jemalloc pax-utils llvm5-dev llvm5-static"
+export vrpkg_content="curl gettext linux-headers python2 openssl jemalloc pax-utils"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
 export monov="5.16.0.179"
@@ -70,10 +70,7 @@ build_mono()
 	./autogen.sh \
 		--prefix=/usr/local --sysconfdir=/usr/local/etc --mandir=/usr/share/man \
 		--infodir=/usr/share/info --localstatedir=/var \
-		--disable-rpath --disable-boehm \
-		--enable-hybrid-suspend --enable-parallel-mark --with-sigaltstack=no \
-		--with-bitcode=yes --with-spectre-mitigation=yes \
-		--with-mcs-docs=no 
+		--enable-small-config --with-mcs-docs=no 
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."
 
