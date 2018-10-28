@@ -22,7 +22,7 @@ export vrpkg="mono_run"
 export vrpkg_content="curl gettext linux-headers python2 openssl jemalloc pax-utils"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-export monov="5.16.0.179"
+export monov="5.10.1.57"
 
 install_runtime()
 {
