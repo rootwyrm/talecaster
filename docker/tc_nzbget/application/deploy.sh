@@ -93,10 +93,12 @@ application_install()
 	fi
 
 	## Downloading from Github is funky.
-	echo "[INSTALL] Retrieving nzbget 18.0 from official"
-	curl -L https://github.com/nzbget/nzbget/releases/download/v18.0/nzbget-18.0-bin-linux.run > /opt/talecaster/nzbget-18.0-bin-linux.run
-	chmod +x /opt/talecaster/nzbget-18.0-bin-linux.run
-	/opt/talecaster/nzbget-18.0-bin-linux.run --destdir /opt/nzbget
+	local MAJOR=20
+	local MINOR=0
+	echo "[INSTALL] Retrieving nzbget ${MAJOR}.${MINOR} from official"
+	curl -L https://github.com/nzbget/nzbget/releases/download/v${MAJOR}.${MINOR}/nzbget-${MAJOR}.${MINOR}-bin-linux.run > /opt/talecaster/nzbget-${MAJOR}.${MINOR}-bin-linux.run
+	chmod +x /opt/talecaster/nzbget-${MAJOR}.${MINOR}-bin-linux.run
+	/opt/talecaster/nzbget-${MAJOR}.${MINOR}-bin-linux.run --destdir /opt/nzbget
 	if [ $? -ne 0 ]; then
 		echo "[FATAL] Error occurred during nzbget installation!"
 		exit 1
