@@ -1,0 +1,17 @@
+#!/bin/sh
+## sv/deluge/finish
+
+echo "[APPLICATION] deluge-web shutting down."
+echo " "
+
+if [ -f /config/deluge-web.env ]; then
+	. /config/deluge-web.env
+fi
+
+if [ ! -f /var/run/deluge-web.pid ]; then
+	kill -9 $(ps ax | grep deluge-web | awk '{print $1}')
+	wait $!
+else
+	kill -9 $(cat /var/run/deluge-web.pid)
+	wait $!
+fi

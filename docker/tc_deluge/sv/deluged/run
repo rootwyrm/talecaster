@@ -1,0 +1,26 @@
+#!/bin/sh
+## sv/deluged/run
+
+export tcuser=$(grep "TaleCaster User" /etc/passwd | cut -d : -f 1)
+export tcgroup=$(getent group $tcuser | cut -d : -f 1)
+
+cat /etc/motd
+
+echo "[APPLICATION] Starting deluged as $tcuser:$tcgroup"
+echo " "
+
+if [ -f /config/deluged.env ]; then
+	. /config/deluged.env
+fi
+
+## Important variables
+pidfile=/var/run/deluged.pid
+user=$tcuser
+group=$tcgroup
+# XXX: Never set uiip in environment!!
+uiip=$(ip -4 addr show eth0 | grep inet | awk '{print $2}' | cut -d / -f 1)
+[ -z "$outip" ]		|| outip=$uiip
+[ -z "$uiport" ]	|| uiport="58846"
+
+## NOTE: Cannot use backtick to format nicely.
+exec /usr/bin/deluged -c /config -u $uiip -p $uiport -i $outip -P $pidfile -U $user -g $group -d
