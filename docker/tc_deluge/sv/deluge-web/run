@@ -1,0 +1,30 @@
+#!/bin/sh
+## sv/deluge-web/run
+
+export tcuser=$(grep "TaleCaster User" /etc/passwd | cut -d : -f 1)
+export tcgroup=$(getent group $tcuser | cut -d : -f 1)
+
+cat /etc/motd
+
+echo "[APPLICATION] Starting deluge-web as $tcuser:$tcgroup"
+echo " "
+
+if [ -f /config/deluge-web.env ]; then
+	. /config/deluge-web.env
+fi
+
+## Important variables
+pidfile=/var/run/deluge-web.pid
+user=$tcuser
+group=$tcgroup
+# XXX: Never set uiip in environment!!
+uiip=$(ip -4 addr show eth0 | grep inet | awk '{print $2}' | cut -d / -f 1)
+[ -z "$uiport" ]	|| uiport="8112"
+
+## SSL not on yet.
+if [ -z $ssl ]; then
+	ssl=false
+fi
+
+## NOTE: Cannot use backtick to format nicely.
+exec /usr/bin/deluge-web -c /config -i $uiip -p $uiport -P $pidfile -U $user -g $group -d

@@ -1,0 +1,25 @@
+#!/bin/sh
+## sv/deluge/finish
+
+echo "[APPLICATION] deluged shutting down."
+echo " "
+
+if [ -f /config/deluged.env ]; then
+	. /config/deluged.env
+fi
+
+if [ ! -f /var/run/deluged.pid ]; then
+	## XXX: Assume we're FUBAR.
+	kill -9 $(ps ax | grep deluged | grep -v deluged-web | awk '{print $1}')
+	wait $!
+else
+	## Use deluge-console to shutdown cleanly.
+	/usr/bin/deluge-console halt
+	wait $!
+	if [ $? -ne 0 ]; then
+		## Clean shutdown failed.
+		echo "[ERROR] deluge-console command failed, killing."
+		kill -9 $(cat /var/run/deluged.pid)
+		wait $!
+	fi
+fi
