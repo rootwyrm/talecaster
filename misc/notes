@@ -1,0 +1,3 @@
+Jackett supports aggregate: https://github.com/Jackett/Jackett/issues/921
+
+http://$HOST:9117/torznab/all
