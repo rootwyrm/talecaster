@@ -1,4 +1,4 @@
-FROM	alpine:3.9
+FROM	alpine:edge
 
 MAINTAINER	Phillip "RootWyrm" Jaenke <talecaster@rootwyrm.com>
 
