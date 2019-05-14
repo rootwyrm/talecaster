@@ -16,13 +16,14 @@ export BUILDNAME="mono"
 
 ## Build
 export vbpkg="mono_build"
-export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev ninja"
+export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev ninja inotify-tools-dev"
 ## Runtime
 export vrpkg="mono_run"
-export vrpkg_content="curl gettext linux-headers python2 openssl jemalloc pax-utils"
+export vrpkg_content="curl gettext inotify-tools linux-headers python2 openssl ninja pax-utils"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-export monov="5.10.1.57"
+#export monov="5.18.0.268"
+export monov="5.20.1.27"
 
 install_runtime()
 {
@@ -67,10 +68,13 @@ build_mono()
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Configuring..."
 	## XXX: This got a lot more complex to get the size down...
 	MONO_PREFIX=/usr/local
-	./autogen.sh \
-		--prefix=/usr/local --sysconfdir=/usr/local/etc --mandir=/usr/share/man \
+	./configure \
+		--prefix=$MONO_PREFIX --sysconfdir=/usr/local/etc \
+		--mandir=/usr/share/man \
 		--infodir=/usr/share/info --localstatedir=/var \
-		--enable-small-config --with-mcs-docs=no 
+		--enable-ninja --enable-system-aot \
+		--disable-boehm --without-x --with-mcs-docs=no \
+		--enable-small-config
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."
 
