@@ -22,8 +22,7 @@ export vrpkg="mono_run"
 export vrpkg_content="curl gettext inotify-tools linux-headers python2 openssl ninja pax-utils"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-#export monov="5.18.0.268"
-export monov="5.20.1.27"
+export monov="6.0.0.319"
 
 install_runtime()
 {
@@ -59,10 +58,9 @@ build_mono()
 {
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Retrieving $monov"
 	cd /opt/talecaster/build
-	$curl_cmd https://download.mono-project.com/sources/mono/mono-$monov.tar.bz2 > mono-$monov.tar.bz2 
-	bunzip2 mono-$monov.tar.bz2
-	tar xf mono-$monov.tar
-	rm mono-$monov.tar
+	$curl_cmd https://download.mono-project.com/sources/mono/mono-$monov.tar.xz > mono-$monov.tar.xz
+	xzcat mono-$monov.tar.xz | tar xf -
+	rm mono-$monov.tar.xz
 	cd mono-$monov
 
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Configuring..."
