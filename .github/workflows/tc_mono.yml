@@ -8,7 +8,7 @@ on:
     tags:
       - v1*
     paths:
-      - 'docker/**'
+      - 'docker/tc_mono/**'
   pull_request:
     branches:
       - master
@@ -16,9 +16,9 @@ on:
     tags:
       - v1*
     paths:
-      - 'docker/**'
+      - 'docker/tc_mono/**'
   repository_dispatch:
-    types: [ tc_docker ]
+    types: [ tc_mono ]
 
 ## Build only for amd64
 jobs:
