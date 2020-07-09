@@ -1,5 +1,5 @@
 ## tc_docker
-name: CICD - tc_docker
+name: CICD - tc_mono
 on:
   push:
     branches:
@@ -23,12 +23,12 @@ on:
 ## Build only for amd64
 jobs:
   base:
-    name: Build ${{ github.ref }} base
+    name: tc_mono - build ${{ github.ref }}
     runs-on: ubuntu-20.04
     env:
       CONTAINER: tc_docker
     steps:
-    - name: Check out from ${{ github.ref }} 
+    - name: tc_mono - check out from ${{ github.ref }} 
       id: checkout
       uses: actions/checkout@v2
 #    - name: Run pre-build hooks
@@ -40,7 +40,7 @@ jobs:
 #      run: |
 #        docker run --rm --privileged docker/binfmt:$BINFMT
 #        docker buildx create --name rootwyrm --use
-    - name: Build and push base
+    - name: tc_mono - build and push ${{ github.ref }}
       run: |
         VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
