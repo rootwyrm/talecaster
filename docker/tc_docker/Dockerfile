@@ -1,4 +1,4 @@
-FROM	alpine:3.10.3
+FROM	alpine:3.12
 
 MAINTAINER	Phillip "RootWyrm" Jaenke <talecaster@rootwyrm.com>
 
@@ -31,7 +31,7 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		org.label-schema.version="$RW_VCSHASH" \
 		org.label-schema.build-date=$LS_BLDDATE
 
-ENV pkg_common="runit file dcron apk-cron openssl bash openvpn"
+ENV pkg_common="runit file dcron apk-cron openssl bash openvpn wireguard"
 
 ## Create common elements
 COPY [ "application/", "/opt/talecaster" ]
@@ -42,7 +42,7 @@ RUN mkdir -p /opt/talecaster/defaults && \
 	touch /firstboot ; \
 	apk update && \
 	apk upgrade && \
-	export pkg_common="runit file dcron apk-cron openssl bash openvpn" && \
+	export pkg_common="runit file dcron apk-cron openssl bash openvpn wireguard" && \
 	apk add --no-cache $pkg_common && \
 	ln -s /etc/sv/firstboot /etc/service/ && \
 	ln -s /etc/service /service && \
@@ -56,6 +56,8 @@ VOLUME [ "/run", "/config/openvpn", "/shared", "/downloads" ]
 
 ## Handle rebuilds in a nicer fashion. 
 ONBUILD RUN apk update ; apk upgrade
+ONBUILD ADD	[ "application/", "/opt/talecaster" ]
+ONBUILD ADD	[ "sv/", "/etc/sv" ]
 
 ## To go to edge (rarely needed):
 # FROM alpine:edge
