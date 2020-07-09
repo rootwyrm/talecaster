@@ -22,7 +22,8 @@ export vrpkg="mono_run"
 export vrpkg_content="curl gettext inotify-tools linux-headers python2 openssl ninja pax-utils"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-export monov="6.0.0.334"
+#export monov="6.0.0.334"
+export monov="6.8.0.123"
 
 install_runtime()
 {
@@ -64,15 +65,27 @@ build_mono()
 	cd mono-$monov
 
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Configuring..."
-	## XXX: This got a lot more complex to get the size down...
+	## XXX: This gets very complicated. Do not touch.
 	MONO_PREFIX=/usr/local
 	./configure \
-		--prefix=$MONO_PREFIX --sysconfdir=/usr/local/etc \
+		--prefix=$MONO_PREFIX \
+		--sysconfdir=/usr/local/etc \
 		--mandir=/usr/share/man \
-		--infodir=/usr/share/info --localstatedir=/var \
-		--enable-ninja --enable-system-aot \
-		--disable-boehm --without-x --with-mcs-docs=no \
-		--enable-small-config
+		--infodir=/usr/share/info \
+		--localstatedir=/var \
+		--enable-dependency-tracking \
+		--enable-ninja \
+		--disable-support-build \
+		--enable-system-aot \
+		--disable-crash-reporting \
+		--disable-boehm \
+		--enable-vtune \
+		--disable-icall-tables \
+		--with-bitcode=yes \
+		--with-spectre-mitigation=yes \
+		--with-sgen=yes \
+		--without-x  \
+		--with-mcs-docs=no 
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."
 

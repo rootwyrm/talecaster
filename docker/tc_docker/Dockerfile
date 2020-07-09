@@ -39,12 +39,12 @@ ENV pkg_common="runit file dcron apk-cron openssl bash openvpn ca-certificates c
 ## Create common elements
 COPY [ "application/", "/opt/talecaster" ]
 COPY [ "sv/", "/etc/sv" ]
-RUN mkdir -p /opt/talecaster/defaults && \
+RUN	apk update && \
+	apk upgrade && \
+	mkdir -p /opt/talecaster/defaults && \
 	mkdir -p /opt/talecaster/build && \
 	mkdir -p /var/log/runit && \
 	touch /firstboot ; \
-	apk update && \
-	apk upgrade && \
 	export pkg_common="runit file dcron apk-cron openssl bash openvpn ca-certificates ca-certificates-bundle" && \
 	apk add --no-cache $pkg_common && \
 	ln -s /etc/sv/firstboot /etc/service/ && \
@@ -59,8 +59,8 @@ VOLUME [ "/run", "/config/openvpn", "/shared", "/downloads" ]
 
 ## Handle rebuilds in a nicer fashion. 
 ONBUILD RUN apk update ; apk upgrade
-ONBUILD ADD	[ "application/", "/opt/talecaster" ]
-ONBUILD ADD	[ "sv/", "/etc/sv" ]
+#ONBUILD ADD	[ "application/", "/opt/talecaster" ]
+#ONBUILD ADD	[ "sv/", "/etc/sv" ]
 
 ## To go to edge (rarely needed):
 # FROM alpine:edge
