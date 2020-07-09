@@ -79,7 +79,6 @@ build_mono()
 		--enable-system-aot \
 		--disable-crash-reporting \
 		--disable-boehm \
-		--enable-vtune \
 		--disable-icall-tables \
 		--with-bitcode=yes \
 		--with-spectre-mitigation=yes \
