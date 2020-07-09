@@ -31,7 +31,10 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		org.label-schema.version="$RW_VCSHASH" \
 		org.label-schema.build-date=$LS_BLDDATE
 
-ENV pkg_common="runit file dcron apk-cron openssl bash openvpn wireguard"
+## Needs:
+# runit file dcron apk-cron openssl bash openvpn 
+# XXX: wireguard-lts balloons it to a GIG! Nope.
+ENV pkg_common="runit file dcron apk-cron openssl bash openvpn ca-certificates ca-certificates-bundle"
 
 ## Create common elements
 COPY [ "application/", "/opt/talecaster" ]
@@ -42,7 +45,7 @@ RUN mkdir -p /opt/talecaster/defaults && \
 	touch /firstboot ; \
 	apk update && \
 	apk upgrade && \
-	export pkg_common="runit file dcron apk-cron openssl bash openvpn wireguard" && \
+	export pkg_common="runit file dcron apk-cron openssl bash openvpn ca-certificates ca-certificates-bundle" && \
 	apk add --no-cache $pkg_common && \
 	ln -s /etc/sv/firstboot /etc/service/ && \
 	ln -s /etc/service /service && \
