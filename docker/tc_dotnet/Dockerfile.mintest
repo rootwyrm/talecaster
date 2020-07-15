@@ -15,7 +15,7 @@ RUN apk update && apk upgrade ; \
 
 	export APKADD="apk add --no-cache" ; \
 	echo "Installation of pieces to install and build software" ; \
-	APKADD --virtual vp_base bash curl gettext git openssl python3 wget zlib
+	APKADD --virtual vp_base bash curl gettext git openssl python3 wget zlib&& \
 	echo "Installation of software building components"	; \
 	APKADD --virtual vp_build git gcc g++ libstdc++ curl-dev icu-dev zlib-dev cmake autoconf automake make libtool lttng-ust-dev icu-libs gettext gettext lttng-ust binutils openssl openssl-dev && \
 	echo "################################################################################" ; \
