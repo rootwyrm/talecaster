@@ -16,10 +16,10 @@ export BUILDNAME="mono"
 
 ## Build
 export vbpkg="mono_build"
-export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev ninja inotify-tools-dev"
+export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev sqlite-dev ninja inotify-tools-dev"
 ## Runtime
 export vrpkg="mono_run"
-export vrpkg_content="curl gettext inotify-tools linux-headers python2 openssl ninja pax-utils"
+export vrpkg_content="curl gettext inotify-tools linux-headers python2 openssl sqlite sqlite-libs ninja pax-utils"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
 #export monov="6.0.0.334"
