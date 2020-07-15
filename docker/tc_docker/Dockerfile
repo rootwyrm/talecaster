@@ -47,13 +47,13 @@ VOLUME [ "/run", "/config/openvpn", "/shared", "/downloads" ]
 
 ## Handle rebuilds in a nicer fashion. 
 ONBUILD ADD	[ "application/", "/opt/talecaster" ]
-ONBUILD ADD [ "init.d/", "/etc/init.d" ]
-ONBUILD RUN touch /firstboot && \
-	echo "$(date '+%FT%T%z') [BUILD] Build phase beginning..." ; \
-	for bld in `ls /opt/talecaster/build/ | sort`; do \
-		/opt/talecaster/build/$bld && \
-	done && \
-	echo "$(date '+%FT%T%z') [BUILD] Build phase complete." 
+#ONBUILD ADD [ "init.d/", "/etc/init.d" ]
+#ONBUILD RUN touch /firstboot && \
+#	echo "$(date '+%FT%T%z') [BUILD] Build phase beginning..." ; \
+#	for bld in `ls /opt/talecaster/build/ | sort`; do \
+#		/opt/talecaster/build/$bld && \
+#	done && \
+#	echo "$(date '+%FT%T%z') [BUILD] Build phase complete." 
 	#/sbin/rc-update add $(cat /opt/talecaster/id.service) default
 
 #ENTRYPOINT [ "/sbin/init" ]
