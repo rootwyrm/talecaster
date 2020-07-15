@@ -22,7 +22,10 @@ on:
 
 ## Build only for amd64
 jobs:
-  base:
+  tc_dotnet:
+    strategy:
+      matrix:
+        alpine_release: [ 3.10, 3.11, 3.12 ]
     name: tc_dotnet - minimum test ${{ github.ref }}
     runs-on: ubuntu-20.04
     env:
@@ -45,6 +48,7 @@ jobs:
       run: |
         VERSION=citest
         docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
+        --build-arg ${{ matrix.alpine_release }} \
         docker/$CONTAINER -f docker/$CONAINER/Dockerfile.mintest
 #docker push rootwyrm/$CONTAINER:$VERSION
 
