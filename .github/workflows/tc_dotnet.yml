@@ -1,5 +1,5 @@
 ## tc_docker
-name: CI - tc_dotnet
+name: CI - tc_dotnet - minimum testing
 on:
   push:
     branches:
@@ -23,7 +23,7 @@ on:
 ## Build only for amd64
 jobs:
   base:
-    name: tc_dotnet - build ${{ github.ref }}
+    name: tc_dotnet - minimum test ${{ github.ref }}
     runs-on: ubuntu-20.04
     env:
       CONTAINER: tc_dotnet
@@ -40,14 +40,12 @@ jobs:
 #      run: |
 #        docker run --rm --privileged docker/binfmt:$BINFMT
 #        docker buildx create --name rootwyrm --use
-    - name: tc_dotnet - build and push ${{ github.ref }}
+    - name: tc_dotnet - build ${{ github.ref }}
+      ## We will never push
       run: |
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        [ "$VERSION" == "master" ] && VERSION=latest
-        docker login -u ${{ secrets.HUB_USER }} -p ${{ secrets.HUB_TOKEN }}
+        VERSION=citest
         docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
-        docker/$CONTAINER
+        docker/$CONTAINER -f docker/$CONAINER/Dockerfile.mintest
 #docker push rootwyrm/$CONTAINER:$VERSION
 
 # vim:ts=2:sw=2:et
