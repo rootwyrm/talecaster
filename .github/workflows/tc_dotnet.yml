@@ -31,7 +31,7 @@ jobs:
     env:
       CONTAINER: tc_dotnet
     steps:
-    - name: tc_mono - check out from ${{ github.ref }} 
+    - name: tc_dotnet - check out from ${{ github.ref }} 
       id: checkout
       uses: actions/checkout@v2
 #    - name: Run pre-build hooks
@@ -47,9 +47,9 @@ jobs:
       ## We will never push
       run: |
         VERSION=citest
+        cd docker/$CONTAINER
         docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
-        --build-arg ${{ matrix.alpine_release }} \
-        docker/$CONTAINER -f docker/$CONAINER/Dockerfile.mintest
+        --build-arg ${{ matrix.alpine_release }} -f Dockerfile.mintest 
 #docker push rootwyrm/$CONTAINER:$VERSION
 
 # vim:ts=2:sw=2:et
