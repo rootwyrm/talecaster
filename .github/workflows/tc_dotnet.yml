@@ -25,7 +25,7 @@ jobs:
   tc_dotnet:
     strategy:
       matrix:
-        alpine_release: [ 3.10, 3.11, 3.12 ]
+        alpine_release: [ "3.10", "3.11", "3.12" ]
     name: tc_dotnet - minimum test ${{ github.ref }}
     runs-on: ubuntu-20.04
     env:
