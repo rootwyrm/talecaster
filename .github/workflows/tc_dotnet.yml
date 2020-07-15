@@ -47,9 +47,9 @@ jobs:
       ## We will never push
       run: |
         VERSION=citest
-        cd docker/$CONTAINER
         docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
-        --build-arg ${{ matrix.alpine_release }} -f Dockerfile.mintest .
+        --build-arg RELEASE=${{ matrix.alpine_release }} \
+        -f docker/tc_dotnet/Dockerfile.mintest docker/tc_dotnet
 #docker push rootwyrm/$CONTAINER:$VERSION
 
 # vim:ts=2:sw=2:et
