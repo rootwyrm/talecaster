@@ -1,5 +1,5 @@
 ## tc_docker
-name: CICD - tc_mono
+name: CI - tc_dotnet
 on:
   push:
     branches:
