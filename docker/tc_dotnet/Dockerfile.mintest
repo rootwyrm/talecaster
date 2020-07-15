@@ -11,7 +11,7 @@ RUN apk update && apk upgrade ; \
 	echo "Installation of pieces to install and build software" ; \
 	apk add --virtual vp_base bash curl gettext git openssl python3 wget zlib && \
 	echo "Installation of software building components"	; \
-	apk add --virtual vp_build git gcc g++ libstdc++ curl-dev icu-dev zlib-dev cmake autoconf automake make libtool lttng-ust-dev icu-libs gettext gettext lttng-ust binutils openssl openssl-dev && \
+	apk add --virtual vp_build git gcc g++ libstdc++ curl-dev icu-dev zlib-dev cmake autoconf automake make libtool lttng-ust-dev icu-libs gettext gettext lttng-ust binutils openssl openssl-dev linux-headers && \
 	echo "#### Clone the repository" ; \
 	git clone https://github.com/dotnet/runtime.git /usr/local/src/runtime && \
 	echo "################################################################################" ; \
