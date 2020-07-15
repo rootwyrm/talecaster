@@ -8,7 +8,7 @@ on:
     tags:
       - v1*
     paths:
-      - 'docker/**'
+      - 'docker/tc_docker/**'
   pull_request:
     branches:
       - master
@@ -16,15 +16,15 @@ on:
     tags:
       - v1*
     paths:
-      - 'docker/**'
+      - 'docker/tc_docker/**'
   repository_dispatch:
     types: [ tc_docker ]
 
 ## Build only for amd64
 jobs:
   base:
-    name: Build ${{ github.ref }} base
-    runs-on: ubuntu-20.04
+    name: Build tc_docker - ${{ github.ref }}
+    runs-on: ubuntu-latest
     env:
       CONTAINER: tc_docker
     steps:
@@ -35,19 +35,17 @@ jobs:
 #      id: hooks
 #      run: |
 #        $GITHUB_WORKSPACE/ci/hooks/pre_build
-#    - name: Set up build environment
-#      id: buildenv
-#      run: |
-#        docker run --rm --privileged docker/binfmt:$BINFMT
-#        docker buildx create --name rootwyrm --use
-    - name: Build and push base
-      run: |
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        [ "$VERSION" == "master" ] && VERSION=latest
-        docker login -u ${{ secrets.HUB_USER }} -p ${{ secrets.HUB_TOKEN }}
-        docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
-        docker/$CONTAINER
-        docker push rootwyrm/$CONTAINER:$VERSION
+    - name: Build tc_docker - ${{ github.ref }}
+      id: docker
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.HUB_USER }}
+        password: ${{ secrets.HUB_TOKEN }}
+        add_git_labels: true
+        tag_with_ref: true
+        always_pull: true
+        path: docker/tc_docker
+        dockerfile: docker/tc_docker/Dockerfile
+        repository: rootwyrm/tc_docker
 
-# vim:ts=2:sw=2:et
+# vim:ts=2:sw=2:et:c=inkpot
