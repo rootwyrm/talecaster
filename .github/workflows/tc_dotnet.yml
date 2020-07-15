@@ -49,7 +49,7 @@ jobs:
         VERSION=citest
         cd docker/$CONTAINER
         docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
-        --build-arg ${{ matrix.alpine_release }} -f Dockerfile.mintest 
+        --build-arg ${{ matrix.alpine_release }} -f Dockerfile.mintest .
 #docker push rootwyrm/$CONTAINER:$VERSION
 
 # vim:ts=2:sw=2:et
