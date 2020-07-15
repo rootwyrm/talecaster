@@ -18,4 +18,4 @@ RUN apk update && apk upgrade ; \
 	echo "#### $(date) Build dotnet " ; \
 	echo "################################################################################" ; \
 	cd /usr/local/src/runtime ; \
-	./build.sh --os Linux -c Release --gcc 
+	./build.sh mono -c Release --gcc 
