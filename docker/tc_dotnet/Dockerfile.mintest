@@ -1,5 +1,5 @@
-ARG		${{ matrix.alpine }}
-FROM	alpine:${matrix.alpine:-edge}
+ARG		${RELEASE:-edge}
+FROM	alpine:${RELEASE}
 
 ## This is to be a high instrument, minimum component build
 ## Just to compile specific tests.
