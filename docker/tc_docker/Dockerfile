@@ -3,14 +3,11 @@ FROM	alpine:3.12
 MAINTAINER	Phillip "RootWyrm" Jaenke <talecaster@rootwyrm.com>
 
 ## Set up our labels
-LABEL	com.rootwyrm.product="TaleCaster" \
+LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
+		com.rootwyrm.product="TaleCaster" \
 		com.rootwyrm.project="tc_docker" \
 		com.rootwyrm.status="" \
 		com.rootwyrm.vcs-type="github" \
-		com.rootwyrm.changelog-url="https://github.com/rootwyrm/talecaster/CHANGELOG" \
-		com.rootwyrm.nvd.release="0" \
-		com.rootwyrm.nvd.version="0" \
-		com.rootwyrm.nvd.update="0" \
 		com.rootwyrm.nvd.update_sub="$RW_BLDHASH" \
 		com.rootwyrm.nvd.build_time=$LS_BLDDATE \
 		# Talecaster Settings
@@ -31,11 +28,6 @@ LABEL	com.rootwyrm.product="TaleCaster" \
 		org.label-schema.version="$RW_VCSHASH" \
 		org.label-schema.build-date=$LS_BLDDATE
 
-## Needs:
-# runit file dcron apk-cron openssl bash openvpn 
-# XXX: wireguard-lts balloons it to a GIG! Nope.
-ENV pkg_common="runit file dcron apk-cron openssl bash openvpn ca-certificates ca-certificates-bundle"
-
 ## Create common elements
 COPY [ "application/", "/opt/talecaster" ]
 COPY [ "sv/", "/etc/sv" ]
@@ -43,31 +35,25 @@ RUN	apk update && \
 	apk upgrade && \
 	mkdir -p /opt/talecaster/defaults && \
 	mkdir -p /opt/talecaster/build && \
-	mkdir -p /var/log/runit && \
-	touch /firstboot ; \
-	export pkg_common="runit file dcron apk-cron openssl bash openvpn ca-certificates ca-certificates-bundle" && \
-	apk add --no-cache $pkg_common && \
+	apk add --no-cache runit file dcron apk-cron openssl bash openvpn ca-certificates ca-certificates-bundle openrc && \
 	ln -s /etc/sv/firstboot /etc/service/ && \
 	ln -s /etc/service /service && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
-	sed -i -e '/.*salute$/d' /etc/inittab && \
-	rm -rf /etc/init.d
+	sed -i -e '/.*salute$/d' /etc/inittab
 
 VOLUME [ "/run", "/config/openvpn", "/shared", "/downloads" ]
 
 ## Handle rebuilds in a nicer fashion. 
-ONBUILD RUN apk update ; apk upgrade
-#ONBUILD ADD	[ "application/", "/opt/talecaster" ]
-#ONBUILD ADD	[ "sv/", "/etc/sv" ]
+ONBUILD ADD	[ "application/", "/opt/talecaster" ]
+ONBUILD ADD [ "init.d/", "/etc/init.d" ]
+ONBUILD RUN touch /firstboot && \
+	echo "$(date '+%FT%T%z') [BUILD] Build phase beginning..." ; \
+	for bld in `ls /opt/talecaster/build/ | sort`; do
+		/opt/talecaster/build/$bld && \
+	done && \
+	echo "$(date '+%FT%T%z') [BUILD] Build phase complete." 
+	#/sbin/rc-update add $(cat /opt/talecaster/id.service) default
 
-## To go to edge (rarely needed):
-# FROM alpine:edge
-# http://dl-cdn.alpinelinux.org/alpine/edge/main
-# http://dl-cdn.alpinelinux.org/alpine/edge/community
-# http://dl-cdn.alpinelinux.org/alpine/edge/testing
-# FROM alpine:3.x
-# http://dl-cdn.alpinelinux.org/alpine/v3.5/main
-# http://dl-cdn.alpinelinux.org/alpine/v3.5/community
-# http://dl-cdn.alpinelinux.org/alpine/v3.5/testing
+#ENTRYPOINT [ "/sbin/init" ]
