@@ -1,0 +1,24 @@
+#!/sbin/openrc-run
+
+name="radarr"
+supervisor="supervise-daemon"
+
+description="Radarr - for your movies"
+
+command="/opt/talecaster/Radarr/Radarr"
+command_args="${RADARR_OPTS} -nobrowser"
+
+depend() {
+	need net dcron rootwyrm
+	use logger
+	after firewall
+	before opennhrp bgpd
+	provide radarr
+}
+
+start_pre() {
+	/opt/talecaster/bin/identify.sh
+	if [ -f /message ]; then
+		cat /message
+	fi
+}
