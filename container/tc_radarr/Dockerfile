@@ -27,6 +27,8 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
+EXPOSE	7878/tcp
+
 COPY	[ "application/", "/opt/talecaster" ]
 COPY	[ "init.d/", "/etc/init.d" ]
 COPY	[ "cron/", "/etc/periodic" ]
