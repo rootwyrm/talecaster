@@ -35,15 +35,11 @@ else
 fi
 
 if [ -z $1 ]; then
-	echo "$GITHUB_WORKSPACE is GITHUB_WORKSPACE"
-	ls -l $GITHUB_WORKSPACE/container
 	TGT="$GITHUB_WORKSPACE/container/${CONTAINER}/Dockerfile"
 else
-	echo "$GITHUB_WORKSPACE is GITHUB_WORKSPACE"
-	ls -l $GITHUB_WORKSPACE/container
-	echo "TGT is $1"
 	TGT=$1
 fi
+
 printf 'Replacing STATUS with %s\n' "$STATUS"
 sed -i -e 's,%%STATUS%%,'${STATUS}',g' $TGT
 
