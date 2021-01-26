@@ -36,7 +36,7 @@ jobs:
     - name: Run pre-build hooks
       id: hooks
       run: |
-        $GITHUB_WORKSPACE/ci/hooks/pre_build $GITHUB_WORKSPACE/container/tc_docker
+        $GITHUB_WORKSPACE/ci/hooks/pre_build 
     - name: Build tc_docker - ${{ github.ref }}
       id: docker
       uses: docker/build-push-action@v1
