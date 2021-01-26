@@ -76,10 +76,10 @@ deploy_talecaster_user()
 		export tcgid="100"
 	else
 		## Defaults are based on original infrastructure
-		## media(60000):media(60000)
+		## talecaster(30000):media(30000)
 		## NOTE: Must be below 65534 due to client limits!!
-		if [[ -z $tcuser ]]; then export tcuser="media"; fi
-		if [[ -z $tcuid ]]; then export tcuid="60000"; fi
+		if [[ -z $tcuser ]]; then export tcuser="talecaster"; fi
+		if [[ -z $tcuid ]]; then export tcuid="30000"; fi
 		if [[ -z $tcgroup ]]; then export tcgroup="media"; fi
 		if [[ -z $tcgid ]]; then 
 			grep $tcgroup /etc/group > /dev/null
