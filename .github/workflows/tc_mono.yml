@@ -1,5 +1,5 @@
 ## tc_docker
-name: CICD - tc_mono
+name: CICD - mono 
 on:
   push:
     branches:
@@ -8,7 +8,8 @@ on:
     tags:
       - v1*
     paths:
-      - 'docker/tc_mono/**'
+      - 'ci/hooks/**'
+      - 'container/tc_mono/**'
   pull_request:
     branches:
       - master
@@ -16,38 +17,37 @@ on:
     tags:
       - v1*
     paths:
-      - 'docker/tc_mono/**'
+      - 'ci/hooks/**'
+      - 'container/tc_mono/**'
   repository_dispatch:
     types: [ tc_mono ]
 
 ## Build only for amd64
 jobs:
   base:
-    name: tc_mono - build ${{ github.ref }}
-    runs-on: ubuntu-20.04
+    name: Build tc_mono - ${{ github.ref }}
+    runs-on: ubuntu-latest
     env:
       CONTAINER: tc_mono
     steps:
-    - name: tc_mono - check out from ${{ github.ref }} 
+    - name: Check out from ${{ github.ref }} 
       id: checkout
       uses: actions/checkout@v2
-#    - name: Run pre-build hooks
-#      id: hooks
-#      run: |
-#        $GITHUB_WORKSPACE/ci/hooks/pre_build
-#    - name: Set up build environment
-#      id: buildenv
-#      run: |
-#        docker run --rm --privileged docker/binfmt:$BINFMT
-#        docker buildx create --name rootwyrm --use
-    - name: tc_mono - build and push ${{ github.ref }}
+    - name: Run pre-build hooks
+      id: hooks
       run: |
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        [ "$VERSION" == "master" ] && VERSION=latest
-        docker login -u ${{ secrets.HUB_USER }} -p ${{ secrets.HUB_TOKEN }}
-        docker build --pull --tag rootwyrm/$CONTAINER:$VERSION \
-        docker/$CONTAINER
-        docker push rootwyrm/$CONTAINER:$VERSION
+        $GITHUB_WORKSPACE/ci/hooks/pre_build 
+    - name: Build tc_mono - ${{ github.ref }}
+      id: docker
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.HUB_USER }}
+        password: ${{ secrets.HUB_TOKEN }}
+        add_git_labels: true
+        tag_with_ref: true
+        always_pull: true
+        path: container/tc_mono
+        dockerfile: container/tc_mono/Dockerfile
+        repository: rootwyrm/tc_mono
 
-# vim:ts=2:sw=2:et
+# vim:ts=2:sw=2:et:colorscheme=inkpot

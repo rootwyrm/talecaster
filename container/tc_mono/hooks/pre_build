@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Using the pre-build to edit the Dockerfile so we can cut down our 
+# layer count.
+# ---
+# ./Dockerfile
+# ./README.md
+# ./hooks/
+# ./sv/
+# etc.
+
+IFS=$'\n'
+
+build_variables()
+{
+	touch ./build/pre_build.run
+	if [ $? -ne 0 ]; then
+		echo "[FATAL] could not create ./build/pre_build.run"
+		exit 1
+	fi
+	
+	RUNFILE="./build/pre_build.run"
+
+	if [ -f ./build.conf ]; then
+		. ./build.conf
+	fi
+
+	GIT_REV=$(git rev-parse HEAD)
+	GIT_REV_SHORT=$(git rev-parse --short HEAD)
+	GIT_REV_HASH=$(git rev-parse HEAD | sha256sum | awk '{print $1}')
+	DATE_FANCY=$(echo \"$(date)\")
+	DATE_HASH=$(date +%d%m%y-%H%MZ | sha256sum | awk '{print $1}')
+
+	## NOTE: Do not place space
+	printf 'LS_BLDDATE=%s\n' $DATE_FANCY >> $RUNFILE
+	printf 'VCS_REF=%s\n' $GIT_REV_SHORT >> $RUNFILE
+	printf 'RW_VCSHASH=%s\n' $GIT_REV_HASH >> $RUNFILE
+	printf 'RW_BLDHASH=%s\n' $GIT_REV_SHORT >> $RUNFILE
+
+	printf 'LS_SCHEMA=%s\n' $LS_SCHEMA >> $RUNFILE
+	printf 'LS_SCHEMAVERSION=%s\n' $LS_SCHEMAVERSION >> $RUNFILE
+	printf 'LS_VENDOR=%s\n' $LS_VENDOR >> $RUNFILE
+	printf 'LS_NAME=%s\n' $LS_NAME >> $RUNFILE
+	printf 'LS_URL=%s\n' $LS_URL >> $RUNFILE
+
+	# XXX: get releaseid from /application/id.release
+	if [ -f ./application/id.service ]; then
+		printf 'TC_SERVICE=%s\n' $(cat ./application/id.service) >> $RUNFILE
+	else
+		printf 'TC_SERVICE=%s\n' "UNDEFINED" >> $RUNFILE
+	fi
+	if [ -f ./application/id.provide ]; then
+		printf 'TC_PROVIDES=%s\n' $(cat ./application/id.provides) >> $RUNFILE
+	else
+		printf 'TC_PROVIDES=%s\n' "UNDEFINED" >> $RUNFILE
+	fi
+}
+
+plug_variable_dockerfile()
+{
+	## NOTE: use , separator due to URL
+	sed -i -e 's,\$'$1','$2',' Dockerfile
+}
+
+mkdir ./build
+if [ $? -ne 0 ]; then
+	echo "[FATAL] Could not mkdir ./build!"
+	exit 1
+fi
+build_variables
+for v in `cat ./build/pre_build.run`; do
+	plug_variable_dockerfile $(echo $v | cut -d = -f 1) $(echo $v | cut -d = -f 2)
+done
+
+## DEBUG
+if [[ $DEBUG -eq 'true' ]]; then
+	echo "[phase:pre_build] ./build/pre_build.run"
+	cat ./build/pre_build.run
+	echo "[phase:pre_build] ./Dockerfile"
+	cat ./Dockerfile
+fi
