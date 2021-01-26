@@ -26,7 +26,4 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
-## Create common elements
-VOLUME [ "/opt/talecaster/Radarr" ]
-
 # vim:sw=4:ts=4:et
