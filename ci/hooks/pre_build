@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+################################################################################
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com>
+# All rights reserved
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE
+################################################################################
+
+set -e -o pipefail
+
+## If CONTAINER is unset, bail quick.
+if [ -z $CONTAINER ]; then
+	echo "No CONTAINER set in environment."
+	exit 0
+fi
+
+export RW_BUILDDATE=$(date '+%FT%T.%N%:z')
+if [ -z $STATUS ]; then
+	export STATUS="latest"
+fi
+if [ -z $GITHUB_REF ]; then
+	export REF="HEAD"
+fi
+if [ -z $GITHUB_SHA ]; then
+	export VCS_REF=$(git rev-parse $REF)
+else
+	export VCS_REF=$GITHUB_SHA
+fi
+if [ -z $GITHUB_SHA ]; then
+	export RW_VCSHASH=$(git rev-parse --short $REF)
+else
+	export RW_VCSHASH=$(echo $GITHUB_SHA | awk -F\| '$r > 0 { print substr($r,1,8)}')
+fi
+
+if [ -z $1 ]; then
+	TGT="$GITHUB_WORKSPACE/container/$CONTAINER/Dockerfile"
+else
+	TGT=$1
+fi
+printf 'Replacing STATUS with %s\n' "$STATUS"
+sed -i -e 's,%%STATUS%%,'${STATUS}',g' $TGT
+
+printf 'Replacing VCS_REF with %s\n' "$VCS_REF"
+sed -i -e 's,%%VCS_REF%%,'$VCS_REF',g' $TGT
+
+printf 'Replacing RW_VCSHASH with %s\n' "$RW_VCSHASH"
+sed -i -e 's,%%RW_VCSHASH%%,'$RW_VCSHASH',g' $TGT
+
+printf 'Replacing RW_BUILDDATE with %s\n' "$RW_BUILDDATE"
+sed -i -e 's,%%RW_BUILDDATE%%,'$RW_BUILDDATE',g' $TGT
+
+printf 'Replacing GITHUB_SHA with %s\n' "$GITHUB_SHA"
+sed -i -e 's,%%GITHUB_SHA%%,'$GITHUB_SHA',g' $TGT
+
+## XXX: Apparently, it passes the asterisks... sigh.
+printf 'Replacing GITHUB_REPOSITORY with %s\n' "${GITHUB_REPOSITORY}"
+sed -i -e 's,%%GITHUB_REPOSITORY%%,'${GITHUB_REPOSITORY}',g' $TGT
+
+printf 'Replacing GITHUB_ACTION with %s\n' "$GITHUB_ACTION"
+sed -i -e 's,%%GITHUB_ACTION%%,'$GITHUB_ACTION',g' $TGT
+
+# vim: ft=sh:ts=4:sw=4

@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+################################################################################
+# Copyright (C) 2020-* Phillip R. Jaenke <prj+docker@rootwyrm.com>
+# All rights reserved
+# 
+# Licensed under CC-BY-NC-3.0
+# See /LICENSE
+################################################################################
+
+set -e -o pipefail
+
+token=""
+
+function docker_login()
+{
+	if [ -z $1 ] || [ -z $2 ]; then
+		echo "Did not receive credentials via action secrets."
+		exit 1
+	fi
+	curl -sb --fail -X POST \
+		-H "Content-Type: application/json" \
+	   	-H "Accept: application/json" \
+	   	-d '{"username":"'$1'","password":"'$2'"}' \
+	   	https://hub.docker.com/v2/users/login \
+	   	-o ${GITHUB_WORKSPACE}/ci/login.json
+	export token=$(jq .token ${GITHUB_WORKSPACE}/ci/login.json -r)
+}
+
+function docker_logout()
+{
+	curl -sbi --fail -X POST \
+		-H "Accept: application/json" \
+		-H "Authorization: JWT $token" \
+		https://hub.docker.com/v2/logout/
+}
+
+function delete_tags()
+{
+	if [ -z $1 ]; then
+		echo "Did not receive tags to delete."
+		exit 1
+	fi
+	#curl -sb --fail -X GET \
+	#	https://hub.docker.com/v2/repositories/${GITHUB_ACTOR}/${CONTAINER}/tags/ \
+	#	-o ${GITHUB_WORKSPACE}/ci/tags.json
+	## XXX: jq '.[].name' tags.json doesn't work on CentOS 8.
+	#readarray tags < <(jq '.results[].name' ${GITHUB_WORKSPACE}/ci/tags.json -r)
+
+	for t in amd64 386 arm64 armv7; do
+		case $t in
+			latest)
+				## Don't delete latest ever
+				;;
+			*)
+				printf 'Deleting %s:%s...\n' "$1" "${t}"
+				echo 'URL: https://hub.docker.com/v2/repositories/${GITHUB_ACTOR}/${CONTAINER}/tags/${t}/\n'
+				curl --fail -X DELETE \
+					-H "Accept: application/json" \
+					-H "Authorization: JWT $token" \
+					"https://hub.docker.com/v2/repositories/${GITHUB_ACTOR}/${CONTAINER}/tags/${t}/"
+				;;
+		esac
+	done
+}
+
+printf 'Logging in to hub.docker.com\n'
+docker_login $1 $2
+printf 'Deleting tags from %s\n' "$3"
+delete_tags $3
+printf 'Logging out of hub.docker.com\n'
+docker_logout
+
+# vim:ft=sh:ts=4:sw=4
