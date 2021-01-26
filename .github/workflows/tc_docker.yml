@@ -47,11 +47,9 @@ jobs:
       id: docker
       uses: docker/build-push-action@v2
       with:
-        add_git_labels: true
-        tag_with_ref: true
-        always_pull: true
         platforms: linux/amd64
         context: container/tc_docker
+        pull: true
         push: true
         tags: rootwyrm/tc_docker:latest
 
