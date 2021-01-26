@@ -46,8 +46,8 @@ jobs:
         add_git_labels: true
         tag_with_ref: true
         always_pull: true
-        path: container/${CONTAINER}
-        dockerfile: container/${CONTAINER}/Dockerfile
-        repository: rootwyrm/${CONTAINER}
+        path: container/tc_docker
+        dockerfile: container/tc_docker/Dockerfile
+        repository: rootwyrm/tc_docker
 
 # vim:ts=2:sw=2:et:colorscheme=inkpot
