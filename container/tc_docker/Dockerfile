@@ -68,7 +68,7 @@ ONBUILD RUN apk update && apk upgrade && \
 	for bld in `ls /opt/talecaster/build/ | sort`; do \
 		/opt/talecaster/build/$bld ; \
 	done && \
-	echo "$(date '+%FT%T%z') [BUILD] Build complete." \
+	echo "$(date '+%FT%T%z') [BUILD] Build complete." ; \
 	/opt/talecaster/lib/service.stub.sh
 
 ENTRYPOINT	[ "/sbin/init" ]
