@@ -1,6 +1,11 @@
 ARG		ALPINE_BASE=3.13
 FROM	alpine:${ALPINE_BASE}
 
+ENV	tcuid=${tcuid:-30000}
+ENV tcgid=${tcgid:-30000}
+ENV tcuser=${tcuser:-talecaster}
+ENV tcgroup=${tcgroup:-media}
+
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		com.rootwyrm.product="TaleCaster" \

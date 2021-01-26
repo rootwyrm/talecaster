@@ -68,57 +68,21 @@ deploy_complete()
 ######################################################################
 deploy_talecaster_user()
 {
-	## If on Synology, *always* run as admin:user to avoid issues
-	if [[ -f /proc/syno_cpu_arch ]]; then
-		export tcuser="media"
-		export tcuid="1024"
-		export tcgroup="users"
-		export tcgid="100"
-	else
-		## Defaults are based on original infrastructure
-		## talecaster(30000):media(30000)
-		## NOTE: Must be below 65534 due to client limits!!
-		if [[ -z $tcuser ]]; then export tcuser="talecaster"; fi
-		if [[ -z $tcuid ]]; then export tcuid="30000"; fi
-		if [[ -z $tcgroup ]]; then export tcgroup="media"; fi
-		if [[ -z $tcgid ]]; then 
-			grep $tcgroup /etc/group > /dev/null
-			if [ $? -ne 0 ]; then
-				export tcgid="60000"
-				addgroup -g $tcgid $tcgroup
-				CHECK_ERROR $? addgroup
-			else
-				grep $tcgroup /etc/group | cut -d : -f 3 > /tmp/gid
-				export tcgid=$(cat /tmp/gid)
-			fi
-		fi
-		echo "[DEPLOY] Set TaleCaster user $tcuser[$tcuid]:$tcgroup[$tcgid]"
-		if [ -z $tcshell ]; then
-			## XXX gliderlabs/docker-alpine/issues/141
-			export tcshell=/bin/sh
-		fi
-
-		grep $tcuser /etc/passwd > /dev/null
-		if [ $? -eq 0 ]; then
-			if [[ $(id -u $tcuser) -eq $tcuid ]]; then
-				echo "[DEPLOY] Found existing user $tcuser[$tcuid], keeping it."
-			elif [[ $(id -u $tcuser) != 0 ]]; then
-				## NOP User doesn't exist.
-				echo -n "" > /dev/null
-			else
-				echo "[DEPLOY] Replacing user $tcuser[$(id -u $tcuser)]"
-				deluser $tcuser
-			fi
-		fi
+	## Defaults are based on original infrastructure and set in the
+	## docker environment. talecaster(30000):media(30000)
+	## NOTE: Must be below 65534 due to client limits!
+	printf 'Deploying TaleCaster user %s[%s]:%s[%s]\n' "$tcuser" "$tcuid" "$tcgroup" "$tcgid"
+	grep $tcgid /etc/group > /dev/null
+	if [ $? -ne 0 ]; then
+		addgroup -g $tcgid $tcgroup
+		CHECK_ERROR $? addgroup
+		printf 'Deployed group %s[%s]\n' "$tcgroup" "$tcgid"
 	fi
-
-	## NOTE: Do not use backtick; known defect in handling.
-	adduser -h /home/$tcuser -g "TaleCaster User" -u $tcuid -G $tcgroup -D -s $tcshell $tcuser
-	CHECK_ERROR $? adduser
-
-	## Clean up after ourselves
-	if [ -f /tmp/gid ]; then
-		rm /tmp/gid
+	grep $tcuser /etc/passwd > /dev/null
+	if [ $? -ne 0 ]; then
+		adduser -h /home/$tcuser -g "TaleCaster User" -u $tcuid -G $tcgroup -D -s /bin/bash $tcuser
+		CHECK_ERROR $? adduser
+		printf 'Deployed user %s[%s]\n' "$tcuser" "$tcuid"
 	fi
 }
 
