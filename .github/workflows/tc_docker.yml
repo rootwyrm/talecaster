@@ -8,6 +8,7 @@ on:
     tags:
       - v1*
     paths:
+      - 'ci/hooks/**'
       - 'container/tc_docker/**'
   pull_request:
     branches:
@@ -16,6 +17,7 @@ on:
     tags:
       - v1*
     paths:
+      - 'ci/hooks/**'
       - 'container/tc_docker/**'
   repository_dispatch:
     types: [ tc_docker ]
