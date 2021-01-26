@@ -64,8 +64,8 @@ ONBUILD RUN apk update && apk upgrade && \
 		/opt/talecaster/build/$bld ; \
 	done && \
 	echo "$(date '+%FT%T%z') [BUILD] Build complete." 
-	#if [ -f /opt/talecaster/id.service ]; then \
-	#	/sbin/rc-update add $(cat /opt/talecaster/id.service) default \
-	#fi
+	if [ -f /opt/talecaster/id.service ]; then \
+		/sbin/rc-update add $(cat /opt/talecaster/id.service) default \
+	fi
 
 ENTRYPOINT	[ "/sbin/init" ]
