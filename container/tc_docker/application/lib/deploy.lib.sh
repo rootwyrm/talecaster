@@ -134,8 +134,8 @@ deploy_tcuser_ownership()
 	chown -R $tcuid:$tcgid /home/$tcuser
 	CHECK_ERROR $? chown_home
 	chmod 0700 /home/$tcuser
-	chown -R $tcuid:$tcgid /config
-	CHECK_ERROR $? chown_config
+	#chown -R $tcuid:$tcgid /config
+	#CHECK_ERROR $? chown_config
 
 	if [ ! -d $app_destdir ] ; then
 		chown -R $tcuid:$tcgid $app_destdir
