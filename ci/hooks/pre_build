@@ -39,6 +39,9 @@ if [ -z $1 ]; then
 	ls -l $GITHUB_WORKSPACE/container
 	TGT="$GITHUB_WORKSPACE/container/${CONTAINER}/Dockerfile"
 else
+	echo "$GITHUB_WORKSPACE is GITHUB_WORKSPACE"
+	ls -l $GITHUB_WORKSPACE/container
+	echo "TGT is $TGT"
 	TGT=$1
 fi
 printf 'Replacing STATUS with %s\n' "$STATUS"
