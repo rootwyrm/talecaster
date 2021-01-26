@@ -37,17 +37,21 @@ jobs:
       id: hooks
       run: |
         $GITHUB_WORKSPACE/ci/hooks/pre_build 
+    - name: Log into Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.HUB_USER }}
+        password: ${{ secrets.HUB_TOKEN }}
     - name: Build tc_docker - ${{ github.ref }}
       id: docker
       uses: docker/build-push-action@v2
       with:
-        username: ${{ secrets.HUB_USER }}
-        password: ${{ secrets.HUB_TOKEN }}
         add_git_labels: true
         tag_with_ref: true
         always_pull: true
-        path: container/tc_docker
-        dockerfile: container/tc_docker/Dockerfile
-        repository: rootwyrm/tc_docker
+        platforms: linux/amd64
+        context: container/tc_docker
+        push: true
+        tags: rootwyrm/tc_docker
 
 # vim:ts=2:sw=2:et:colorscheme=inkpot
