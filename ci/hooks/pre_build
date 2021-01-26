@@ -34,7 +34,9 @@ else
 fi
 
 if [ -z $1 ]; then
-	TGT="$GITHUB_WORKSPACE/container/$CONTAINER/Dockerfile"
+	echo "$GITHUB_WORKSPACE is GITHUB_WORKSPACE"
+	ls -l $GITHUB_WORKSPACE/container
+	TGT="$GITHUB_WORKSPACE/container/${CONTAINER}/Dockerfile"
 else
 	TGT=$1
 fi
