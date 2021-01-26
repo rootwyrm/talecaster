@@ -52,6 +52,6 @@ jobs:
         platforms: linux/amd64
         context: container/tc_docker
         push: true
-        tags: rootwyrm/tc_docker
+        tags: rootwyrm/tc_docker:latest
 
 # vim:ts=2:sw=2:et:colorscheme=inkpot
