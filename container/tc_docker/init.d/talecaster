@@ -8,7 +8,7 @@
 ################################################################################
 # init.d/talecaster
 
-name="rootwyrm"
+name="talecaster"
 command="/opt/talecaster/bin/boot"
 description="TaleCaster Startup Routines"
 
