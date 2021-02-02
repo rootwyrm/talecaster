@@ -16,26 +16,26 @@ export svcdir="/etc/service"
 ## Logging function
 function log()
 {
-	tsformat="+%b %d %H:%M:%S"
 	if [ -z $logfile ]; then
 		logfile="/var/log/talecaster.log"
 	fi
 	case $2 in
 		E*|e*)
 			## Error condition
-			printf '%s [ERROR] %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
+			printf '%s [ERROR] %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			;;
 		W*|w*)
 			## Warn condition
-			printf '%s [WARN] %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
+			printf '%s [WARN] %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			;;
 		N*|n*)
 			## Notice condition
-			printf '%s [NOTICE] %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
+			printf '%s [NOTICE] %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			;;
 		*)
 			## All others
-			printf '%s %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
+			echo "date $tsformat"
+			printf '%s %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			;;
 	esac
 }
