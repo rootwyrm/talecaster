@@ -26,4 +26,15 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
+ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
+ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
+ONBUILD ADD [ "cron/", "/etc/periodic/" ]
+ONBUILD RUN apk update && apk upgrade && \
+	echo "$(date '+%FT%T%z') [BUILD] Beginning build..." ; \
+	for bld in `ls /opt/talecaster/build/ | sort`; do \
+		/opt/talecaster/build/$bld ; \
+	done && \
+	echo "$(date '+%FT%T%z') [BUILD] Build complete." ; \
+	/opt/talecaster/lib/service.stub.sh
+
 # vim:sw=4:ts=4:et

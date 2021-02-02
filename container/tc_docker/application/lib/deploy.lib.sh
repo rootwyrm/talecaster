@@ -1,17 +1,46 @@
 #!/bin/bash
-# application/lib/deploy.lib.sh
-
+################################################################################
 # Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com>
-#
-# COMMERCIAL REDISTRIBUTION IN ANY FORM IS PROHIBITED WITHOUT EXPRESS
-# WRITTEN CONSENT OF THE AUTHOR(S). 
+# All rights reserved
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# application/lib/deploy.lib.sh
 
 ## NOTE: Use export due to bash limitations
 export chkfile="/firstboot"
 export basedir="/opt/talecaster/defaults"
 export svcdir="/etc/service"
 
-CHECK_ERROR()
+## Logging function
+function log()
+{
+	tsformat="+%b %d %H:%M:%S"
+	if [ -z $logfile ]; then
+		logfile="/var/log/talecaster.log"
+	fi
+	case $2 in
+		E*|e*)
+			## Error condition
+			printf '%s [ERROR] %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			;;
+		W*|w*)
+			## Warn condition
+			printf '%s [WARN] %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			;;
+		N*|n*)
+			## Notice condition
+			printf '%s [NOTICE] %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			;;
+		*)
+			## All others
+			printf '%s %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			;;
+	esac
+}
+
+function CHECK_ERROR()
 {
 	if [ $1 -ne 0 ]; then
 		RC=$1
