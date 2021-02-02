@@ -23,19 +23,19 @@ function log()
 	case $2 in
 		E*|e*)
 			## Error condition
-			printf '%s [ERROR] %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			printf '%s [ERROR] %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
 			;;
 		W*|w*)
 			## Warn condition
-			printf '%s [WARN] %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			printf '%s [WARN] %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
 			;;
 		N*|n*)
 			## Notice condition
-			printf '%s [NOTICE] %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			printf '%s [NOTICE] %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
 			;;
 		*)
 			## All others
-			printf '%s %s\n' "$(date '${tsformat}')" "$1" >> $logfile
+			printf '%s %s\n' "$(date '${tsformat}')" "$1" | tee -a $logfile
 			;;
 	esac
 }
