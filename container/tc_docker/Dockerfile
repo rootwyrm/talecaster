@@ -31,11 +31,12 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
+ADD		[ "init.d/", "/etc/init.d/" ]
 COPY	[ "application/", "/opt/talecaster/" ]
 VOLUME	[ "/sys", "/run", "/shared" ]
 
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file dcron openssl bash openvpn ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata && \
+	apk add --no-cache wget curl file dcron openssl bash openvpn ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata busybox-initscripts && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
@@ -52,6 +53,8 @@ RUN	apk update && apk upgrade && \
 	rm -f /etc/init.d/modloop ; \
 	/sbin/rc-update add dcron default ; \
 	/sbin/rc-update add haveged default ; \
+	/sbin/rc-update add mdev default ; \
+	/sbin/rc-update add talecaster default ; \
 	sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh ; \
 	echo "TaleCaster is Copyright (C) 2016-* Phillip Jaenke and its contributors" > /LICENSE ; \
 	echo "https://github.com/rootwyrm/talecaster/" >> /LICENSE ; \
@@ -64,6 +67,7 @@ ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
 ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
 ONBUILD ADD [ "cron/", "/etc/periodic/" ]
 ONBUILD RUN apk update && apk upgrade && \
+	touch /firstboot ; \
 	echo "$(date '+%FT%T%z') [BUILD] Beginning build..." ; \
 	for bld in `ls /opt/talecaster/build/ | sort`; do \
 		/opt/talecaster/build/$bld ; \

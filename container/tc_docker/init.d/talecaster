@@ -1,0 +1,47 @@
+#!/sbin/openrc-run
+################################################################################
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com>
+# All rights reserved
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# init.d/talecaster
+
+name="rootwyrm"
+command="/opt/talecaster/bin/boot"
+description "TaleCaster Startup Routines"
+
+depend() {
+	need net dcron
+	use logger
+	after firewall
+	provide talecaster
+}
+
+check_first() {
+	ebegin "Checking for /firstboot..."
+	test -f /firstboot
+	eend $?
+}
+
+check_reset() {
+	ebegin "Checking for /factory.reset..."
+	test -f /factory.reset
+	eend $?
+}
+
+checkfile() {
+	check_first
+	check_reset
+}
+
+start_pre() {
+	checkfile
+	$command
+}
+
+stop() {
+	rm -f /firstboot
+	rm -f /factory.reset
+}
