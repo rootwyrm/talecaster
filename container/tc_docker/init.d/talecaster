@@ -10,7 +10,7 @@
 
 name="rootwyrm"
 command="/opt/talecaster/bin/boot"
-description "TaleCaster Startup Routines"
+description="TaleCaster Startup Routines"
 
 depend() {
 	need net dcron
