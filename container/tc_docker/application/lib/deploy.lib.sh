@@ -34,7 +34,6 @@ function log()
 			;;
 		*)
 			## All others
-			echo "date $tsformat"
 			printf '%s %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			;;
 	esac
