@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+################################################################################
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com>
+# All rights reserved
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# init.d/nzbget
+
+: ${cfgfile:="/talecaster/config/nzbget.conf"}
+: ${command_user:="talecaster:media"}
+: ${wait:=300}
+
+name="nzbget"
+description="NZBget NNTP downloader"
+
+command="/opt/nzbget/nzbget"
+command_args="-c $cfgfile -D"
+command_background="yes"
+procname="nzbget"
+
+start_stop_daemon_args="
+	--wait $wait
+	$start_stop_daemon_args"
+
+depend() {
+	need net
+	after firewall talecaster
+}
