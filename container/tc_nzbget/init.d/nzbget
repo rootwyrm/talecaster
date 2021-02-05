@@ -17,7 +17,7 @@ description="NZBget NNTP downloader"
 
 command="/opt/nzbget/nzbget"
 command_args="-c $cfgfile -D"
-command_background="yes"
+#command_background="yes"
 procname="nzbget"
 
 start_stop_daemon_args="

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+################################################################################
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com>
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+
+. /opt/talecaster/lib/talecaster.lib.sh
+
+function config()
+{
+	if [ ! -f /talecaster/config/nzbget.conf ]; then
+		LOG "No configuration found, installing defaults."
+		cp /opt/talecaster/defaults/nzbget.conf /talecaster/config/
+		CHECK_ERROR $? install_default_config
+	fi
+	LOG "Setting password based on environment." D
+	NNTP_PASSWORD=${NNTP_PASSWORD:="t4l3caster"}
+	sed -i -e 's/^ControlPassword.*/ControlPassword=${NNTP_PASSWORD}/' /talecaster/config/nzbget.conf
+}
+
+function permissions()
+{
+	tcuid=${tcuid:-"30000"}
+	tcgid=${tcuid:-"30000"}
+	chown -R $tcuid:$tcgid /opt/nzbget
+	chown -R $tcuid:$tcgid /talecaster/config/nzbget.conf
+	## Deal with a potential problem with the queue dir.
+	DestDir=$(grep ^DestDir /talecaster/config/nzbget.conf | awk '{print $2}')
+	QueueDir=$(grep ^QueueDir /talecaster/config/nzbget.conf | awk '{print $2}')
+	if [ ! -d $QueueDir ]; then
+		mkdir $QueueDir
+		chown $tcuid:$tcgid $QueueDir
+	fi
+}
+
+load_config
+check_firstrun
+config
+permissions
+if [ ! -f /message ]; then
+	touch /message
+fi
+generate_message
+cat /message
