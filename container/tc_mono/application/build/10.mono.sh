@@ -16,13 +16,12 @@ export BUILDNAME="mono"
 
 ## Build
 export vbpkg="mono_build"
-export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev sqlite-dev ninja inotify-tools-dev"
+export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev sqlite-dev ninja inotify-tools-dev musl-dev"
 ## Runtime
 export vrpkg="mono_run"
-export vrpkg_content="curl gettext inotify-tools linux-headers python3 openssl sqlite sqlite-libs ninja pax-utils"
+export vrpkg_content="curl gettext inotify-tools linux-headers python3 openssl sqlite sqlite-libs ninja pax-utils libgcc libstdc++ ca-certificates"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-#export monov="6.8.0.123"
 export monov="6.12.0.107"
 
 install_runtime()
@@ -65,15 +64,11 @@ build_mono()
 		--infodir=/usr/share/info \
 		--localstatedir=/var \
 		--enable-dependency-tracking \
-		--disable-support-build \
-		--enable-system-aot \
 		--with-bitcode=yes \
 		--with-sgen=yes \
-		--disable-boehm \
 		--without-x  \
 		--enable-ninja \
 		--with-spectre-mitigation=yes \
-		--disable-crash-reporting \
 		--with-mcs-docs=no 
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."

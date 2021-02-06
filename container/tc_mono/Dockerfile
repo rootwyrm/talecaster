@@ -26,6 +26,12 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
+RUN apk update && apk upgrade && \
+    for bld in `ls /opt/talecaster/build/ | sort`; do \
+        /opt/talecaster/build/$bld ; \
+    done && \
+    rm -f /opt/talecaster/build/*
+
 ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
 ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
 ONBUILD ADD [ "cron/", "/etc/periodic/" ]

@@ -1,0 +1,27 @@
+#!/sbin/openrc-run
+################################################################################
+# TaleCaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# init.d/mono 
+
+name="mono"
+description="Mono prestart routine"
+
+depend() {
+	need net
+	after firewall
+}
+
+start() {
+	ebegin "Updating ca-certificates..."
+	apk update ca-certificates
+	eend $?
+	ebegin "Synchronizing certificates..."
+	/usr/local/bin/cert-sync --quiet /etc/ssl/certs/ca-certificates.crt
+	eend $?
+}
