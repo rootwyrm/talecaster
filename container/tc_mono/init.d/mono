@@ -18,10 +18,10 @@ depend() {
 }
 
 start() {
-	ebegin "Updating ca-certificates..."
-	apk update ca-certificates
+	ebegin "Updating ca-certificates"
+	apk update ca-certificates > /dev/null
 	eend $?
-	ebegin "Synchronizing certificates..."
+	ebegin "Synchronizing certificates"
 	/usr/local/bin/cert-sync --quiet /etc/ssl/certs/ca-certificates.crt
 	eend $?
 }
