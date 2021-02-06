@@ -16,7 +16,7 @@ export BUILDNAME="mono"
 
 ## Build
 export vbpkg="mono_build"
-export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev sqlite-dev ninja inotify-tools-dev musl-dev"
+export vbpkg_content="git gcc g++ autoconf libtool automake gettext-dev cmake make openssl-dev sqlite-dev ninja inotify-tools-dev musl-dev binutils"
 ## Runtime
 export vrpkg="mono_run"
 export vrpkg_content="curl gettext inotify-tools linux-headers python3 openssl sqlite sqlite-libs ninja pax-utils libgcc libstdc++ ca-certificates"
@@ -68,7 +68,6 @@ build_mono()
 		--with-sgen=yes \
 		--without-x  \
 		--enable-ninja \
-		--with-spectre-mitigation=yes \
 		--with-mcs-docs=no 
 	CHECK_ERROR $? "mono_configure"
 	echo "$(date '+%b %d %H:%M:%S') [MONO] autogen.sh complete."
@@ -108,6 +107,9 @@ clean_mono()
 	cd /root
 	rm -rf /opt/talecaster/build/mono-$monov
 	CHECK_ERROR $? "mono_clean_delete_source"
+	## Strip to get the size back down
+	find /usr/local -type f -exec strip {} \; > /dev/null
+	CHECK_ERROR $? "mono_strip_installed"
 	/sbin/apk --no-cache del mono_build
 	CHECK_ERROR $? "mono_clean_apk"
 }
