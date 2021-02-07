@@ -8,6 +8,8 @@
 
 . /opt/talecaster/lib/talecaster.lib.sh
 
+appbase="/opt/nzbget"
+
 function config()
 {
 	if [ ! -f /talecaster/config/nzbget.conf ]; then
@@ -30,12 +32,17 @@ function permissions()
 	DestDir=$(grep ^DestDir /talecaster/config/nzbget.conf | awk '{print $2}')
 	QueueDir=$(grep ^QueueDir /talecaster/config/nzbget.conf | awk '{print $2}')
 	if [ ! -d $QueueDir ]; then
+		chown $tcuid:$tcgid $DestDir
 		mkdir $QueueDir
+		chown $tcuid:$tcgid $QueueDir
+	else
 		chown $tcuid:$tcgid $QueueDir
 	fi
 }
 
 load_config
+deploy_talecaster_user
+user_ownership
 check_firstrun
 config
 permissions
