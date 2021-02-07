@@ -19,26 +19,15 @@ depend() {
 	provide talecaster
 }
 
-check_first() {
-	ebegin "Checking for /firstboot..."
-	test -f /firstboot
-	eend $?
-}
-
-check_reset() {
-	ebegin "Checking for /factory.reset..."
-	test -f /factory.reset
-	eend $?
-}
-
-checkfile() {
-	check_first
-	check_reset
-}
-
-start_pre() {
-	checkfile
-	$command
+stop_pre() {
+	if [ -f /opt/talecaster/id.service ]; then
+		appid=$(cat /opt/talecaster/id.service)
+	fi
+	if [ -f /opt/talecaster/bin/$appid ]; then
+		ebegin "Running application prestart..."
+		/opt/talecaster/bin/$appid
+		eend $?
+	fi
 }
 
 stop() {

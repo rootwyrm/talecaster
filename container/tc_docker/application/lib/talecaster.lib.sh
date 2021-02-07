@@ -39,9 +39,14 @@ function LOG()
 			## Notice condition
 			printf '%s [NOTICE] %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			;;
+		D*|d*)
+			## Debug messages only go to the logfile.
+			printf '%s %s\n' "$(date -Iseconds)" "$1" >> $logfile
+			;;
 		*)
 			## All others
-			printf '%s %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
+			#printf '%s %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
+			echo "$(date -Iseconds) $1" | tee -a $logfile
 			;;
 	esac
 }
@@ -109,6 +114,20 @@ function generate_message()
 	msgfile="/message"
 	sed -i -e 's,%RELEASE%,'$release',g' $msgfile
 	sed -i -e 's,%APPNAME%,'$appname',g' $msgfile
+}
+
+## Check if in firstrun state
+function check_firstrun()
+{
+	if [ -f /firstboot ]; then
+		printf ' * TaleCaster: found /firstboot, running initial setup\n'
+		return 1
+	fi
+	if [ -f /factory.reset ]; then
+		printf ' * TaleCaster: found /factory.reset, performing reset\n'
+		export FACTORY_RESET=1
+		return 1
+	fi
 }
 
 # vim:ft=sh:ts=4:sw=4
