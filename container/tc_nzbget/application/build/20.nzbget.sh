@@ -6,7 +6,7 @@
 # See /LICENSE for details
 ################################################################################
 ## build/20.nzbget.sh
-. /opt/talecaster/lib/deploy.lib.sh
+. /opt/talecaster/lib/talecaster.lib.sh
 
 export app_name="nzbget"
 export app_url="http://www.nzbget.net/"
@@ -23,12 +23,11 @@ application_install()
 {
 	test -d /opt/nzbget
 	if [ $? -eq 0 ]; then
-		log "Found existing nzbget installation!" E
-		exit 1
+		LOG "Found existing nzbget installation!" E 1
 	fi
 
 	## Downloading from Github is funky.
-	echo "[INSTALL] Retrieving nzbget ${MAJOR}.${MINOR} from official"
+	LOG "[BUILD] Retrieving nzbget ${MAJOR}.${MINOR} from official"
 	curl -L ${NZBGET_URL}/v${MAJOR}.${MINOR}/nzbget-${MAJOR}.${MINOR}-bin-linux.run > /opt/talecaster/nzbget-${MAJOR}.${MINOR}-bin-linux.run
 	chmod +x /opt/talecaster/nzbget-${MAJOR}.${MINOR}-bin-linux.run
 	/opt/talecaster/nzbget-${MAJOR}.${MINOR}-bin-linux.run --destdir ${app_destdir}
@@ -114,18 +113,7 @@ config_copybase()
 ######################################################################
 
 echo "Entering $0"
-ingest_environment
-test_deploy
+load_config
 
-log "[BUILD] Installing ${app_name}"
+LOG "[BUILD] Installing ${app_name}"
 application_install
-#config_checkdir
-#config_copybase
-
-# XXX: can't do here, needs to do in init.d
-#log "[DEPLOY] Adjusting file ownership"
-#deploy_tcuser_ownership
-
-#runit_linksv
-
-deploy_complete

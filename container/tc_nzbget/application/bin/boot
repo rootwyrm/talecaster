@@ -29,17 +29,23 @@ function permissions()
 	chown -R $tcuid:$tcgid /opt/nzbget
 	chown -R $tcuid:$tcgid /talecaster/config/nzbget.conf
 	## Deal with a potential problem with the queue dir.
-	DestDir=$(grep ^DestDir /talecaster/config/nzbget.conf | awk '{print $2}')
-	QueueDir=$(grep ^QueueDir /talecaster/config/nzbget.conf | awk '{print $2}')
+	DestDir=$(grep ^DestDir /talecaster/config/nzbget.conf | cut -d= -f2)
+	QueueBase=$(basename `grep ^QueueDir /talecaster/config/nzbget.conf | cut -d= -f2`) 
+	QueueDir=${DestDir}/${QueueBase}
 	if [ ! -d $QueueDir ]; then
 		chown $tcuid:$tcgid $DestDir
+		CHECK_ERROR $? chown_destdir
+		echo "Creating $QueueDir"
 		mkdir $QueueDir
+		CHECK_ERROR $? create_queuedir
 		chown $tcuid:$tcgid $QueueDir
+		CHECK_ERROR $? chown_queuedir
 	else
 		chown $tcuid:$tcgid $QueueDir
 	fi
 }
 
+echo ""
 load_config
 deploy_talecaster_user
 user_ownership
