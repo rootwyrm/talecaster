@@ -8,9 +8,8 @@
 ################################################################################
 # docker/application/build/01.install_user.sh
 
-. /opt/talecaster/lib/deploy.lib.sh
+. /opt/talecaster/lib/talecaster.lib.sh
 
 ingest_environment
 deploy_talecaster_user
-deploy_tcuser_ownership
-generate_motd
+user_ownership

@@ -130,4 +130,60 @@ function check_firstrun()
 	fi
 }
 
+## Deploy our user
+function deploy_talecaster_user()
+{
+	## Defaults are based on the reference original architecture and set
+	## by the environment.
+	## Defaults are talecaster(30000):media(30000)
+	## NOTE: Must be below 65534 due to musl limitations. AD environments
+	## should set and use the uidNumber and gidNumber values.
+	tcuid=${tcuid:="30000"}
+	tcgid=${tcgid:="30000"}
+	tcuser=${tcuser:="talecaster"}
+	tcgroup=${tcgroup:="media"}
+
+	printf 'TaleCaster user is %s[%s]:%s[%s]\n' "$tcuser" "$tcuid" "$tcgroup" "$tcgid"
+	grep $tcgid /etc/group > /dev/null
+	if [ $? -ne 0 ]; then
+		printf 'Adding %s as gid %s\n' "$tcgroup" "$tcgid"
+		addgroup -g $tcgid $tcgroup
+		CHECK_ERROR $? addgroup
+	fi
+	grep $tcuser /etc/passwd > /dev/null
+	if [ $? -ne 0 ]; then
+		printf 'Adding %s as uid %s\n' "$tcuser" "$tcuid"
+		adduser -h /home/$tcuser -g "TaleCaster User" -u $tcuid -G $tcgroup -D -s /bin/bash $tcuser
+		CHECK_ERROR $? adduser
+	fi
+}
+
+## Fix user ownership
+function user_ownership()
+{
+	## Defaults are based on the reference original architecture and set
+	## by the environment.
+	## Defaults are talecaster(30000):media(30000)
+	## NOTE: Must be below 65534 due to musl limitations. AD environments
+	## should set and use the uidNumber and gidNumber values.
+	tcuid=${tcuid:="30000"}
+	tcgid=${tcgid:="30000"}
+	tcuser=${tcuser:="talecaster"}
+	tcgroup=${tcgroup:="media"}
+
+	chown -R $tcuid:$tcgid /home/$tcuser
+	CHECK_ERROR $? chown_home
+	chown $tcuid:$tcgid /talecaster
+	CHECK_ERROR $? chown_appbase
+	chown -R $tcuid:$tcgid /talecaster/config
+	CHECK_ERROR $? chown_config
+
+	if [ -z $appbase ]; then
+		if [ -d $appbase ]; then
+			chown -R $tcuid:$tcgid $appbase
+			CHECK_ERROR $? chown_appbase
+		fi
+	fi
+}
+
 # vim:ft=sh:ts=4:sw=4

@@ -59,15 +59,12 @@ RUN	apk update && apk upgrade && \
 	echo "https://github.com/rootwyrm/talecaster/" >> /LICENSE ; \
 	echo "" >> /LICENSE ; \
 	echo "This work is licensed under the Creative Commons Attribution-NonCommerical 4.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA." >> /LICENSE
-	#/sbin/rc-update add mdev default ; \
 
 COPY [ "rc.conf", "/etc/rc.conf" ]
 
 ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
 ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
-#ONBUILD ADD [ "cron/", "/etc/periodic/" ]
-ONBUILD RUN apk update && apk upgrade && \
-	touch /firstboot ; \
+ONBUILD RUN touch /firstboot ; \
 	echo "$(date '+%FT%T%z') [BUILD] Beginning build..." ; \
 	for bld in `ls /opt/talecaster/build/ | sort`; do \
 		/opt/talecaster/build/$bld ; \
