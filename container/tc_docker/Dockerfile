@@ -1,7 +1,7 @@
 ARG		ALPINE_BASE=3.13
 FROM	alpine:${ALPINE_BASE}
 
-ENV	tcuid=${tcuid:-30000}
+ENV tcuid=${tcuid:-30000}
 ENV tcgid=${tcgid:-30000}
 ENV tcuser=${tcuser:-talecaster}
 ENV tcgroup=${tcgroup:-media}
@@ -53,19 +53,19 @@ RUN	apk update && apk upgrade && \
 	rm -f /etc/init.d/modloop ; \
 	/sbin/rc-update add dcron default ; \
 	/sbin/rc-update add haveged default ; \
-	/sbin/rc-update add mdev default ; \
 	/sbin/rc-update add talecaster default ; \
 	sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh ; \
 	echo "TaleCaster is Copyright (C) 2016-* Phillip Jaenke and its contributors" > /LICENSE ; \
 	echo "https://github.com/rootwyrm/talecaster/" >> /LICENSE ; \
 	echo "" >> /LICENSE ; \
 	echo "This work is licensed under the Creative Commons Attribution-NonCommerical 4.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA." >> /LICENSE
+	#/sbin/rc-update add mdev default ; \
 
-#COPY [ "rc.conf", "/etc/rc.conf" ]
+COPY [ "rc.conf", "/etc/rc.conf" ]
 
 ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
 ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
-ONBUILD ADD [ "cron/", "/etc/periodic/" ]
+#ONBUILD ADD [ "cron/", "/etc/periodic/" ]
 ONBUILD RUN apk update && apk upgrade && \
 	touch /firstboot ; \
 	echo "$(date '+%FT%T%z') [BUILD] Beginning build..." ; \
