@@ -1,6 +1,5 @@
-#ARG		TALECASTER_BASE=latest
-#FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
-FROM	basetest
+ARG		TALECASTER_BASE=latest
+FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
