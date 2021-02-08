@@ -78,6 +78,9 @@ function load_config()
 	## Load in application data as well
 	if [ -f /opt/talecaster/id.service ]; then
 		export APPNAME=$(cat /opt/talecaster/id.service)
+		if [ -d /opt/$APPNAME ]; then
+			export appbase="/opt/${APPNAME}"
+		fi
 	else
 		export APPNAME=${APPNAME:-"base"}
 	fi
@@ -178,7 +181,7 @@ function user_ownership()
 	chown -R $tcuid:$tcgid /talecaster/config
 	CHECK_ERROR $? chown_config
 
-	if [ -z $appbase ]; then
+	if [ ! -z $appbase ]; then
 		if [ -d $appbase ]; then
 			chown -R $tcuid:$tcgid $appbase
 			CHECK_ERROR $? chown_appbase
