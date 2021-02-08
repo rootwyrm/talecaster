@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+###############################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# cron/weekly/cert-sync
+## Update ca-certificates on a weekly basis to reduce security risk.
+
+apk update -q
+apk upgrade -q --no-cache
+/usr/local/bin/cert-sync --quiet /etc/ssl/certs/ca-certificates.crt
