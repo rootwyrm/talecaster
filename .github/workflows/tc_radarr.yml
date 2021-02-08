@@ -1,5 +1,5 @@
-## tc_mono
-name: CICD - tc_mono
+## tc_radarr
+name: CICD - tc_radarr
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
       - v1*
     paths:
       - 'ci/hooks/**'
-      - 'container/tc_mono/**'
+      - 'container/tc_radarr/**'
   pull_request:
     branches:
       - master
@@ -18,17 +18,17 @@ on:
       - v1*
     paths:
       - 'ci/hooks/**'
-      - 'container/tc_mono/**'
+      - 'container/tc_radarr/**'
   repository_dispatch:
-    types: [ tc_mono ]
+    types: [ tc_radarr ]
 
 ## Build only for amd64
 jobs:
   base:
-    name: Build tc_mono - ${{ github.ref }}
+    name: Build tc_radarr - ${{ github.ref }}
     runs-on: ubuntu-latest
     env:
-      CONTAINER: tc_mono
+      CONTAINER: tc_radarr
     steps:
     - name: Check out from ${{ github.ref }} 
       id: checkout
@@ -43,30 +43,15 @@ jobs:
       with:
         username: ${{ secrets.HUB_USER }}
         password: ${{ secrets.HUB_TOKEN }}
-    - name: Build tc_mono - ${{ github.ref }}
+    - name: Build tc_radarr - ${{ github.ref }}
       id: docker
       uses: docker/build-push-action@v2
       with:
         platforms: linux/amd64
-        context: container/tc_mono
+        context: container/tc_radarr
         pull: true
         push: true
-        tags: rootwyrm/tc_mono:latest
-    ## Rebuild dependents.
-    - name: Rebuild dependency tc_sonarr
-      if: success()
-      with:
-        token: ${{ secrets.TRIGGER_TOKEN }}
-        repository: ${{ github.repository }}
-        event-type: tc_sonarr
-        client-payload: '{"ref": "${{ github.ref }}", "sha":, "${{ github.sha }}"}'
-    - name: Rebuild dependency tc_radarr
-      if: success()
-      with:
-        token: ${{ secrets.TRIGGER_TOKEN }}
-        repository: ${{ github.repository }}
-        event-type: tc_radarr
-        client-payload: '{"ref": "${{ github.ref }}", "sha":, "${{ github.sha }}"}'
+        tags: rootwyrm/tc_radarr:latest
 
 # colorscheme=inkpot
 # vim:ts=2:sw=2:et
