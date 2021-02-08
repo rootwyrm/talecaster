@@ -55,6 +55,7 @@ jobs:
     ## Rebuild dependents.
     - name: Rebuild dependency tc_sonarr
       if: success()
+      uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.TRIGGER_TOKEN }}
         repository: ${{ github.repository }}
@@ -62,6 +63,7 @@ jobs:
         client-payload: '{"ref": "${{ github.ref }}", "sha":, "${{ github.sha }}"}'
     - name: Rebuild dependency tc_radarr
       if: success()
+      uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.TRIGGER_TOKEN }}
         repository: ${{ github.repository }}
