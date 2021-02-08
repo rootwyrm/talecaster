@@ -1,11 +1,11 @@
-#ARG		ALPINE_BASE=3.13
-#FROM	alpine:${ALPINE_BASE}
-FROM	tc_dotnet
+ARG		TALECASTER_BASE=latest
+FROM	docker.io/rootwyrm/tc_mono:$TALECASTER_BASE
+#FROM	monotest
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		com.rootwyrm.product="TaleCaster" \
-		com.rootwyrm.project="tc_docker" \
+		com.rootwyrm.project="tc_sonarr" \
 		com.rootwyrm.status="%%STATUS%%" \
 		com.rootwyrm.license="CC-BY-NC-4.0" \
 		com.rootwyrm.vcs-type="github" \
@@ -13,7 +13,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		## label-schema.org
         org.label-schema.schema-version="1.0.0-rc1" \
         org.label-schema.vendor="RootWyrm" \
-        org.label-schema.name="tc_docker" \
+        org.label-schema.name="tc_sonarr" \
         org.label-schema.url="%%GITHUB_REPOSITORY%%" \
         org.label-schema.vcs-ref="%%VCS_REF%%" \
         org.label-schema.version="%%REF%%" \
@@ -27,17 +27,10 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
-EXPOSE	7878/tcp
+## Ports
+EXPOSE	8989/tcp
 
-COPY	[ "application/", "/opt/talecaster" ]
-COPY	[ "init.d/", "/etc/init.d" ]
-COPY	[ "cron/", "/etc/periodic" ]
-VOLUME	[ "/media/downloads", "/media/movies" ]
+## Volumes
+VOLUME [ "/talecaster/downloads", "/talecaster/television", "/talecaster/config" ]
 
-RUN apk update && apk upgrade && \
-	touch /firstboot && \
-	echo "$(date '+%FT%T%z') [Radarr] build phase beginning..." ;\
-	for bld in `ls /opt/talecaster/build/ | sort`; do \
-		/opt/talecaster/build/$bld ; \
-	done && \
-	echo "$(date '+%FT%T%z') [Radarr] build phase complete..." ;\
+# vim:sw=4:ts=4
