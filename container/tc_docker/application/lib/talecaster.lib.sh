@@ -186,8 +186,6 @@ function user_ownership()
 
 	chown -R $tcuid:$tcgid /home/$tcuser
 	CHECK_ERROR $? chown_home
-	chown $tcuid:$tcgid /talecaster
-	CHECK_ERROR $? chown_appbase
 	chown -R $tcuid:$tcgid /talecaster/config
 	CHECK_ERROR $? chown_config
 
