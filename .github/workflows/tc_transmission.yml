@@ -1,0 +1,57 @@
+## tc_transmission
+name: CICD - tc_transmission
+on:
+  push:
+    branches:
+      - master
+      - release/*
+    tags:
+      - v1*
+    paths:
+      - 'ci/hooks/**'
+      - 'container/tc_transmission/**'
+  pull_request:
+    branches:
+      - master
+      - release/*
+    tags:
+      - v1*
+    paths:
+      - 'ci/hooks/**'
+      - 'container/tc_transmission/**'
+  repository_dispatch:
+    types: [ tc_transmission ]
+
+## Build only for amd64
+jobs:
+  base:
+    name: Build tc_transmission - ${{ github.ref }}
+    runs-on: ubuntu-latest
+    env:
+      CONTAINER: tc_transmission
+    steps:
+    - name: Check out from ${{ github.ref }} 
+      id: checkout
+      uses: actions/checkout@v2
+    - name: Run pre-build hooks
+      id: hooks
+      run: |
+        $GITHUB_WORKSPACE/ci/hooks/pre_build 
+    - uses: docker/setup-buildx-action@v1
+    - name: Log into Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.HUB_USER }}
+        password: ${{ secrets.HUB_TOKEN }}
+    - name: Build tc_transmission - ${{ github.ref }}
+      id: docker
+      uses: docker/build-push-action@v2
+      with:
+        platforms: linux/amd64
+        context: container/tc_transmission
+        pull: true
+        push: true
+        tags: rootwyrm/tc_transmission:latest
+
+# colorscheme=inkpot
+# vim:ts=2:sw=2:et
