@@ -50,7 +50,7 @@ start() {
 	start-stop-daemon --start --quiet --pidfile ${pidfile} ${SSD_OPTIONS} \
 		--exec /usr/bin/transmission-daemon -- --pid-file ${pidfile} \
 		$(test ${logfile} != "syslog" && echo --logfile ${logfile}) \
-		${TRANSMISSION_OPTIONS}
+		${TRANSMISSION_OPTIONS} -x ${pidfile}
 	eend $?
 }
 

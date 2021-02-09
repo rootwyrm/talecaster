@@ -22,6 +22,7 @@ function config()
 		cp /opt/talecaster/defaults/settings.json ${conffile}
 		CHECK_ERROR $? install_default_config
 		LOCALIP=$(hostname -i)
+		echo "fix localip"
 		sed -i -e 's/%%LOCALIP%%/'${LOCALIP}'/g' ${conffile}
 	fi
 	LOG "Setting password based on environment." D
@@ -37,12 +38,14 @@ function permissions()
 {
 	tcuid=${tcuid:-"30000"}
 	tcgid=${tcuid:-"30000"}
-	if [ -z $appbase ]; then
+	if [ ! -z $appbase ]; then
 		chown -R $tcuid:$tcgid $appbase
 	fi
+	echo "chowning /talecaster/config"
 	chown -R $tcuid:$tcgid /talecaster/config
 }
 
+echo ""
 load_config
 check_firstrun
 deploy_talecaster_user
