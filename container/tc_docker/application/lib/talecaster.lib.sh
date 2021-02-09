@@ -21,6 +21,12 @@ function LOG()
 		touch $logfile
 	fi
 	case $2 in
+		F*|f*)
+			## Fatal condition
+			RC=${3:-"255"}
+			printf '%s [FATAL] %s %s\n' "$(date -Iseconds)" "$1" "$3" | tee -a $logfile
+			exit $RC
+			;;
 		E*|e*)
 			## Error condition
 			if [ -z $3 ]; then
@@ -58,9 +64,13 @@ function CHECK_ERROR()
 		RC=$1
 		if [ -z $2 ]; then
 			LOG "Error occurred in unknown location" E $RC
+			exit $RC
 		else
 			LOG "Error occurred in $2 : $1" E $RC
+			exit $RC
 		fi
+	else
+		return 0
 	fi
 }
 
