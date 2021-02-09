@@ -1,0 +1,69 @@
+#!/sbin/openrc-run
+###############################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# init.d/transmission
+
+extra_started_commands="reload"
+description="Transmission is a fast, easy, and free bittorrent client"
+
+rundir=${rundir:-/var/run/transmission}
+pidfile=${pidfile:-${rundir}/transmission.pid}
+config_dir=${config_dir:-/talecaster/config}
+logfile=${logfile:-/var/log/transmission.log}
+
+download_dir="/talecaster/downloads"
+runas_user=${runas_user:-${tcuser}:${tcgroup}}
+
+depend() {
+	need net
+	after firewall talecaster
+}
+
+check_config() {
+	if [ ! -d "${rundir}" ]; then
+		mkdir "${rundir}"
+		chown -R ${runas_user} "${rundir}"
+	fi
+	if [ -n "${runas_user}" ]; then
+		SSD_OPTIONS="${SSD_OPTIONS} --user ${runas_user}"
+	fi
+	if [ ! -d "${config_dir}" ]; then
+		echo "Configuration directory ${config_dir} missing!"
+		exit 1
+	else
+		## Fix permissions aggressively
+		chown -R ${runas_user} "${config_dir}"
+		TRANSMISSION_OPTIONS="--config-dir ${config_dir} ${TRANSMISSION_OPTIONS}"
+	fi
+}
+
+start() {
+	check_config
+
+	ebegin "Starting Transmission daemon"
+	start-stop-daemon --start --quiet --pidfile ${pidfile} ${SSD_OPTIONS} \
+		--exec /usr/bin/transmission-daemon -- --pid-file ${pidfile} \
+		$(test ${logfile} != "syslog" && echo --logfile ${logfile}) \
+		${TRANSMISSION_OPTIONS}
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping Transmission daemon"
+	start-stop-daemon --stop --quiet --retry TERM/45/QUIT/15 --pidfile ${pidfile}
+	eend $?
+}
+
+reload() {
+	ebegin "Reloading Transmission configuration"
+	start-stop-daemon --signal HUP --pidfile ${pidfile}
+	eend $?
+}
+
+# vim:ft=sh:sw=4:ts=4
