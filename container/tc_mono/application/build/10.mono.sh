@@ -10,7 +10,7 @@
 ## Function Import and Setup
 ######################################################################
 
-. /opt/talecaster/lib/deploy.lib.sh
+. /opt/talecaster/lib/talecaster.lib.sh
 
 export BUILDNAME="mono"
 
