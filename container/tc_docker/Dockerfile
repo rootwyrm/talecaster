@@ -36,7 +36,7 @@ COPY	[ "application/", "/opt/talecaster/" ]
 VOLUME	[ "/sys", "/run", "/shared" ]
 
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file dcron openssl bash openvpn ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata busybox-initscripts && \
+	apk add --no-cache wget curl file dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata busybox-initscripts && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
