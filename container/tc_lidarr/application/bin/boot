@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+###############################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+
+. /opt/talecaster/lib/talecaster.lib.sh
+appbase="/opt/Lidarr"
+
+function config()
+{
+	if [ ! -d /talecaster/config ]; then
+		LOG "Configuration storage volume missing!" E 255
+	fi
+}
+
+function permissions()
+{
+	tcuid=${tcuid:-"30000"}
+	tcgid=${tcuid:-"30000"}
+	chown -R $tcuid:$tcgid ${appbase}
+	chown $tcuid:$tcgid /talecaster/config
+	if [ -d /talecaster/config/.config ]; then
+		chown -R $tcuid:$tcgid /talecaster/config/.config
+	fi
+}
+
+load_config
+check_firstrun
+deploy_talecaster_user
+user_ownership
+config
+permissions
+if [ ! -f /message ]; then
+	touch /message
+fi
+generate_message
+cat /message
