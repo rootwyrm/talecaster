@@ -15,8 +15,10 @@ description="Transmission is a fast, easy, and free bittorrent client"
 rundir=${rundir:-/var/run/transmission}
 pidfile=${pidfile:-${rundir}/transmission.pid}
 config_dir=${config_dir:-/talecaster/config}
-logfile=${logfile:-/var/log/transmission.log}
+logfile=${logfile:-/var/log/transmission/transmission.log}
 
+tcuser=${tcuser:-talecaster}
+tcgroup=${tcgroup:-media}
 download_dir="/talecaster/downloads"
 runas_user=${runas_user:-${tcuser}:${tcgroup}}
 
@@ -26,6 +28,11 @@ depend() {
 }
 
 check_config() {
+	logdir=$(basename ${logfile})
+	if [ ! -d $logdir ]; then
+		mkdir $logdir
+		chown -R ${runas_user} $logdir
+	fi
 	if [ ! -d "${rundir}" ]; then
 		mkdir "${rundir}"
 		chown -R ${runas_user} "${rundir}"
@@ -48,9 +55,9 @@ start() {
 
 	ebegin "Starting Transmission daemon"
 	start-stop-daemon --start --quiet --pidfile ${pidfile} ${SSD_OPTIONS} \
-		--exec /usr/bin/transmission-daemon -- --pid-file ${pidfile} \
+		--exec /usr/bin/transmission-daemon -- -x ${pidfile} \
 		$(test ${logfile} != "syslog" && echo --logfile ${logfile}) \
-		${TRANSMISSION_OPTIONS} -x ${pidfile}
+		${TRANSMISSION_OPTIONS} 
 	eend $?
 }
 
