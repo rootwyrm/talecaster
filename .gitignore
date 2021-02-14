@@ -2,3 +2,6 @@
 *.swo
 *.tmp
 SYSTEMS.md
+*/tmp/*
+*tmp
+todo
