@@ -18,8 +18,8 @@ function config()
 		CHECK_ERROR $? install_default_config
 	fi
 	LOG "Setting password based on environment." D
-	NNTP_PASSWORD=${NNTP_PASSWORD:="t4l3caster"}
-	sed -i -e 's/^ControlPassword.*/ControlPassword=${NNTP_PASSWORD}/' /talecaster/config/nzbget.conf
+	NNTP_PASSWORD=${NNTP_PASSWORD:-"t4l3caster"}
+	sed -i -e 's/^ControlPassword.*/ControlPassword='${NNTP_PASSWORD}'/' /talecaster/config/nzbget.conf
 }
 
 function permissions()
