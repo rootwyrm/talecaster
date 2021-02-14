@@ -24,9 +24,12 @@ function config()
 		LOCALIP=$(hostname -i)
 		echo "fix localip"
 		sed -i -e 's/%%LOCALIP%%/'${LOCALIP}'/g' ${conffile}
+	elif [ -f /talecaster/config/settings.json ]; then
+		## Fix the settings.json configuration
+		sed -i -e 's/rpc-bind-adddress.*/,rpc-bind-address: "127.0.0.1,'${LOCALIP}'",/'
 	fi
 	LOG "Setting password based on environment." D
-	TORRENT_PASSWORD=${TORRENT_PASSWORD:="t4l3caster"}
+	TORRENT_PASSWORD=${TORRENT_PASSWORD:-"t4l3caster"}
 	sed -i -e 's/rpc-password\:.*/rpc-password:'${TORRENT_PASSWORD}'/g' ${conffile}
 	CHECK_ERROR $? set_password
 	if [ $? -ne 0 ]; then
