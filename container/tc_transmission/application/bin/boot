@@ -26,7 +26,7 @@ function config()
 		sed -i -e 's/%%LOCALIP%%/'${LOCALIP}'/g' ${conffile}
 	elif [ -f /talecaster/config/settings.json ]; then
 		## Fix the settings.json configuration
-		sed -i -e 's/rpc-bind-adddress.*/,rpc-bind-address: "127.0.0.1,'${LOCALIP}'",/'
+		sed -i -e 's/rpc-bind-adddress.*/,rpc-bind-address: "127.0.0.1,'${LOCALIP}'",/' ${conffile}
 	fi
 	LOG "Setting password based on environment." D
 	TORRENT_PASSWORD=${TORRENT_PASSWORD:-"t4l3caster"}
