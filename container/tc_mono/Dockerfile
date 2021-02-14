@@ -31,7 +31,7 @@ RUN apk update && apk upgrade && \
     for bld in `ls /opt/talecaster/build/ | sort`; do \
         /opt/talecaster/build/$bld ; \
     done && \
-    rm -f /opt/talecaster/build/*
+    rm -f /opt/talecaster/build/10.mono.sh
 
 ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
 ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
