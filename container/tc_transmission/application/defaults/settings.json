@@ -1,15 +1,13 @@
-## TaleCaster
-## Transmission configuration file
 {
-	message-level: 1,
-	download-dir: "/talecaster/downloads",
-	watch-dir: "/talecaster/blackhole",
-	watch-dir-enabled: true,
-	trash-original-torrent-files: true,
-	encryption: 1,
-	peer-id-ttl-hours: 4,
+	"message-level": 1,
+	"download-dir": "/talecaster/downloads",
+	"watch-dir": "/talecaster/blackhole",
+	"watch-dir-enabled": true,
+	"trash-original-torrent-files": true,
+	"encryption": 1,
+	"peer-id-ttl-hours": 4,
 
-	rpc-bind-address: "127.0.0.1,%%LOCALIP%%",
-	rpc-username: "talecaster",
-	rpc-password: "%%talecaster_password%%"
+	"rpc-bind-address": "127.0.0.1,%%LOCALIP%%",
+	"rpc-username": "talecaster",
+	"rpc-password": "%%talecaster_password%%"
 }

@@ -17,6 +17,7 @@ function config()
 		LOG "Configuration storage volume missing!" E 255
 	fi
 	if [ ! -f /talecaster/config/settings.json ]; then
+		export SETUP=1
 		echo ""
 		LOG "No configuration file found - installing default."
 		cp /opt/talecaster/defaults/settings.json ${conffile}
@@ -25,12 +26,15 @@ function config()
 		echo "fix localip"
 		sed -i -e 's/%%LOCALIP%%/'${LOCALIP}'/g' ${conffile}
 	elif [ -f /talecaster/config/settings.json ]; then
+		export SETUP=0
 		## Fix the settings.json configuration
 		sed -i -e 's/rpc-bind-adddress.*/,rpc-bind-address: "127.0.0.1,'${LOCALIP}'",/' ${conffile}
 	fi
 	LOG "Setting password based on environment." D
 	TORRENT_PASSWORD=${TORRENT_PASSWORD:-"t4l3caster"}
-	sed -i -e 's/rpc-password\:.*/rpc-password:'${TORRENT_PASSWORD}'/g' ${conffile}
+	## XXX: this is not right and will break.
+	## NOTE: Transmission will crypt the password on startup.
+	sed -i -e 's/"rpc-password"\:.*/"rpc-password": "'${TORRENT_PASSWORD}'"/g' ${conffile}
 	CHECK_ERROR $? set_password
 	if [ $? -ne 0 ]; then
 		LOG 'Failed to set password!\n' FATAL $?
