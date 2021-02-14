@@ -7,7 +7,7 @@
 ################################################################################
 ## application/build/00.install_deps.sh
 
-. /opt/talecaster/lib/deploy.lib.sh
+. /opt/talecaster/lib/talecaster.lib.sh
 
 SERVICE=$(cat /opt/talecaster/id.service)
 
