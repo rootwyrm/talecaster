@@ -17,16 +17,16 @@ function download()
 {
 	export TARFILE=/tmp/dotnet.tgz
 	wget -O $TARFILE https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-musl-x64.tar.gz
-	CHECK_ERROR retrieve_dotnet
+	CHECK_ERROR $? retrieve_dotnet
 	echo "$DOTNET_SHA512	$TARFILE" | sha512sum -c -
-	CHECK_ERROR sha512_dotnet
+	CHECK_ERROR $? sha512_dotnet
 }
 
 function install()
 {
 	mkdir -p /usr/share/dotnet
 	tar -C /usr/share/dotnet -oxzf $TARFILE
-	CHECK_ERROR dotnet_extract
+	CHECK_ERROR $? dotnet_extract
 	ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
 	rm -f $TARFILE
 }
