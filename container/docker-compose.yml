@@ -109,7 +109,7 @@ services:
       - /sys:/sys
   music:
     container_name: music 
-    image: docker.io/rootwyrm/tc_${MOVIE_PROVIDER:-lidarr}:${RELEASE:-latest}
+    image: docker.io/rootwyrm/tc_${MUSIC_PROVIDER:-lidarr}:${RELEASE:-latest}
     restart: on-failure
     env_file:
       - /opt/talecaster/docker.env
@@ -120,7 +120,7 @@ services:
       - /run
       - /tmp
     ports:
-      - "${MOVIE_PORT:-8686}:8686"
+      - "${MUSIC_PORT:-8686}:8686"
     volumes:
       - tc-blackhole:/talecaster/blackhole
       - tc-downloads:/talecaster/downloads
