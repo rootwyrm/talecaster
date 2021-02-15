@@ -1,0 +1,158 @@
+###############################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+version: "3.7"
+services:
+  #talecaster:
+  #  container_name: frontend
+  #  image: docker.io/rootwyrm/tc_frontend
+  #  network_mode: "host"
+  #  restart: on-failure
+  #  env_file:
+  #    - /opt/talecaster/docker.env
+  #  tmpfs:
+  #    - /run
+  #    - /tmp
+  #  cap_add:
+  #    - NET_ADMIN
+  #    - NET_BIND_SERVICE
+  #  ports:
+  #    - ${HTTP_PORT}
+  #    - ${HTTPS_PORT}
+  nntp:
+    container_name: nntp
+    image: docker.io/rootwyrm/tc_${NNTP_PROVIDER:-nzbget}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.20
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${NNTP_PORT:-6789}:6789"
+    volumes:
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - /opt/talecaster/config/nntp:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+  torrent:
+    container_name: torrent
+    image: docker.io/rootwyrm/tc_${TORRENT_PROVIDER:-transmission}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.21
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${TORRENT_PORT:-9091}:9091"
+      - "${TORRENT_TPORT:-51413}:51413"
+    volumes:
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - /opt/talecaster/config/torrent:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+  television:
+    container_name: television
+    image: docker.io/rootwyrm/tc_${TELEVISION_PROVIDER:-sonarr}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.30
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${TELEVISION_PORT:-8989}:8989"
+    volumes:
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-television:/talecaster/television
+      - /opt/talecaster/config/television:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+  movies:
+    container_name: movies 
+    image: docker.io/rootwyrm/tc_${MOVIE_PROVIDER:-radarr}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.31
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${MOVIE_PORT:-7878}:7878"
+    volumes:
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-movies:/talecaster/movies
+      - /opt/talecaster/config/television:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+  music:
+    container_name: music 
+    image: docker.io/rootwyrm/tc_${MOVIE_PROVIDER:-lidarr}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.32
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${MOVIE_PORT:-8686}:8686"
+    volumes:
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-music:/talecaster/music
+      - /opt/talecaster/config/television:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+
+networks:
+  talecaster:
+    ipam:
+      config:
+        - subnet: "172.16.100.0/24"
+
+## Define your volumes here... these are examples.
+volumes:
+  data:
+  ## This volume must be shared between multiple containers
+  tc-download:
+    driver_opts:
+      type: nfs
+      o: addr=MY_NFS_SERVER,rw,hard,intr,rsize=32768,wsize=32768,vers=4,sec=sys
+      device: :/volume/talecaster/downloads
+  ## This volume must be shared between multiple containers
+  tc-blackhole:
+    driver_opts:
+      type: bind
+      source: /opt/talecaster/blackhole
+  ## This volume can be exclusive to the television container
+  tc-television:
+    driver_opts:
+      type: local
+      source: /opt/talecaster/television
+
+# vim:ft=yaml:sw=2:ts=2:et

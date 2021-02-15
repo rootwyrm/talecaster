@@ -1,0 +1,2 @@
+![CICD - tc_docker](https://github.com/rootwyrm/talecaster/workflows/CICD%20-%20tc_docker/badge.svg)![tc_docker Size](https://img.shields.io/microbadger/image-size/rootwyrm/tc_docker)![tc_docker Image Size (tag)](https://img.shields.io/docker/image-size/rootwyrm/tc_docker/latest)
+![CICD - tc_mono](https://github.com/rootwyrm/talecaster/workflows/CICD%20-%20tc_mono/badge.svg)![tc_mono Size](https://img.shields.io/microbadger/image-size/rootwyrm/tc_mono)![tc_mono Image Size (tag)](https://img.shields.io/docker/image-size/rootwyrm/tc_mono/latest)
