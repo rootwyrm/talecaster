@@ -77,6 +77,15 @@ jobs:
         repository: ${{ github.repository }}
         event-type: tc_lidarr
         client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+    - name: Rebuild dependency tc_jackett
+      if: success()
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.TRIGGER_TOKEN }}
+        repository: ${{ github.repository }}
+        event-type: tc_jackett
+        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+
 
 # colorscheme=inkpot
 # vim:ts=2:sw=2:et
