@@ -1,6 +1,5 @@
-#ARG		RELEASE=latest
-#FROM	docker.io/rootwyrm/tc_base:${RELEASE}
-FROM	tc_docker
+ARG		RELEASE=latest
+FROM	docker.io/rootwyrm/tc_docker:${RELEASE}
 
 ######################################################################
 ## Labels
@@ -30,22 +29,22 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## Common elements
-ADD	[ "cron/", "/etc/periodic/" ]
-ADD [ "init.d/", "/etc/init.d/" ]
 ADD [ "application/", "/opt/talecaster" ]
 ## Volumes
-VOLUME	[ "/run" ]
-VOLUME	[ "/shared" ]
 
 ## Execute
-RUN	apk update && apk upgrade && \
-	apk add bash curl libstdc++ libgcc ca-certificates icu libintl && \
-	echo "$(date '+%FT%T%z') Installing dotnet..." ; \
-	wget https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh && \
-	/bin/bash ./dotnet-install.sh --install-dir /opt/dotnet && \
-	ln -s /opt/dotnet/dotnet /usr/local/bin/dotnet && \
-	dotnet --info && \
-	rm ./dotnet-install.sh
+ENV	DOTNET_VERSION=5.0.3
+RUN	echo "$(date '+%FT%T%z') Installing dotnet..." ; \
+	apk update && apk upgrade && \
+	apk add libstdc++ libgcc libc6-compat gcompat ; \
+	wget -O /opt/talecaster/dotnet.tgz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-musl-x64.tar.gz \
+    && dotnet_sha512='85e4063792fb9d921a24f9da221a2b69c1faa253adb10644cc5907c35af92b3204f461fd6a9ec936ae37cfada47937f1c2b67174eabc778bd7305d66dc67e340' \
+    && echo "$dotnet_sha512  /opt/talecaster/dotnet.tgz" | sha512sum -c - \
+    && mkdir -p /usr/share/dotnet \
+    && tar -C /usr/share/dotnet -oxzf /opt/talecaster/dotnet.tgz \
+    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
+	&& rm -f /opt/talecaster/dotnet.tgz ; \
+	echo "$(date '+%FT%T%z') Dotnet installation complete..." 
 
 ONBUILD RUN	apk update && apk upgrade && \
 	touch /firstboot && \
@@ -53,5 +52,4 @@ ONBUILD RUN	apk update && apk upgrade && \
 	for bld in `ls /opt/talecaster/build/ | sort`; do \
 		/opt/talecaster/build/$bld ; \
 	done && \
-	echo "$(date '+%FT%T%z') [BUILD] phase complete..." ; \
-
+	echo "$(date '+%FT%T%z') [BUILD] phase complete..." 
