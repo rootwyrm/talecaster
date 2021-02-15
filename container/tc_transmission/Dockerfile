@@ -35,7 +35,9 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## PORTS
-EXPOSE	8181/tcp
+EXPOSE	9091/tcp
+EXPOSE	51413/tcp
+EXPOSE	51413/udp
 
 ## VOLUMES
 VOLUME	[ "/talecaster/blackhole" ]
