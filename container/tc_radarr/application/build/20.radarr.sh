@@ -44,7 +44,7 @@ if [ ! -f /usr/local/bin/mono ]; then
 	## Install the dotnet initscript
 	ln -sf /etc/init.d/radarr-dotnet /etc/init.d/radarr
 	## Set URL for .NET app
-	export APPURL="https://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
+	export APPURL="https://github.com/Radarr/Radarr/releases/download/v3.0.2.4552/Radarr.master.3.0.2.4552.linux-musl-core-x64.tar.gz"
 else
 	ln -sf /etc/init.d/radarr-mono /etc/init.d/radarr
 	export APPURL="https://radarr.servarr.com/v1/update/master/updatefile?os=linux"
