@@ -1,15 +1,37 @@
+@font-face {
+	font-family: 'Archivo';
+	src: url('./fonts/Archivo-Regular.woff');
+}
+
+@font-face {
+	font-family: 'Archivo-Bold';
+	src: url('./fonts/Archivo-Bold.woff');
+}
+
+@font-face {
+	font-family: 'Chivo';
+	src: url('./fonts/Chivo-Regular.woff');
+}
+
+@font-face {
+	font-family: 'Chivo-Bold';
+	src: url('./fonts/Chivo-Bold.woff');
+}
+
 .body {
-	width: 100%;
-	height: 32px;
-	margin 0;
-	padding 0;
-	color: white;
+	width: 100vw;
+	height: 48px;
+	margin: 0;
+	padding: 0;
 	background-color: gray;
 }
 
-.p {
+.title {
+	background-color: gray;
+	color: white;
+	font-family: 'Chivo';
 	font-size: 24px;
-	background: -webkit-linear-gradient(#FFFFFF,blue)
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+	font-weight: bold;
+	font-style: normal;
+	font-variant: small-caps;
 }

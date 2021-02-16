@@ -2,25 +2,18 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>TaleCaster</title>
-		<link href="style.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=ABeeZee&display=swap">
-    </head>
-	<body class="body"> 
-		<div class="tc_navigation"> 
-        <p style="font-family: 'ABeeZee', sans-serif; font-size: 24px; font-weight: 700; font-variant: small-caps; text-align: left; writing-mode: horizontal-tb;">TaleCaster
-            <img src="nntp_icon.png" height="32"/>
-            <img src="bittorrent_icon.png" height="32"/>
-            <img src="sonarr_logo.png" height="32"/>
-            <img src="radarr_logo.png" height="32"/>
-            <img src="lidarr_logo.png" height="32"/>
-		</p> 
-	</div>
-	<div class="tc_application">
-      	<iframe class="iframe" allowfullscreen scrolling="no" title="Application" src="application.html"></iframe>
-	</div>
-    </body>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="TaleCaster Media Management">
+		<meta name="author" content="https://github.com/rootwyrm/talecaster">
+		<title>TaleCaster Media Management</title>
+		<link href="index.css" rel="stylesheet">
+	</head>
+	<body class="body">
+		<div name="tc_navigation">
+			<iframe name="Navigation" title="Navigation" class="iframe_navigation" src="navigation.html"></iframe>
+		</div>
+		<div name="tc_application">
+			<iframe name="Application" title="Application" class="iframe_application" src="application.html" allowfullscreen scrolling="no"></iframe>
+		</div>
+	</body>
 </html>
