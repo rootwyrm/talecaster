@@ -14,8 +14,6 @@ export app_name="Radarr"
 export app_url="http://www.radarr.video/"
 export app_destdir="/opt/Radarr"
 
-export APPURL="https://radarr.servarr.com/v1/update/master/updatefile?os=linux"
-
 ######################################################################
 ## Application Install
 ######################################################################
@@ -41,5 +39,15 @@ application_install()
 echo "Entering $0"
 load_config
 
+if [ ! -f /usr/local/bin/mono ]; then
+	/opt/talecaster/bin/install_dotnet.sh
+	## Install the dotnet initscript
+	ln -sf /etc/init.d/radarr-dotnet /etc/init.d/radarr
+	## Set URL for .NET app
+	export APPURL="https://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
+else
+	ln -sf /etc/init.d/radarr-mono /etc/init.d/radarr
+	export APPURL="https://radarr.servarr.com/v1/update/master/updatefile?os=linux"
+fi
 LOG "[BUILD] Installing ${app_name}"
 application_install

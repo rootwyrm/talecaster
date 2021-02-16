@@ -1,6 +1,13 @@
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
 ARG		TALECASTER_BASE=latest
-FROM	docker.io/rootwyrm/tc_mono:$TALECASTER_BASE
-#FROM	monotest
+FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
@@ -28,9 +35,9 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## Ports
-EXPOSE	8989/tcp
+EXPOSE	7878/tcp
 
 ## Volumes
-VOLUME [ "/talecaster/downloads", "/talecaster/television", "/talecaster/config" ]
+VOLUME [ "/talecaster/downloads", "/talecaster/blackhole", "/talecaster/movies", "/talecaster/config" ]
 
 # vim:sw=4:ts=4

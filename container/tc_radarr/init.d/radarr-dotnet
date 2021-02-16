@@ -1,0 +1,27 @@
+#!/sbin/openrc-run
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com> and its
+# contributors. All rights reserved.
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# init.d/radarr-dotnet
+
+: ${datadir:="/talecaster/config"}
+: ${radarrbin:="/opt/Radarr/Radarr"}
+: ${command_user:="talecaster:media"}
+
+name="Radarr"
+description="Radarr - media management for movies"
+supervisor="supervise-daemon"
+
+command="${radarrbin}"
+command_args="-data=${datadir} -nobrowser"
+command_args_foreground=""
+
+depend() {
+	need net
+	after firewall talecaster
+}
