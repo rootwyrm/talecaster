@@ -40,6 +40,7 @@ application_install()
 
 echo "Entering $0"
 load_config
+/opt/talecaster/bin/install_dotnet.sh
 
 LOG "[BUILD] Installing ${app_name}"
 application_install

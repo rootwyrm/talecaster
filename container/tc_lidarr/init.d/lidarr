@@ -10,18 +10,18 @@
 # init.d/lidarr
 
 : ${datadir:="/talecaster/config"}
-: ${sonarrbin:="/opt/Lidarr/Lidarr.exe"}
+: ${lidarrbin:="/opt/Lidarr/Lidarr"}
 : ${command_user:="talecaster:media"}
 
 name="Lidarr"
 description="Lidarr - media management for music"
 supervisor="supervise-daemon"
 
-command="/usr/local/bin/mono"
-command_args="--debug ${sonarrbin} -data=${datadir} -nobrowser"
+command="${lidarrbin}"
+command_args="-data=${datadir} -nobrowser"
 command_args_foreground=""
 
 depend() {
-	need net mono
-	after firewall talecaster mono
+	need net
+	after firewall talecaster
 }
