@@ -3,7 +3,8 @@ mediainfo
 libmediainfo
 libzen
 sqlite
+sqlite-libs
 icu
-glib
+lttng-ust
 beets
 lame
