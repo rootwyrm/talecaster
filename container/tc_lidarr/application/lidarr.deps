@@ -5,6 +5,7 @@ libzen
 sqlite
 sqlite-libs
 icu
-lttng-ust
+libintl
 beets
 lame
+chromaprint

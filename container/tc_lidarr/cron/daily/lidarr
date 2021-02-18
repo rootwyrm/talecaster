@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# periodic/daily/lidarr
+
+LOGDIR=/talecaster/config/logs
+## Lidarr only creates new logs, it doesn't clean out old ones.
+if [ ! -d ${LOGDIR} ]; then
+	exit 0
+fi
+
+## Clean up debug logs; Lidarr will create a new one if it goes away
+## while debug is set.
+find ${LOGDIR} -name Lidarr.debug* -mtime 5 -exec rm -f {} \ ;
+
+## Clean up trace logs
+find ${LOGDIR} -name Lidarr.trace* -mtime 5 -exec rm -f {} \ ;
+
+## Now clean up old Lidarr logs. Don't ever delete Lidarr.txt, this will
+## break logging. Same reason we don't use log rotate.
+find ${LOGDIR} -name Lidarr.*[0-9].txt -mtime 5 -exec rm -f {} \ ;

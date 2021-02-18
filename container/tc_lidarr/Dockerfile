@@ -23,7 +23,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.label-schema.name="tc_lidarr" \
         org.label-schema.url="%%GITHUB_REPOSITORY%%" \
         org.label-schema.vcs-ref="%%VCS_REF%%" \
-        org.label-schema.version="%%REF%%" \
+        org.label-schema.version="%%STATUS%%" \
         org.label-schema.build-date="%%RW_BUILDDATE%%" \
         ## OCI
         org.opencontainers.image.authors="RootWyrm" \
@@ -35,9 +35,12 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## Ports
-EXPOSE	6789/tcp
+EXPOSE	8686/tcp
+
+## Periodic
+COPY	[ "cron/", "/etc/periodic" ]
 
 ## Volumes
-VOLUME [ "/talecaster/downloads", "/talecaster/music", "/talecaster/config" ]
+VOLUME [ "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/music", "/talecaster/config" ]
 
 # vim:sw=4:ts=4
