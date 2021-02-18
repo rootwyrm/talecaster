@@ -6,11 +6,15 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-# tc_frontend:etc/logrotate.conf
+# tc_frontend:etc/logrotate.d/nginx.conf
 
-/var/log/messages {
+/var/log/nginx/*.log {
+	missingok
 	rotate 5
 	daily
+	compress
+	sharedscripts
+	postrotate
+		/etc/init.d/nginx --quiet --ifstarted reopen
+	endscript
 }
-
-include /etc/logrotate.d

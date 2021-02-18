@@ -39,4 +39,3 @@ RUN	apk update && apk upgrade && \
 	/sbin/rc-update add nginx default
 
 COPY [ "etc/", "/etc/" ]
-#ADD [ "etc/logrotate.conf", "/etc/logrotate.conf" ]
