@@ -95,16 +95,8 @@ def main():
     ical = icalModule()
     ical.ical_ini_core()
     ical.ical_ini_files()
-    time_now = datetime.datetime.now()
-    print(time_now)
-    tzname = time.tzname[0]
-    print(time_now.utcoffset())
-    print(tz.gettz(tzname).utcoffset(datetime.datetime.utcnow()))
     ical.ical_ini_sonarr()
     ical.ical_ini_radarr()
     ical.ical_ini_lidarr()
-    #for key in ["sonarr.api","radarr.api"]:
-    #    keyresult = read_api_key(f"/talecaster/shared/{key}")
-    #    print(keyresult)
 
 main()
