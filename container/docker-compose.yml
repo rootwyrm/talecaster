@@ -8,22 +8,29 @@
 ################################################################################
 version: "3.7"
 services:
-  #talecaster:
-  #  container_name: frontend
-  #  image: docker.io/rootwyrm/tc_frontend
-  #  network_mode: "host"
-  #  restart: on-failure
-  #  env_file:
-  #    - /opt/talecaster/docker.env
-  #  tmpfs:
-  #    - /run
-  #    - /tmp
-  #  cap_add:
-  #    - NET_ADMIN
-  #    - NET_BIND_SERVICE
-  #  ports:
-  #    - ${HTTP_PORT}
-  #    - ${HTTPS_PORT}
+  talecaster:
+    container_name: frontend
+    image: docker.io/rootwyrm/tc_frontend
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.10
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    tmpfs:
+      - /run
+      - /tmp
+    cap_add:
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    ports:
+      - ${HTTP_PORT}:80
+      - ${HTTPS_PORT}:443
+    volumes:
+      - tc-shared:/talecaster/shared
+      - /opt/talecaster/config/frontend:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
   nntp:
     container_name: nntp
     image: docker.io/rootwyrm/tc_${NNTP_PROVIDER:-nzbget}:${RELEASE:-latest}
@@ -39,6 +46,7 @@ services:
     ports:
       - "${NNTP_PORT:-6789}:6789"
     volumes:
+      - tc-shared:/talecaster/shared
       - tc-blackhole:/talecaster/blackhole
       - tc-downloads:/talecaster/downloads
       - /opt/talecaster/config/nntp:/talecaster/config
@@ -60,6 +68,7 @@ services:
       - "${TORRENT_PORT:-9091}:9091"
       - "${TORRENT_TPORT:-51413}:51413"
     volumes:
+      - tc-shared:/talecaster/shared
       - tc-blackhole:/talecaster/blackhole
       - tc-downloads:/talecaster/downloads
       - /opt/talecaster/config/torrent:/talecaster/config
@@ -80,6 +89,7 @@ services:
     ports:
       - "${TELEVISION_PORT:-8989}:8989"
     volumes:
+      - tc-shared:/talecaster/shared
       - tc-blackhole:/talecaster/blackhole
       - tc-downloads:/talecaster/downloads
       - tc-television:/talecaster/television
@@ -101,10 +111,11 @@ services:
     ports:
       - "${MOVIE_PORT:-7878}:7878"
     volumes:
+      - tc-shared:/talecaster/shared
       - tc-blackhole:/talecaster/blackhole
       - tc-downloads:/talecaster/downloads
       - tc-movies:/talecaster/movies
-      - /opt/talecaster/config/television:/talecaster/config
+      - /opt/talecaster/config/movies:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
       - /sys:/sys
   music:
@@ -122,10 +133,11 @@ services:
     ports:
       - "${MUSIC_PORT:-8686}:8686"
     volumes:
+      - tc-shared:/talecaster/shared
       - tc-blackhole:/talecaster/blackhole
       - tc-downloads:/talecaster/downloads
       - tc-music:/talecaster/music
-      - /opt/talecaster/config/television:/talecaster/config
+      - /opt/talecaster/config/music:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
       - /sys:/sys
 
@@ -144,6 +156,11 @@ volumes:
       type: nfs
       o: addr=MY_NFS_SERVER,rw,hard,intr,rsize=32768,wsize=32768,vers=4,sec=sys
       device: :/volume/talecaster/downloads
+  ## This volume must be shared between multiple containers
+  tc-shared:
+    driver_opts:
+      type: bind
+      source: /opt/talecaster/shared
   ## This volume must be shared between multiple containers
   tc-blackhole:
     driver_opts:
