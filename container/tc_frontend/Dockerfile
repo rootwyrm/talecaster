@@ -35,7 +35,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 RUN	apk update && apk upgrade && \
-	apk add --no-cache logrotate nginx nginx-mod-http-cache-purge nginx-mod-http-headers-more ; \
+	apk add --no-cache logrotate nginx nginx-mod-http-cache-purge nginx-mod-http-headers-more nginx-mod-http-cookie-flag ; \
 	/sbin/rc-update add nginx default
 
 COPY [ "etc/", "/etc/" ]
