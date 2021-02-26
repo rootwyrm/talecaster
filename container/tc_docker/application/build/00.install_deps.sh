@@ -25,6 +25,28 @@ function install_deps()
 	else
 		LOG "No dependencies for ${SERVICE}"
 	fi
+
+	case ${SERVICE}_VPN in
+		[Tt][Rr][Uu][Ee])
+			if [ ! -c /dev/net/tun ]; then
+				printf 'VPN requested but tunnel device not available!\n'
+				exit 255
+			fi
+			apk --no-cache add openvpn openvpn-openrc
+			rc-update add openvpn
+			;;
+		wireguard)
+			## XXX: NOT READY FOR USE!!
+			if [ ! -c /dev/net/tun ]; then
+				printf 'VPN requested but tunnel device not available!\n'
+				exit 255
+			fi
+			apk --no-cache add wireguard-tools ifupdown-ng-wireguard
+			## XXX: seriously, doesn't do anything but add package for now.
+		*)
+			## Do nothing
+			;;
+	esac
 }
 
 install_deps
