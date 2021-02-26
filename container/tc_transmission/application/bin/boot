@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-###############################################################################
+################################################################################
 # TaleCaster - https://github.com/rootwyrm/talecaster
 # Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
 # contributors, all rights reserved.
@@ -34,7 +34,15 @@ function config()
 	TORRENT_PASSWORD=${TORRENT_PASSWORD:-"t4l3caster"}
 	## XXX: this is not right and will break.
 	## NOTE: Transmission will crypt the password on startup.
-	sed -i -e 's/"rpc-password"\:.*/"rpc-password": "'${TORRENT_PASSWORD}'"/g' ${conffile}
+	case $SETUP in
+		1)
+			sed -i -e 's/"rpc-password"\:.*/"rpc-password": "'${TORRENT_PASSWORD}'"/g' ${conffile}
+			;;
+		0)
+			## Needs the trailing comma.
+			sed -i -e 's/"rpc-password"\:.*/"rpc-password": "'${TORRENT_PASSWORD}'",/g' ${conffile}
+			;;
+	esac
 	CHECK_ERROR $? set_password
 	if [ $? -ne 0 ]; then
 		LOG 'Failed to set password!\n' FATAL $?
