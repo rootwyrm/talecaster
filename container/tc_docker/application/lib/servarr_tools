@@ -1,0 +1,313 @@
+#!/usr/bin/env bash
+################################################################################
+# TaleCaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com> and its
+# contributors. All rights reserved
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# application/lib/servarr_tools
+
+## Tools for working with Servarr
+# xml_extract_apikey $XMLFILE
+function xml_extract_apikey()
+{
+	if [ -z $1 ]; then
+		printf 'No XML file provided.\n'
+		exit 2
+	fi
+	if [ -f $1 ]; then
+		apikey=$(grep -oP '(?<=ApiKey>)[^<]+' $1)
+		printf '%s\n' $apikey
+	fi
+}
+
+# xml_extract_sslcert $XMLFILE
+## XXX: key must be named identically to cert, suffix of .key
+function xml_extract_sslcert()
+{
+	if [ -z $1 ]; then
+		printf 'No XML file provided.\n'
+		exit 2
+	fi
+	if [ -f $1 ]; then
+		sslcert=$(grep -oP '(?<=SslCertPath>)[^<]+' $1)
+		printf '%s\n' $sslcert
+	fi
+}
+
+# xml_extract_urlbase $XMLFILE
+function xml_extract_urlbase()
+{
+	if [ -z $1 ]; then
+		printf 'No XML file provided.\n'
+		exit 2
+	fi
+	if [ -f $1 ]; then
+		urlbase=$(grep -oP '(?<=UrlBase>)[^<]+' $1)
+		printf '%s\n' $urlbase
+	fi
+}
+
+# xml_update_urlbase $XMLFILE /PATH
+function xml_update_urlbase()
+{
+	if [ -z $1 ] || [ -z $2 ]; then
+		printf 'No XML file or path provided.\n'
+		exit 2
+	fi
+	if [ -f $1 ]; then
+		urlbase=$(grep -oP '(?<=UrlBase>)[^<]+' $1)
+		if [ "$2" == "$urlbase" ]; then
+			## Already set correctly, do nothing.
+			exit 0
+		else
+			sed -i -e 's,<UrlBase.*,<UrlBase>'$2'</UrlBase>,' $1
+			CHECK_ERROR $? xml_update_urlbase
+		fi
+	else
+		printf 'Configuration file %s missing.\n' $1
+		exit 1
+	fi
+}
+
+# sql_add_rootfolder $SQLITEDB /PATH
+function sql_add_rootfolder()
+{
+	if [ -z $1 ] || [ -z $2 ]; then
+		printf 'No SQLite DB or path provided.\n'
+		exit 2
+	fi
+	if [ -f $1 ]; then
+		result=$(sqlite3 -csv -readonly $1 'SELECT Path FROM RootFolders WHERE Path LIKE "'$2'%"')
+		if [ $(echo $result | wc -l) -ge '2' ]; then
+			printf 'WARNING: Multiple RootFolders detected!\n'
+			exit 1
+		elif [ -z $(echo $result | cut -d , -f 2) ]; then
+			## No matching root folder, so do the insert.
+			sqlite3 -csv $1 'INSERT INTO RootFolders ("'$2'") VALUES (Path)'
+			CHECK_ERROR $? sql_add_rootfolder
+		elif [ $(echo $result | cut -d , -f 2) == "$2" ]; then
+			## RootFolder entry already exists
+			exit 0
+		fi
+	fi
+}
+
+# sql_add_nzbget $SQLITEDB
+## XXX: This is a VERY ugly and complicated function so do NOT mess with
+##      it unless you REALLY know what you are doing!
+function sql_add_nzbget()
+{
+	if [ -z $1 ]; then
+		printf 'No SQLite DB or path provided\n'
+		exit 1
+	fi
+	load_config
+	# CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
+	# DANGER: Settings is a JSON!!
+	local nzbhost="172.16.100.20"
+	local category=$(cat /opt/talecaster/id.provides)
+	case $category in
+		television)
+			recpri="recentTvPriority"
+			oldpri="olderTvPriority"
+			;;
+		movies)
+			recpri="recentMoviePriority"
+			oldpri="olderMoviePriority"
+			;;
+		music)
+			## XXX: https://github.com/lidarr/Lidarr/issues/2026
+			recpri="recentTvPriority"
+			oldpri="recentTvPriority"
+			;;
+	esac
+	check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Nzbget')
+	if [ ! -z $check ]; then
+		## We have an existing client, so we need to check further.
+		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Nzbget AND host = '$nzbhost'')
+		if [ ! -z $check_existing ]; then
+			## update
+			sqlite3 $1 'UPDATE DownloadClients SET \
+				Enable=1, Name="TaleCaster - NZBget", \
+				Implementation="Nzbget", \
+				Settings="{"host": "'$nzbhost'", "port": '${NNTP_PORT}', "username": "nzbget", "password": "'${NNTP_PASSWORD}'", "'$category'Category": "'${category^}'", "'$recpri'": 0, "'$oldpri'": 0, "addPaused": false, "useSsl": false }", \
+				ConfigContract="NzbgetSettings", Priority="1"'
+				#Name" host="'$nzbhost'", port="'${NNTP_PORT}'", \
+				#username="nzbget", password="'${NNTP_PASSWORD}'", \
+				#'$category'Category="'${category^}'"'
+			CHECK_ERROR $? sql_add_nzbget_update
+		elif [ -z $check_existing ]; then
+			## And now we have to do an insert...
+	cat << EOF > /tmp/nzb.json
+{
+	"host": "$nzbhost",
+	"port": "${NNTP_PORT}",
+	"username": "nzbget",
+	"password": "${NNTP_PASSWORD}",
+	"${category}Category": "${category^}",
+	"${recpri}": 0,
+	"${oldpri}": 0
+	"addPaused": false,
+	"useSsl": false
+}
+EOF
+
+		fi
+	fi
+
+
+}
+
+# sql_add_transmission $SQLITEDB
+## XXX: This is a VERY ugly and complicated function so do NOT mess with
+##      it unless you REALLY know what you are doing!
+function sql_add_transmission()
+{
+	if [ -z $1 ]; then
+		printf 'No SQLite DB or path provided\n'
+		exit 1
+	fi
+	load_config
+	# CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
+	# DANGER: Settings is a JSON!!
+	local torrenthost="172.16.100.21"
+	local category=$(cat /opt/talecaster/id.provides)
+	case $category in
+		television)
+			recpri="recentTvPriority"
+			oldpri="olderTvPriority"
+			;;
+		movies)
+			recpri="recentMoviePriority"
+			oldpri="olderMoviePriority"
+			;;
+		music)
+			## XXX: https://github.com/lidarr/Lidarr/issues/2026
+			recpri="recentTvPriority"
+			oldpri="recentTvPriority"
+			;;
+	esac
+	## Generate the json to make life easier...
+	cat << EOF > /tmp/settings.json
+{
+	"host": "$torrenthost",
+	"port": "${TORRENT_PORT}",
+	"urlBase": "/transmission/",
+	"${category}Category": "${category}",
+	"${recpri}": 0,
+	"${oldpri}": 0
+	"addPaused": false,
+	"useSsl": false
+}
+EOF
+	check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Nzbget')
+	if [ ! -z $check ]; then
+		## We have an existing client, so we need to check further.
+		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Nzbget AND host = '$nzbhost'')
+		if [ ! -z $check_existing ]; then
+			## update
+			sqlite3 $1 'UPDATE DownloadClients SET \
+				Enable=1, Name="TaleCaster - NZBget", \
+				Implementation="Nzbget", \
+				Settings="{"host": "'$nzbhost'", "port": '${NNTP_PORT}', "username": "nzbget", "password": "'${NNTP_PASSWORD}'", "'$category'Category": "'${category^}'", "'$recpri'": 0, "'$oldpri'": 0, "addPaused": false, "useSsl": false }", \
+				ConfigContract="TransmissionSettings", Priority="1"'
+				#Name" host="'$nzbhost'", port="'${NNTP_PORT}'", \
+				#username="nzbget", password="'${NNTP_PASSWORD}'", \
+				#'$category'Category="'${category^}'"'
+			CHECK_ERROR $? sql_add_nzbget_update
+		elif [ -z $check_existing ]; then
+			## And now we have to do an insert...
+
+		fi
+	fi
+
+
+}
+
+# sql_add_blackhole_nzb $SQLITEDB
+## XXX: This is a VERY ugly and complicated function so do NOT mess with
+##      it unless you REALLY know what you are doing!
+function sql_add_blackhole_nzb()
+{
+	if [ -z $1 ]; then
+		printf 'No SQLite DB or path provided\n'
+		exit 1
+	fi
+	load_config
+	# CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
+	# DANGER: Settings is a JSON!!
+	## Generate the json to make life easier...
+	local nzbjson='{ "nzbFolder": "/talecaster/blackhole", "watchFolder": "/talecaster/downloads" }'
+EOF
+	check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Nzbget')
+	if [ ! -z $check ]; then
+		## We have an existing client, so we need to check further.
+		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Nzbget AND host = '$nzbhost'')
+		if [ ! -z $check_existing ]; then
+			## update
+			sqlite3 $1 'UPDATE DownloadClients SET \
+				Enable=1, Name="TaleCaster - NZBget", \
+				Implementation="Nzbget", \
+				Settings="{"host": "'$nzbhost'", "port": '${NNTP_PORT}', "username": "nzbget", "password": "'${NNTP_PASSWORD}'", "'$category'Category": "'${category^}'", "'$recpri'": 0, "'$oldpri'": 0, "addPaused": false, "useSsl": false }", \
+				ConfigContract="TransmissionSettings", Priority="1"'
+				#Name" host="'$nzbhost'", port="'${NNTP_PORT}'", \
+				#username="nzbget", password="'${NNTP_PASSWORD}'", \
+				#'$category'Category="'${category^}'"'
+			CHECK_ERROR $? sql_add_nzbget_update
+		elif [ -z $check_existing ]; then
+			## And now we have to do an insert...
+
+		fi
+	fi
+
+
+}
+
+# sql_add_blackhole_torrent $SQLITEDB
+## XXX: This is a VERY ugly and complicated function so do NOT mess with
+##      it unless you REALLY know what you are doing!
+function sql_add_blackhole_torrent()
+{
+	if [ -z $1 ]; then
+		printf 'No SQLite DB or path provided\n'
+		exit 1
+	fi
+	load_config
+	# CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
+	# DANGER: Settings is a JSON!!
+	## Generate the json to make life easier...
+	local torrentjson='{ "torrentFolder": "/talecaster/blackhole", "watchFolder": "/talecaster/downloads", "saveMagnetFiles": true, "magnetFileExtension": ".magnet", "readOnly": false }'
+	
+	check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = TorrentBlackhole')
+	if [ ! -z $check ]; then
+		## We have an existing client, so we need to check further.
+		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = TorrentBlackhole AND Name LIKE "TaleCaster - Blackhole%"'
+		if [ ! -z $check_existing ]; then
+			## update
+			sqlite3 $1 'UPDATE DownloadClients SET \
+				Enable=1, Name="TaleCaster - NZBget", \
+				Implementation="Nzbget", \
+				Settings="{"host": "'$nzbhost'", "port": '${NNTP_PORT}', "username": "nzbget", "password": "'${NNTP_PASSWORD}'", "'$category'Category": "'${category^}'", "'$recpri'": 0, "'$oldpri'": 0, "addPaused": false, "useSsl": false }", \
+				ConfigContract="TransmissionSettings", Priority="1"'
+				#Name" host="'$nzbhost'", port="'${NNTP_PORT}'", \
+				#username="nzbget", password="'${NNTP_PASSWORD}'", \
+				#'$category'Category="'${category^}'"'
+			CHECK_ERROR $? sql_add_nzbget_update
+		elif [ -z $check_existing ]; then
+			## And now we have to do an insert...
+
+		fi
+	fi
+
+
+}
+
+if [ -z $1 ]; then
+	printf 'No command given.\n'
+	exit 1
+else
+	$1 $2 $3
+fi
