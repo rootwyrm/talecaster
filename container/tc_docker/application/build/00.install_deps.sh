@@ -43,6 +43,7 @@ function install_deps()
 			fi
 			apk --no-cache add wireguard-tools ifupdown-ng-wireguard
 			## XXX: seriously, doesn't do anything but add package for now.
+			;;
 		*)
 			## Do nothing
 			;;
