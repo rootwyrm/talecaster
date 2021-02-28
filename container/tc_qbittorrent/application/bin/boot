@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+
+. /opt/talecaster/lib/talecaster.lib.sh
+
+function config()
+{
+	conffile=/talecaster/config/qBittorrent/config/qBittorrent.conf
+	TORRENT_PORT=${TORRENT_PORT:-9091}
+	if [ ! -d /talecaster/config ]; then
+		LOG "Configuration storage volume missing!" E 255
+	fi
+	if [ ! -f $conffile ]; then
+		if [ -d /talecaster/config/qBittorrent/config ]; then
+			mkdir -p /talecaster/config/qBittorrent/config
+			chown -R $tcuser:$tcgroup /talecaster/config/qBittorrent
+		fi
+		export SETUP=1
+		echo ""
+		LOG "No configuration file found - installing default."
+		cp /opt/talecaster/defaults/qBittorrent.conf ${conffile}
+		CHECK_ERROR $? install_default_config
+		sed -i -e 's/%%TORRENT_PORT%%/'${TORRENT_PORT}'/g' ${conffile}
+	elif [ -f $conffile ]; then
+		export SETUP=0
+		## Fix the settings.json configuration
+		sed -i -e 's,WebUI\Port.*,WebUI\Port='${TORRENT_PORT}'",' ${conffile}
+	fi
+	#LOG "Setting password based on environment." D
+	#TORRENT_PASSWORD=${TORRENT_PASSWORD:-"t4l3caster"}
+	## XXX: qbittorrent needs the password as a PBKDF2 hash which is then
+	##      presented as a bytearray because... WHY!?
+	## Thankfully with whitelisting, it's unnecessary for the moment.
+}
+
+function permissions()
+{
+	tcuid=${tcuid:-"30000"}
+	tcgid=${tcuid:-"30000"}
+	if [ ! -z $appbase ]; then
+		chown -R $tcuid:$tcgid $appbase
+	fi
+	echo "chowning /talecaster/config"
+	chown -R $tcuid:$tcgid /talecaster/config
+}
+
+echo ""
+load_config
+check_firstrun
+deploy_talecaster_user
+user_ownership
+config
+permissions
+if [ ! -f /message ]; then
+	touch /message
+fi
+generate_message
+cat /message
