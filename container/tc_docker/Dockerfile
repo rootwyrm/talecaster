@@ -33,7 +33,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 
 ADD		[ "init.d/", "/etc/init.d/" ]
 COPY	[ "application/", "/opt/talecaster/" ]
-VOLUME	[ "/run", "/shared" ]
+VOLUME	[ "/run", "/talecaster/shared" ]
 
 RUN	apk update && apk upgrade && \
 	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata && \
