@@ -227,6 +227,71 @@ EOF
 
 }
 
+# sql_add_qbittorrent $SQLITEDB
+function sql_add_qbittorrent()
+{
+	if [ -z $1 ]; then
+		printf 'No SQLite DB or path provided\n'
+		exit 1
+	fi
+	load_config
+	# CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
+	# DANGER: Settings is a JSON!!
+	local torrenthost="172.16.100.21"
+	local category=$(cat /opt/talecaster/id.provides)
+	case $category in
+		television)
+			recpri="recentTvPriority"
+			oldpri="olderTvPriority"
+			;;
+		movies)
+			recpri="recentMoviePriority"
+			oldpri="olderMoviePriority"
+			;;
+		music)
+			## XXX: https://github.com/lidarr/Lidarr/issues/2026
+			recpri="recentTvPriority"
+			oldpri="recentTvPriority"
+			;;
+	esac
+	## Generate the json to make life easier...
+	cat << EOF > /tmp/settings.json
+{
+	"host": "$torrenthost",
+	"port": "${TORRENT_PORT}",
+	"urlBase": "/transmission/",
+	"${category}Category": "${category}",
+	"${recpri}": 0,
+	"${oldpri}": 0
+	"addPaused": false,
+	"useSsl": false
+}
+EOF
+	check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = QBittorrent')
+	if [ ! -z $check ]; then
+		## We have an existing client, so we need to check further.
+		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = Qbittorrent AND host = '$nzbhost'')
+		if [ ! -z $check_existing ]; then
+			## update
+			sqlite3 $1 'UPDATE DownloadClients SET \
+				Enable=1, Name="TaleCaster - qBittorrent", \
+				Implementation="QBittorrent", \
+				Settings="{"host": "'$torrenthost'", "port": '${TORRENT_PORT}', "username": "admin", "password": "adminadmin", "'$category'Category": "'${category^}'", "'$recpri'": 0, "'$oldpri'": 0, "initialState": 0, "useSsl": false }", \
+				ConfigContract="QBittorrentSettings", Priority="1"'
+				#Name" host="'$nzbhost'", port="'${NNTP_PORT}'", \
+				#username="nzbget", password="'${NNTP_PASSWORD}'", \
+				#'$category'Category="'${category^}'"'
+			CHECK_ERROR $? sql_add_nzbget_update
+		elif [ -z $check_existing ]; then
+			## And now we have to do an insert...
+			echo "qbittorrent_sql_error"
+			exit 255
+		fi
+	fi
+
+
+}
+
 # sql_add_blackhole_nzb $SQLITEDB
 ## XXX: This is a VERY ugly and complicated function so do NOT mess with
 ##      it unless you REALLY know what you are doing!
@@ -259,7 +324,8 @@ EOF
 			CHECK_ERROR $? sql_add_nzbget_update
 		elif [ -z $check_existing ]; then
 			## And now we have to do an insert...
-
+			echo "nope not yet ready"
+			exit 255
 		fi
 	fi
 
@@ -284,7 +350,7 @@ function sql_add_blackhole_torrent()
 	check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = TorrentBlackhole')
 	if [ ! -z $check ]; then
 		## We have an existing client, so we need to check further.
-		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = TorrentBlackhole AND Name LIKE "TaleCaster - Blackhole%"'
+		check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = TorrentBlackhole AND Name LIKE "TaleCaster - Blackhole%"')
 		if [ ! -z $check_existing ]; then
 			## update
 			sqlite3 $1 'UPDATE DownloadClients SET \
@@ -298,16 +364,9 @@ function sql_add_blackhole_torrent()
 			CHECK_ERROR $? sql_add_nzbget_update
 		elif [ -z $check_existing ]; then
 			## And now we have to do an insert...
-
+			echo "Nope not ready either"
 		fi
 	fi
 
 
 }
-
-if [ -z $1 ]; then
-	printf 'No command given.\n'
-	exit 1
-else
-	$1 $2 $3
-fi
