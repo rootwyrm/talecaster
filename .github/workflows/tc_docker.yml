@@ -68,5 +68,23 @@ jobs:
         repository: ${{ github.repository }}
         event-type: tc_transmission
         client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+    - name: Rebuild qBittorrent
+      if: success()
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.TRIGGER_TOKEN }}
+        repository: ${{ github.repository }}
+        event-type: tc_qbittorrent
+        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+    - name: Rebuild mono
+      if: success()
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.TRIGGER_TOKEN }}
+        repository: ${{ github.repository }}
+        event-type: tc_mono
+        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+
+
 
 # vim:ts=2:sw=2:et
