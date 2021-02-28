@@ -37,7 +37,10 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 ## Ports
 EXPOSE	8989/tcp
 
+## Periodic
+COPY	[ "cron/", "/etc/periodic/" ]
+
 ## Volumes
-VOLUME [ "/talecaster/downloads", "/talecaster/television", "/talecaster/config" ]
+VOLUME [ "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/television" ]
 
 # vim:sw=4:ts=4

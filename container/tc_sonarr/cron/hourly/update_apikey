@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+################################################################################
+# TaleCaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com> and its
+# contributors. All rights reserved
+# 
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# cron/hourly/update_apikey
+
+. /opt/talecaster/lib/talecaster.lib.sh
+. /opt/talecaster/lib/servarr_tools
+
+appid=$(cat /opt/talecaster/id.service)
+if [ ! -f /talecaster/shared/${appid}.api ]
+	## We definitely don't have the API key.
+	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/${appid}.api
+else
+	curkey=$(cat /talecaster/shared/${appid}.api)
+	runkey=$(xml_extract_apikey /talecaster/config/config.xml)
+	if [ $curkey != $runkey ]; then
+		## Key has updated
+		xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/${appid}.api
+	fi
+fi
