@@ -13,7 +13,7 @@
 . /opt/talecaster/lib/servarr_tools
 
 appid=$(cat /opt/talecaster/id.service)
-if [ ! -f /talecaster/shared/${appid}.api ]
+if [ ! -f /talecaster/shared/${appid}.api ]; then
 	## We definitely don't have the API key.
 	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/${appid}.api
 else
