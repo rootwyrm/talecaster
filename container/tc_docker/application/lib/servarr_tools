@@ -534,13 +534,10 @@ function sql_add_blackhole_torrent()
     ## ** Move files, don't link them.
     ##   "readOnly": false
     ## }
-    check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = "TorrentBlackhole"')
+    check=$(sqlite3 -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = "TorrentBlackhole" AND Settings LIKE "%/talecaster/blackhole%"')
     if [ ! -z $check ]; then
-        ## We have an existing client, so we need to check further.
-        check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = TorrentBlackhole AND Settings LIKE "%/talecaster/blackhole%" ')
-        if [ ! -z $check_existing ]; then
-            ## update
-            cat << EOF > /tmp/bh_update.sql
+        ## Update an existing client
+        cat << EOF > /tmp/bh_update.sql
 UPDATE DownloadClients SET Enable = '1' ,
 Name = 'TaleCaster - Torrent Blackhole',
 Implementation = 'TorrentBlackhole',
@@ -551,17 +548,17 @@ Settings = '{
   "magnetFileExtension": ".magnet",
   "readOnly": false
 }', 
-SettingsContract = 'UsenetBlackholeSetings', Priority = '1'
+ConfigContract = 'TorrentBlackholeSettings', Priority = '10'
 WHERE Id = '$check_existing';
 .quit
 EOF
-            cat /tmp/bh_update.sql | sqlite3 $1 
-            CHECK_ERROR $? sql_add_blackhole_nzb_update
-            rm /tmp/bh_update.sql
-        elif [ -z $check_existing ]; then
-            ## We have to do an insert
-            cat << EOF > /tmp/bh_update.sql
-INSERT INTO DownloadClients (Enable, Name, Implementation, Settings, SettingsContract, Priority) VALUES
+        cat /tmp/bh_update.sql | sqlite3 $1 
+        CHECK_ERROR $? sql_add_blackhole_nzb_update
+        rm /tmp/bh_update.sql
+    elif [ -z $check ]; then
+        ## We have to do an insert
+        cat << EOF > /tmp/bh_update.sql
+INSERT INTO DownloadClients (Enable, Name, Implementation, Settings, ConfigContract, Priority) VALUES
 ('1', 'TaleCaster - Torrent Blackhole', 'TorrentBlackhole',
 '{
   "torrentFolder": "/talecaster/blackhole",
@@ -569,15 +566,14 @@ INSERT INTO DownloadClients (Enable, Name, Implementation, Settings, SettingsCon
   "saveMagnetFiles": true,
   "magnetFileExtension": ".magnet",
   "readOnly": false
-}', 'UsenetBlackholeSettings', '1');
+}', 'TorrentBlackholeSettings', '10');
 .quit
 EOF
-            cat /tmp/bh_update.sql | sqlite3 $1
-            if [ $? -ne 0 ]; then
-                printf 'Error adding Torrent Blackhole\n'
-                rm /tmp/bh_update.sql
-                exit 20
-            fi
+        cat /tmp/bh_update.sql | sqlite3 $1
+        if [ $? -ne 0 ]; then
+            printf 'Error adding Torrent Blackhole\n'
+            rm /tmp/bh_update.sql
+            exit 20
         fi
     fi
 }
