@@ -16,7 +16,10 @@ function xml_extract_apikey()
 {
     if [ -z $1 ]; then
         printf 'No XML file provided.\n'
-        exit 2
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Configuration XML %s does not exist\n' "$1"
+        exit 20
     fi
     if [ -f $1 ]; then
         apikey=$(grep -oP '(?<=ApiKey>)[^<]+' $1)
@@ -30,7 +33,10 @@ function xml_extract_sslcert()
 {
     if [ -z $1 ]; then
         printf 'No XML file provided.\n'
-        exit 2
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Configuration XML %s does not exist\n' "$1"
+        exit 20
     fi
     if [ -f $1 ]; then
         sslcert=$(grep -oP '(?<=SslCertPath>)[^<]+' $1)
@@ -43,7 +49,10 @@ function xml_extract_urlbase()
 {
     if [ -z $1 ]; then
         printf 'No XML file provided.\n'
-        exit 2
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Configuration XML %s does not exist\n' "$1"
+        exit 20
     fi
     if [ -f $1 ]; then
         urlbase=$(grep -oP '(?<=UrlBase>)[^<]+' $1)
@@ -56,13 +65,16 @@ function xml_update_urlbase()
 {
     if [ -z $1 ] || [ -z $2 ]; then
         printf 'No XML file or path provided.\n'
-        exit 2
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Configuration XML %s does not exist\n' "$1"
+        exit 20
     fi
     if [ -f $1 ]; then
         urlbase=$(grep -oP '(?<=UrlBase>)[^<]+' $1)
         if [ "$2" == "$urlbase" ]; then
             ## Already set correctly, do nothing.
-            exit 0
+            return 0
         else
             sed -i -e 's,<UrlBase.*,<UrlBase>'$2'</UrlBase>,' $1
             CHECK_ERROR $? xml_update_urlbase
@@ -78,7 +90,12 @@ function sql_add_rootfolder()
 {
     if [ -z $1 ] || [ -z $2 ]; then
         printf 'No SQLite DB or path provided.\n'
-        exit 2
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Database %s does not exist\n' "$1"
+        exit 20
+    elif [ ! -d $2 ]; then
+        printf 'Root path %s does not exist\n' "$2"
     fi
     if [ -f $1 ]; then
         result=$(sqlite3 -csv -readonly $1 'SELECT Path FROM RootFolders WHERE Path LIKE "'$2'%"')
@@ -91,7 +108,7 @@ function sql_add_rootfolder()
             CHECK_ERROR $? sql_add_rootfolder
         elif [ $(echo $result | cut -d , -f 2) == "$2" ]; then
             ## RootFolder entry already exists
-            exit 0
+            return 0
         fi
     fi
 }
@@ -126,7 +143,10 @@ function sql_add_qbittorrent()
     local category=$(cat /opt/talecaster/id.provides)
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
-        exit 1
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Database %s does not exist\n' "$1"
+        exit 20
     fi
     load_config
     case $category in
@@ -188,7 +208,7 @@ EOF
         fi
     done
     if [ $update == "true" ]; then
-        exit 0
+        return 0
     fi
     ## We have no existing record, so do an insert.
     ## XXX: Must be single quotes and 2 spaces to not break json.
@@ -215,7 +235,7 @@ EOF
     ## Clean return
     rm /tmp/qb_settings
     rm /tmp/qb_update.sql
-    exit 0
+    return 0
 }
 
 # sql_add_nzbget $SQLITEDB
@@ -244,10 +264,13 @@ function sql_add_nzbget()
     
     local nntphost="nntp"
     local category=$(cat /opt/talecaster/id.provides)
-    local NZB_USER=${NNTP_USER:-nzbget}
+    local NNTP_USER="${NNTP_USER:-nzbget}"
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
         exit 1
+    elif [ ! -f $1 ]; then
+        printf 'Database %s does not exist\n' "$1"
+        exit 20
     fi
     load_config
     case $category in
@@ -286,7 +309,7 @@ Implementation='Nzbget',
 Settings='{
   "host": "$nntphost",
   "port": ${NNTP_PORT},
-  "username": "${NZBGET_USER}",
+  "username": "${NNTP_USER}",
   "password": "${NNTP_PASSWORD}",
   "${category}Category": "${category^}",
   "$recpri": 0,
@@ -312,16 +335,16 @@ EOF
         fi
     done
     if [ $update == "true" ]; then
-        exit 0
+        return 0
     fi
     ## We have no existing record, so do an insert.
     ## XXX: Must be single quotes and 2 spaces to not break json.
     cat << EOF > /tmp/nzb_update.sql
-INSERT INTO DownloadClients (Enable, Name, Implementation, Settings, ConfigContract, Priority) VALUES ('1', 'TaleCaster - qBittorrent', 'QBittorrent',
+INSERT INTO DownloadClients (Enable, Name, Implementation, Settings, ConfigContract, Priority) VALUES ('1', 'TaleCaster - Nzbget', 'Nzbget',
 '{
   "host": "$nntphost",
   "port": ${NNTP_PORT},
-  "username": "${NZBGET_USER}",
+  "username": "${NNTP_USER}",
   "password": "${NNTP_PASSWORD}",
   "${category}Category": "${category^}",
   "$recpri": 0,
@@ -342,7 +365,7 @@ EOF
     ## Clean return
     rm /tmp/nzb_settings
     rm /tmp/nzb_update.sql
-    exit 0
+    return 0
 }
 
 # sql_add_transmission $SQLITEDB
@@ -374,7 +397,10 @@ function sql_add_transmission()
     local TORRENT_USER=${TORRENT_USER:-talecaster}
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
-        exit 1
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Database %s does not exist\n' "$1"
+        exit 20
     fi
     load_config
     case $category in
@@ -438,7 +464,7 @@ EOF
         fi
     done
     if [ $update == "true" ]; then
-        exit 0
+        return 0
     fi
     ## We have no existing record, so do an insert.
     ## XXX: Must be single quotes and 2 spaces to not break json.
@@ -467,7 +493,7 @@ EOF
     ## Clean return
     rm /tmp/trns_settings
     rm /tmp/trns_update.sql
-    exit 0
+    return 0
 }
 
 # sql_add_blackhole_nzb $SQLITEDB
@@ -478,37 +504,59 @@ function sql_add_blackhole_nzb()
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
         exit 1
+    elif [ ! -f $1 ]; then
+        printf 'Database %s does not exist\n' "$1"
+        exit 20
     fi
     load_config
     # CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
     # DANGER: Settings is a JSON!!
-    ## Generate the json to make life easier...
-    check=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = "UsenetBlackhole"')
+    ## This one is a bit of a mess.
+    ## {
+    ##   "torrentFolder": "/talecaster/blackhole",
+    ##   "watchFolder": "/talecaster/downloads",
+    ##   "saveMagnetFiles": true,
+    ##   "magnetFileExtension": ".magnet",
+    ## ** Move files, don't link them.
+    ##   "readOnly": false
+    ## }
+    check=$(sqlite3 -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = "UsenetBlackhole" AND Settings LIKE "%/talecaster/blackhole%"')
     if [ ! -z $check ]; then
-        ## We have an existing client, so we need to check further.
-        check_existing=$(sqlite3 -csv -readonly $1 'SELECT Id FROM DownloadClients WHERE Implementation = UsenetBlackhole AND Settings LIKE "%/talecaster/blackhole%" ')
-        if [ ! -z $check_existing ]; then
-            ## update
-            cat << EOF > /tmp/bh_update.sql
+        ## Update an existing client
+        cat << EOF > /tmp/bh_update.sql
 UPDATE DownloadClients SET Enable = '1' ,
-Name = 'TaleCaster - NZB Blackhole',
+Name = 'TaleCaster - Usenet Blackhole',
 Implementation = 'UsenetBlackhole',
 Settings = '{
-  "nzbFolder": "/talecaster/blackhole",
-  "watchFolder": "/talecaster/downloads"
+  "torrentFolder": "/talecaster/blackhole",
+  "watchFolder": "/talecaster/downloads",
 }', 
-SettingsContract = 'UsenetBlackholeSetings', Priority = '1'
+ConfigContract = 'UsenetBlackholeSettings', Priority = '10'
 WHERE Id = '$check_existing';
 .quit
 EOF
-            cat /tmp/bh_update.sql | sqlite3 $1 
-            ## XXX: this could leave dangling files, but no sensitive data
-            CHECK_ERROR $? sql_add_blackhole_nzb_update
+        cat /tmp/bh_update.sql | sqlite3 $1 
+        if [ $? -ne 0 ]; then
+            printf 'Error adding Usenet Blackhole\n'
             rm /tmp/bh_update.sql
-        elif [ -z $check_existing ]; then
-            ## And now we have to do an insert...
-            echo "nope not yet ready"
-            exit 255
+            exit 20
+        fi
+    elif [ -z $check ]; then
+        ## We have to do an insert
+        cat << EOF > /tmp/bh_update.sql
+INSERT INTO DownloadClients (Enable, Name, Implementation, Settings, ConfigContract, Priority) VALUES
+('1', 'TaleCaster - Usenet Blackhole', 'UsenetBlackhole',
+'{
+  "torrentFolder": "/talecaster/blackhole",
+  "watchFolder": "/talecaster/downloads",
+}', 'UsenetBlackholeSettings', '10');
+.quit
+EOF
+        cat /tmp/bh_update.sql | sqlite3 $1
+        if [ $? -ne 0 ]; then
+            printf 'Error adding Torrent Blackhole\n'
+            rm /tmp/bh_update.sql
+            exit 20
         fi
     fi
 }
@@ -521,6 +569,9 @@ function sql_add_blackhole_torrent()
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
         exit 1
+    elif [ ! -f $1 ]; then
+        printf 'Database %s does not exist\n' "$1"
+        exit 20
     fi
     load_config
     # CREATE TABLE IF NOT EXISTS "DownloadClients" ("Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "Enable" INTEGER NOT NULL, "Name" TEXT NOT NULL, "Implementation" TEXT NOT NULL, "Settings" TEXT NOT NULL, "ConfigContract" TEXT NOT NULL, "Priority" INTEGER NOT NULL DEFAULT 1);
