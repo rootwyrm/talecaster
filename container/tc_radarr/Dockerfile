@@ -12,7 +12,7 @@ FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		com.rootwyrm.product="TaleCaster" \
-		com.rootwyrm.project="tc_sonarr" \
+		com.rootwyrm.project="tc_radarr" \
 		com.rootwyrm.status="%%STATUS%%" \
 		com.rootwyrm.license="CC-BY-NC-4.0" \
 		com.rootwyrm.vcs-type="github" \
@@ -20,7 +20,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		## label-schema.org
         org.label-schema.schema-version="1.0.0-rc1" \
         org.label-schema.vendor="RootWyrm" \
-        org.label-schema.name="tc_sonarr" \
+        org.label-schema.name="tc_radarr" \
         org.label-schema.url="%%GITHUB_REPOSITORY%%" \
         org.label-schema.vcs-ref="%%VCS_REF%%" \
         org.label-schema.version="%%REF%%" \
