@@ -22,7 +22,7 @@ export vrpkg="mono_run"
 export vrpkg_content="curl gettext inotify-tools linux-headers python3 openssl sqlite pax-utils libgcc libstdc++ ca-certificates"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 --cert-status -L --silent"
-export monov="6.12.0.107"
+export monov="6.12.0.122"
 
 install_runtime()
 {
