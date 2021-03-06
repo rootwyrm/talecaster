@@ -10,14 +10,21 @@
 
 . /opt/talecaster/lib/talecaster.lib.sh
 
-DOTNET_VERSION=5.0.3
+DOTNET_VERSION=$(cat /opt/talecaster/etc/dotnet.release)
+DOTNET_PR=$(cat /opt/talecaster/etc/dotnet.pr)
+DOTNET_KEY=$(cat /opt/talecaster/etc/dotnet.key)
+DOTNET_SHA512=$(cat /opt/talecaster/etc/dotnet.sha512)
 
 function download()
 {
 	export TARFILE=/tmp/dotnet.tgz
-	wget -O $TARFILE https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-musl-x64.tar.gz
-	## SHA512:85e4063792fb9d921a24f9da221a2b69c1faa253adb10644cc5907c35af92b3204f461fd6a9ec936ae37cfada47937f1c2b67174eabc778bd7305d66dc67e340
+	wget -O $TARFILE https://download.visualstudio.microsoft.com/download/pr/${DOTNET_PR}/${DOTNET_KEY}/dotnet-runtime-${DOTNET_VERSION}-linux-musl-x64.tar.gz
 	CHECK_ERROR $? retrieve_dotnet
+	local sha512=$(sha512sum $TARFILE | awk '{print $1}')
+	if [ ${sha512} != ${DOTNET_SHA512} ]; then
+		printf '[ERROR] Checksum mismatch!\n'
+		exit 255
+	fi
 }
 
 function install()
@@ -28,7 +35,7 @@ function install()
 	ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
 	rm -f $TARFILE
 	apk update
-	apk add --no-cache libc6-compat gcompat
+	apk add --no-cache libgcc libstdc++ libc6-compat gcompat
 }
 
 download
