@@ -36,7 +36,7 @@ COPY	[ "application/", "/opt/talecaster/" ]
 VOLUME	[ "/run", "/talecaster/shared" ]
 
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata jq && \
+	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata jq rsyslog && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
@@ -53,6 +53,7 @@ RUN	apk update && apk upgrade && \
 	rm -f /etc/init.d/modloop ; \
 	/sbin/rc-update add dcron default ; \
 	/sbin/rc-update add haveged default ; \
+	/sbin/rc-update add rsyslog default ; \
 	/sbin/rc-update add talecaster default ; \
 	sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh ; \
 	echo "TaleCaster is Copyright (C) 2016-* Phillip Jaenke and its contributors" > /LICENSE ; \
