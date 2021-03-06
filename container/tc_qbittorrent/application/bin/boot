@@ -13,7 +13,8 @@
 function config()
 {
 	conffile=/talecaster/config/qBittorrent/config/qBittorrent.conf
-	TORRENT_PORT=${TORRENT_PORT:-9091}
+	TORRENT_PORT=${TORRENT_PORT:-8081}
+	TORRENT_USER=${TORRENT_USER:-talecaster}
 	if [ ! -d /talecaster/config ]; then
 		LOG "Configuration storage volume missing!" E 255
 	fi
@@ -28,10 +29,12 @@ function config()
 		cp /opt/talecaster/defaults/qBittorrent.conf ${conffile}
 		CHECK_ERROR $? install_default_config
 		sed -i -e 's/%%TORRENT_PORT%%/'${TORRENT_PORT}'/g' ${conffile}
+		sed -i -e 's/%%TORRENT_USER%%/'${TORRENT_USER}'/g' ${conffile}
 	elif [ -f $conffile ]; then
 		export SETUP=0
 		## Fix the settings.json configuration
-		sed -i -e 's,WebUI\Port.*,WebUI\Port='${TORRENT_PORT}'",' ${conffile}
+		sed -i -e 's,WebUI\Port.*,WebUI\Port='${TORRENT_PORT}',' ${conffile}
+		sed -i -e 's,WebUI\Username.*,WebUI\Username='${TORRENT_USER}',' ${conffile}
 	fi
 	#LOG "Setting password based on environment." D
 	#TORRENT_PASSWORD=${TORRENT_PASSWORD:-"t4l3caster"}

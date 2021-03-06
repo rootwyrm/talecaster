@@ -20,6 +20,10 @@ function config()
 	LOG "Setting password based on environment." D
 	NNTP_PASSWORD=${NNTP_PASSWORD:-"t4l3caster"}
 	sed -i -e 's/^ControlPassword.*/ControlPassword='${NNTP_PASSWORD}'/' /talecaster/config/nzbget.conf
+	## Update username as well
+	if [ ! -z $NNTP_USER ]; then
+		sed -i -e 's/^ControlUsername.*/ControlUsername='${NNTP_USER}'/' /talecaster/config/nzbget.conf
+	fi
 }
 
 function permissions()
