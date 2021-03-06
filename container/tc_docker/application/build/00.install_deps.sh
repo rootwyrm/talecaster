@@ -26,7 +26,7 @@ function install_deps()
 		LOG "No dependencies for ${SERVICE}"
 	fi
 
-	case ${SERVICE}_VPN in
+	case ${SERVICE^^}_VPN in
 		[Tt][Rr][Uu][Ee])
 			if [ ! -c /dev/net/tun ]; then
 				printf 'VPN requested but tunnel device not available!\n'
