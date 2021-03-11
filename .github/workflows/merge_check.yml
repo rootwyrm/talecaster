@@ -13,14 +13,20 @@ on:
       - release/*
     tags:
       - v1*
-        
-## Build only for amd64 at this time, haven't moved on to aarch64 testing.
+
+## Restructure to build our cores separate...        
 jobs:
-  tc_docker:
-    name: Pull Request - tc_docker
+  ############################################################
+  # tc_docker, tc_mono
+  ############################################################
+  base:
+    name: Pull Request - base images
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        container: [ tc_docker, tc_mono ]
     env:
-      CONTAINER: tc_docker
+      CONTAINER: ${{ matrix.container }}
     steps:
       - name: Check out from ${{ github.ref }}
         id: checkout
@@ -31,137 +37,20 @@ jobs:
           $GITHUB_WORKSPACE/ci/hooks/pre_build
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
+      - name: Build ${{ matrix.container }}
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
+          platforms: linux/amd64, linux/aarch64
+          context: container/${{ matrix.container }}
           pull: true
           push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_mono:
-    name: Pull Request - tc_mono
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: tc_mono
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
-          pull: true
-          push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_frontend:
-    name: Pull Request - tc_frontend
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: tc_frontend
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
-          pull: true
-          push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_jackett:
-    name: Pull Request - tc_jackett
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: tc_docker
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
-          pull: true
-          push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_lidarr:
-    name: Pull Request - tc_lidarr
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: tc_lidarr
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
-          pull: true
-          push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_nzbget:
-    name: Pull Request - tc_nzbget
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: tc_nzbget
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
-          pull: true
-          push: false
-          tags: rootwyrm/${CONTAINER}:merge
+          tags: rootwyrm/${{ matrix.container }}:merge
+  ############################################################
+  # tc_qbittorrent - takes 1hr+
+  ############################################################
   tc_qbittorrent:
-    name: Pull Request - tc_qbittorrent
+    name: Pull Request - tc_mono
     runs-on: ubuntu-latest
     env:
       CONTAINER: tc_qbittorrent
@@ -175,20 +64,26 @@ jobs:
           $GITHUB_WORKSPACE/ci/hooks/pre_build
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
+      - name: Build tc_qbittorrent
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64
-          context: container/${CONTAINER}
+          context: container/$CONTAINER
           pull: true
           push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_radarr:
-    name: Pull Request - tc_radarr
+          tags: rootwyrm/tc_qbittorrent:merge
+  ############################################################
+  # tc_docker chidlren
+  ############################################################
+  tc_docker_child:
+    name: Pull Request - tc_docker children
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr ]
     env:
-      CONTAINER: tc_radarr
+      CONTAINER: ${{ matrix.container }}
     steps:
       - name: Check out from ${{ github.ref }}
         id: checkout
@@ -199,20 +94,26 @@ jobs:
           $GITHUB_WORKSPACE/ci/hooks/pre_build
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
+      - name: Build ${{ matrix.container }}
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
+          platforms: linux/amd64, linux/aarch64
+          context: container/${{ matrix.container }}
           pull: true
           push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_sonarr:
-    name: Pull Request - tc_sonarr
+          tags: rootwyrm/${{ matrix.container }}:merge
+  ############################################################
+  # tc_mono children
+  ############################################################
+  tc_mono_child:
+    name: Pull request - tc_mono children
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        container: [ tc_jackett, tc_sonarr ]
     env:
-      CONTAINER: tc_sonarr
+      CONTAINER: ${{ matrix.container }}
     steps:
       - name: Check out from ${{ github.ref }}
         id: checkout
@@ -223,39 +124,15 @@ jobs:
           $GITHUB_WORKSPACE/ci/hooks/pre_build
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
+      - name: Build ${{ matrix.container }}
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
+          platforms: linux/amd64, linux/aarch64
+          context: container/${{ matrix.container }}
           pull: true
           push: false
-          tags: rootwyrm/${CONTAINER}:merge
-  tc_transmission:
-    name: Pull Request - tc_transmission
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: tc_transmission
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${CONTAINER}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64
-          context: container/${CONTAINER}
-          pull: true
-          push: false
-          tags: rootwyrm/${CONTAINER}:merge
+          tags: rootwyrm/${{ matrix.container }}:merge
 
 # colorscheme=inkpot
 # vim:ts=2:sw=2:et
