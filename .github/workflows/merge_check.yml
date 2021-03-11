@@ -6,6 +6,7 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
+name: CICD - Pull Request Validator
 on:
   pull_request:
     branches:
@@ -35,6 +36,8 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Setup qemu environment
+        uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
       - name: Build ${{ matrix.container }}
@@ -62,13 +65,15 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Setup qemu environment
+        uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
       - name: Build tc_qbittorrent
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/aarch64
           context: container/$CONTAINER
           pull: true
           push: false
@@ -92,6 +97,8 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Setup qemu environment
+        uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
       - name: Build ${{ matrix.container }}
@@ -122,6 +129,8 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Setup qemu environment
+        uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
         uses: docker/setup-buildx-action@v1
       - name: Build ${{ matrix.container }}
