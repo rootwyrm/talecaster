@@ -10,15 +10,6 @@ on:
     paths:
       - 'ci/hooks/**'
       - 'container/tc_mono/**'
-  pull_request:
-    branches:
-      - latest
-      - release/*
-    tags:
-      - v1*
-    paths:
-      - 'ci/hooks/**'
-      - 'container/tc_mono/**'
   repository_dispatch:
     types: [ tc_mono ]
 

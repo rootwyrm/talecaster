@@ -5,7 +5,7 @@ TaleCaster - The Ultimate Media Management Solution
 
 All credit goes to sgallagh for the name :)
 
-Sponsor on GitHub | Sponsor on Patreon
+[Sponsor on GitHub](https://github.com/sponsors/rootwyrm) | [Sponsor on Patreon](https://patreon.com/rootwyrm)
 
 Our primary development environment is generously hosted by @rootwyrm using [Dragon North Enterprise Systems](https://www.dragonnorth.systems) BabyDragon Gen.5 and Gen.6 hardware. Available for purchase now.
 
@@ -23,9 +23,12 @@ Our secondary development hardware, named `alexandria.dragonnorth.systems`, is a
 
 
 # Linux
-Docker-based 'basic' configurations are validated and working, but not documented. This is not recommended for use at this time. Extensive work has been done to polish them up for individual module use but integration work is not complete. Advanced knowledge of disk and filesystem management is required to make use of these.
+Docker-based 'basic' configurations are validated and working, and documentation is in progress!
+TaleCaster is designed to be deployed using `docker-compose` as a full application suite and comes with a web front end.
 
-This is recommended for virtual environments and folks just looking to get an idea of how things work.
+# HALP PLEASE!
+* Documentation! Documenting how to set up TaleCaster, Synology, etc.
+* The build status table is a nightmare. There has to be a better way?
 
 # FreeBSD
-Most work on FreeBSD has been discontinued, due to overt hostility and threats of physical harm which have been made by members of the FreeBSD core team. Consequently, we have no interest in providing the software to people who do not want it and have stated they will physically assault or muder people who do work on it.
+Most work on FreeBSD has been discontinued, due to overt hostility and threats of physical harm which have been made by members of the FreeBSD core team. Consequently, we have no interest in providing the software to people who do not want it and have stated they will harass or physically assault people who do work on it.
