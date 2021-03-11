@@ -149,10 +149,15 @@ function sql_add_qbittorrent()
         exit 20
     fi
     load_config
+    if [ -z $TORRENT_PORT ]; then
+        printf 'TORRENT_PORT is unset or unknown\n'
+        exit 10
+    fi
     case $category in
         television)
             recpri="recentTvPriority"
             oldpri="olderTvPriority"
+            catname="tvCategory"
             ;;
         movies)
             recpri="recentMoviePriority"
@@ -265,6 +270,7 @@ function sql_add_nzbget()
     local nntphost="nntp"
     local category=$(cat /opt/talecaster/id.provides)
     local NNTP_USER="${NNTP_USER:-nzbget}"
+    local NNTP_PORT="${NNTP_PORT:-6789}"
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
         exit 1
@@ -277,6 +283,7 @@ function sql_add_nzbget()
         television)
             recpri="recentTvPriority"
             oldpri="olderTvPriority"
+            catname="tvCategory"
             ;;
         movies)
             recpri="recentMoviePriority"
@@ -334,7 +341,7 @@ EOF
             update="false"
         fi
     done
-    if [ $update == "true" ]; then
+    if [[ $update == "true" ]]; then
         return 0
     fi
     ## We have no existing record, so do an insert.
@@ -392,9 +399,6 @@ function sql_add_transmission()
     ##   "useSsl": false,
     ## }
     
-    local torrenthost="torrent"
-    local category=$(cat /opt/talecaster/id.provides)
-    local TORRENT_USER=${TORRENT_USER:-talecaster}
     if [ -z $1 ]; then
         printf 'No SQLite DB or path provided\n'
         exit 20
@@ -403,6 +407,13 @@ function sql_add_transmission()
         exit 20
     fi
     load_config
+    local torrenthost="torrent"
+    local category=$(cat /opt/talecaster/id.provides)
+    local TORRENT_USER=${TORRENT_USER:-talecaster}
+    if [ -z $TORRENT_PORT ]; then
+        printf 'TORRENT_PORT is unset or unknown\n'
+        exit 10
+    fi
     case $category in
         television)
             recpri="recentTvPriority"
