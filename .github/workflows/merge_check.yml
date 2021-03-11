@@ -44,7 +44,7 @@ jobs:
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64, linux/aarch64
+          platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: false
@@ -53,7 +53,7 @@ jobs:
   # tc_qbittorrent - takes 1hr+
   ############################################################
   tc_qbittorrent:
-    name: Pull Request - tc_mono
+    name: Pull Request - tc_qbittorrent
     runs-on: ubuntu-latest
     env:
       CONTAINER: tc_qbittorrent
@@ -73,8 +73,8 @@ jobs:
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64, linux/aarch64
-          context: container/$CONTAINER
+          platforms: linux/amd64, linux/arm64
+          context: container/tc_qbittorrent
           pull: true
           push: false
           tags: rootwyrm/tc_qbittorrent:merge
@@ -84,6 +84,7 @@ jobs:
   tc_docker_child:
     name: Pull Request - tc_docker children
     runs-on: ubuntu-latest
+    needs: tc_docker
     strategy:
       matrix:
         container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr ]
@@ -105,7 +106,7 @@ jobs:
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64, linux/aarch64
+          platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: false
@@ -116,6 +117,7 @@ jobs:
   tc_mono_child:
     name: Pull request - tc_mono children
     runs-on: ubuntu-latest
+    needs: tc_mono
     strategy:
       matrix:
         container: [ tc_jackett, tc_sonarr ]
@@ -137,7 +139,7 @@ jobs:
         id: docker_nopush
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64, linux/aarch64
+          platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: false
