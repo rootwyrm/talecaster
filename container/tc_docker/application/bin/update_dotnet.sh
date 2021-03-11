@@ -71,7 +71,7 @@ function upgrade()
 		printf 'Upgrade failed! SHA512 does not match.\n'
 		exit 2
 	fi
-	if [ ! -f /opt/talecaster/id.service ]; then
+	if [ -f /opt/talecaster/id.service ]; then
 		service=$(cat /opt/talecaster/id.service)
 	fi
 	if [ ! -z $service ]; then
