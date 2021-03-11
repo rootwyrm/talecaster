@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-###############################################################################
+################################################################################
 # TaleCaster - https://github.com/rootwyrm/talecaster
 # Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
 # contributors, all rights reserved.

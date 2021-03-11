@@ -1,3 +1,11 @@
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
 ARG		TALECASTER_BASE=latest
 FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 

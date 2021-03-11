@@ -1,10 +1,13 @@
 #!/bin/bash
-## application/build/10.mono.sh
-
-# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwyrm.com>
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
 #
-# NO COMMERCIAL REDISTRIBUTION IN ANY FORM IS PERMITTED WITHOUT
-# EXPRESS WRITTEN CONSENT
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+## application/build/10.mono.sh
 
 ######################################################################
 ## Function Import and Setup

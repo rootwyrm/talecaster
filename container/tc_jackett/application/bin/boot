@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-###############################################################################
+################################################################################
 # TaleCaster - https://github.com/rootwyrm/talecaster
 # Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
 # contributors, all rights reserved.
@@ -10,7 +10,7 @@
 
 . /opt/talecaster/lib/talecaster.lib.sh
 
-appbase="/opt/Sonarr"
+appbase="/opt/Jackett"
 
 function config()
 {
@@ -23,7 +23,7 @@ function permissions()
 {
 	tcuid=${tcuid:-"30000"}
 	tcgid=${tcuid:-"30000"}
-	chown -R $tcuid:$tcgid /opt/Sonarr
+	chown -R $tcuid:$tcgid $appbase
 	chown $tcuid:$tcgid /talecaster/config
 	if [ -d /talecaster/config/.config ]; then
 		chown -R $tcuid:$tcgid /talecaster/config/.config
