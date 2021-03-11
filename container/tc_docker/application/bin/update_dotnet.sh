@@ -24,10 +24,10 @@ function existing_version()
 function check_update()
 {
 	## dotnet version _always_ tracks latest.
-	URL_VERSION=https://github.com/rootwyrm/talecaster/blob/master/container/tc_docker/application/etc/dotnet.release
-	URL_SHA512=https://github.com/rootwyrm/talecaster/blob/master/container/tc_docker/application/etc/dotnet.sha512
-	URL_PR=https://github.com/rootwyrm/talecaster/blob/master/container/tc_docker/application/etc/dotnet.pr
-	URL_KEY=https://github.com/rootwyrm/talecaster/blob/master/container/tc_docker/application/etc/dotnet.key
+	URL_VERSION=https://github.com/rootwyrm/talecaster/blob/latest/container/tc_docker/application/etc/dotnet.release
+	URL_SHA512=https://github.com/rootwyrm/talecaster/blob/latest/container/tc_docker/application/etc/dotnet.sha512
+	URL_PR=https://github.com/rootwyrm/talecaster/blob/latest/container/tc_docker/application/etc/dotnet.pr
+	URL_KEY=https://github.com/rootwyrm/talecaster/blob/latest/container/tc_docker/application/etc/dotnet.key
 
 	wget -O /tmp/dotnet.verison $URL_VERSION
 	CHECK_ERROR $? retrieve_latest_version 
@@ -45,7 +45,7 @@ function check_update()
 ## the actual upgrade
 function upgrade()
 {
-	URL_BASE=https://github.com/rootwyrm/talecaster/blob/master/container/tc_docker/application/etc/dotnet
+	URL_BASE=https://github.com/rootwyrm/talecaster/blob/latest/container/tc_docker/application/etc/dotnet
 	## We need to do an upgrade.
 	log 'Upgrading dotnet from %s to %s\n' "$CUR_VERSION" "$(cat /tmp/dotnet.version)"
 	for c in version sha512 pr key; do

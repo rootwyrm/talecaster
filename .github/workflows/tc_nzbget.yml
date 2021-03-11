@@ -3,7 +3,7 @@ name: CICD - tc_nzbget
 on:
   push:
     branches:
-      - master
+      - latest
       - release/*
     tags:
       - v1*
@@ -12,7 +12,7 @@ on:
       - 'container/tc_nzbget/**'
   pull_request:
     branches:
-      - master
+      - latest
       - release/*
     tags:
       - v1*

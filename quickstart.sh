@@ -35,7 +35,7 @@ done
 
 ## Bring in the default docker.env file
 printf 'Downloading default docker.env file...\n'
-wget -O /opt/talecaster/docker.env https://github.com/rootwyrm/talecaster/blob/master/container/docker.env 
+wget -O /opt/talecaster/docker.env https://github.com/rootwyrm/talecaster/blob/latest/container/docker.env 
 printf 'Opening docker.env in your editor.\n'
 sleep 5
 $EDITOR /opt/talecaster/docker.env
@@ -47,7 +47,7 @@ sleep 30
 printf 'Accepted docker.env, composing containers...\n'
 . /opt/talecaster/docker.env
 ## XXX: needs to select the VPN mode
-wget -O /opt/talecaster/docker-compose.yml https://github.com/rootwyrm/talecaster/blob/master/container/docker-compose.yml
+wget -O /opt/talecaster/docker-compose.yml https://github.com/rootwyrm/talecaster/blob/latest/container/docker-compose.yml
 docker-compose -f /opt/talecaster/docker-compose.yml up --force-recreate --no-start
 if [ $? -ne 0 ]; then
 	printf 'An error occurred during compose, aborting!\n'

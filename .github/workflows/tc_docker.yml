@@ -3,7 +3,7 @@ name: CICD - tc_docker
 on:
   push:
     branches:
-      - master
+      - latest
       - release/*
     tags:
       - v1*
@@ -12,7 +12,7 @@ on:
       - 'container/tc_docker/**'
   pull_request:
     branches:
-      - master
+      - latest
       - release/*
     tags:
       - v1*
