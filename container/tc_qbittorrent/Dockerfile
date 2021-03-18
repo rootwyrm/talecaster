@@ -45,7 +45,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## PORTS
-EXPOSE	9091/tcp
+EXPOSE	8081/tcp
 
 ## VOLUMES
 VOLUME	[ "/talecaster/shared" ]
