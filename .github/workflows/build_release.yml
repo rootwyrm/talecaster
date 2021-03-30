@@ -6,7 +6,7 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-name: CICD - Pull Request Validator
+name: CICD - Release Build
 on:
   push:
     branches:
@@ -25,7 +25,7 @@ jobs:
   # tc_docker, tc_mono
   ############################################################
   tc_docker:
-    name: Pull Request - tc_docker
+    name: Release Build - tc_docker
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -54,7 +54,7 @@ jobs:
           push: true
           tags: rootwyrm/${{ matrix.container }}:merge
   tc_mono:
-    name: Pull Request - tc_mono
+    name: Build Release - tc_mono
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -86,7 +86,7 @@ jobs:
   # tc_qbittorrent - takes 1hr+
   ############################################################
   tc_qbittorrent:
-    name: Pull Request - tc_qbittorrent
+    name: Build Release - tc_qbittorrent
     runs-on: ubuntu-latest
     env:
       CONTAINER: tc_qbittorrent
@@ -115,7 +115,7 @@ jobs:
   # tc_docker chidlren
   ############################################################
   tc_docker_child:
-    name: Pull Request - tc_docker children
+    name: Build Release - tc_docker children
     runs-on: ubuntu-latest
     needs: tc_docker
     strategy:
@@ -148,7 +148,7 @@ jobs:
   # tc_mono children
   ############################################################
   tc_mono_child:
-    name: Pull request - tc_mono children
+    name: Build Release - tc_mono children
     runs-on: ubuntu-latest
     needs: tc_mono
     strategy:
