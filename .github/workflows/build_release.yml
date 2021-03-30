@@ -14,8 +14,6 @@ on:
       - release/*
     tags:
       - v1*
-    paths:
-      - 'ci/hooks/**'
     repository_dispatch:
       types: [ relbuild ]
 
