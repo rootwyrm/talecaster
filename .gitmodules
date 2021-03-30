@@ -1,4 +1,0 @@
-[submodule "tc_docker"]
-	path = docker/tc_docker
-	url = https://github.com/rootwyrm/tc_docker.git
-	branch = master
