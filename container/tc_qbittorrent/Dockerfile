@@ -9,9 +9,9 @@
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
 FROM	alpine:3.13 AS inter
 WORKDIR	/intermediate
-RUN		apk update && apk upgrade && apk add git bash && \
+RUN		apk update && apk upgrade && apk add git bash gcc g++ && \
 	cd /intermediate ; \
-	wget https://raw.githubusercontent.com/guillaumedsde/qbittorrent-nox-static/master/qbittorrent-nox-static.sh ; \
+	wget https://raw.githubusercontent.com/userdocs/qbittorrent-nox-static/master/qbittorrent-nox-static.sh ; \
 	chmod +x qbittorrent-nox-static.sh ; \
 	./qbittorrent-nox-static.sh all
 
