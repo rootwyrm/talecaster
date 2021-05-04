@@ -16,7 +16,7 @@ export app_destdir="/opt/Sonarr"
 
 export BRANCH="phantom-develop"
 export VERSION="3"
-export APPURL="https://services.sonarr.tv/v1/download/phantom-develop/latest?version=3&os=linux"
+export APPURL="https://services.sonarr.tv/v1/download/main/latest?version=3&os=linux"
 
 ######################################################################
 ## Application Install
