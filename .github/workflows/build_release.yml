@@ -38,6 +38,14 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Set tag
+        id: tag
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo "::set-output name=VERSION::$(echo $VERSION)"
       - name: Setup qemu environment
         uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
@@ -48,14 +56,14 @@ jobs:
           username: ${{ secrets.HUB_USER }}
           password: ${{ secrets.HUB_TOKEN }}
       - name: Build ${{ matrix.container }}
-        id: docker_nopush
+        id: docker_push
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: true
-          tags: rootwyrm/${{ matrix.container }}:merge
+          tags: rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
   tc_mono:
     name: Build Release - tc_mono
     runs-on: ubuntu-latest
@@ -73,6 +81,14 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Set tag
+        id: tag
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo "::set-output name=VERSION::$(echo $VERSION)"
       - name: Setup qemu environment
         uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
@@ -83,14 +99,14 @@ jobs:
           username: ${{ secrets.HUB_USER }}
           password: ${{ secrets.HUB_TOKEN }}
       - name: Build ${{ matrix.container }}
-        id: docker_nopush
+        id: docker_push
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: true 
-          tags: rootwyrm/${{ matrix.container }}:merge
+          tags: rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
   ############################################################
   # tc_qbittorrent - takes 1hr+
   ############################################################
@@ -108,6 +124,14 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Set tag
+        id: tag
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo "::set-output name=VERSION::$(echo $VERSION)"
       - name: Setup qemu environment
         uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
@@ -118,14 +142,14 @@ jobs:
           username: ${{ secrets.HUB_USER }}
           password: ${{ secrets.HUB_TOKEN }}
       - name: Build tc_qbittorrent
-        id: docker_nopush
+        id: docker_push
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64, linux/arm64
           context: container/tc_qbittorrent
           pull: true
           push: true
-          tags: rootwyrm/tc_qbittorrent:merge
+          tags: rootwyrm/tc_qbittorrent:${{ steps.tag.outputs.VERSION }}
   ############################################################
   # tc_docker chidlren
   ############################################################
@@ -146,6 +170,14 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Set tag
+        id: tag
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo "::set-output name=VERSION::$(echo $VERSION)"
       - name: Setup qemu environment
         uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
@@ -156,14 +188,14 @@ jobs:
           username: ${{ secrets.HUB_USER }}
           password: ${{ secrets.HUB_TOKEN }}
       - name: Build ${{ matrix.container }}
-        id: docker_nopush
+        id: docker_push
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: true
-          tags: rootwyrm/${{ matrix.container }}:merge
+          tags: rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
   ############################################################
   # tc_mono children
   ############################################################
@@ -184,6 +216,14 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Set tag
+        id: tag
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo "::set-output name=VERSION::$(echo $VERSION)"
       - name: Setup qemu environment
         uses: docker/setup-qemu-action@v1
       - name: Setup buildx environment
@@ -194,14 +234,14 @@ jobs:
           username: ${{ secrets.HUB_USER }}
           password: ${{ secrets.HUB_TOKEN }}
       - name: Build ${{ matrix.container }}
-        id: docker_nopush
+        id: docker_push
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64, linux/arm64
           context: container/${{ matrix.container }}
           pull: true
           push: true
-          tags: rootwyrm/${{ matrix.container }}:merge
+          tags: rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
 
 # colorscheme=inkpot
 # vim:ts=2:sw=2:et
