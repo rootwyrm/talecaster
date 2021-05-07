@@ -14,8 +14,8 @@ export app_name="Lidarr"
 export app_url="http://www.lidarr.audio/"
 export app_destdir="/opt/Lidarr"
 
-export VERSION="0.8.0.2042"
-export APPURL="https://github.com/lidarr/Lidarr/releases/download/v${VERSION}/Lidarr.develop.${VERSION}.linux-musl-core-x64.tar.gz"
+export VERSION="0.8.1.2135"
+export APPURL="https://github.com/lidarr/Lidarr/releases/download/v${VERSION}/Lidarr.master.${VERSION}.linux-musl-core-x64.tar.gz"
 
 ######################################################################
 ## Application Install
