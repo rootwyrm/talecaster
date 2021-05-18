@@ -31,4 +31,4 @@ TaleCaster is designed to be deployed using `docker-compose` as a full applicati
 * The build status table is a nightmare. There has to be a better way?
 
 # FreeBSD
-Most work on FreeBSD has been discontinued, due to overt hostility and threats of physical harm which have been made by members of the FreeBSD core team. Consequently, we have no interest in providing the software to people who do not want it and have stated they will harass or physically assault people who do work on it.
+Work on FreeBSD has been discontinued due to applications migrating to .NET Runtime. FreeBSD core and portmgr have been openly hostile to Mono and .NET, preventing any serious porting efforts. Existing installations should migrate to the Linux distribution of their preference and use Docker.
