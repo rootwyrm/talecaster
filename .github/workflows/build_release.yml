@@ -159,7 +159,7 @@ jobs:
     needs: tc_docker
     strategy:
       matrix:
-        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr ]
+        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_jackett ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
@@ -205,7 +205,7 @@ jobs:
     needs: tc_mono
     strategy:
       matrix:
-        container: [ tc_jackett, tc_sonarr ]
+        container: [ tc_sonarr ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:

@@ -14,9 +14,18 @@ export app_name="Jackett"
 export app_url="https://github.com/Jackett/Jackett"
 export app_destdir="/opt/Jackett"
 
-export BRANCH="phantom-develop"
-export VERSION="3"
-export APPURL="https://github.com/Jackett/Jackett/releases/download/v0.17.532/Jackett.Binaries.Mono.tar.gz"
+case $(uname -m) in
+	x86_64)
+		export APPARCH="LinuxAMDx64" ;;
+	aarch64)
+		export APPARCH="LinuxARM64" ;;
+	*)
+		echo "Unsupported architecture!"
+		exit 255
+		;;
+esac
+export VERSION="0.18.98"
+export APPURL="https://github.com/Jackett/Jackett/releases/download/v${VERSION}/Jackett.Binaries.${APPARCH}.tar.gz"
 
 ######################################################################
 ## Application Install
@@ -42,6 +51,7 @@ application_install()
 
 echo "Entering $0"
 load_config
+/opt/talecaster/bin/install_dotnet.sh
 
 LOG "[BUILD] Installing ${app_name}"
 application_install
