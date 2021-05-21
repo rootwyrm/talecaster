@@ -25,8 +25,30 @@ application_install()
 		exit 1
 	fi
 
+	## Determine machine architecture
+	case $(uname -m) in
+		x86_64)
+			local APPARCH="linux-musl-core-x64" ;;
+		aarch64)
+			local APPARCH="linux-musl-core-arm64" ;;
+		*)
+			echo "Unsupported architecture!"
+			exit 255
+			;;
+	esac
+	if [ $MONO == 'true' ]; then
+		local APPARCH="linux"
+	fi
+	## Determine our version
+	if [ -f /opt/talecaster/${app_name}.version ]; then
+		local VERSION=$(cat /opt/talecaster/${app_name}.version)
+	else
+		local VERSION="3.2.0.5048"
+	fi
+	local APPURL="https://github.com/Radarr/Radarr/releases/download/v${VERSION}/Radarr.master.${VERSION}.${APPARCH}.tar.gz"
+
 	## Downloading from Github is funky.
-	echo "[INSTALL] Retrieving ${app_name}..."
+	echo "[INSTALL] Retrieving ${app_name} release ${VERSION} ..."
 	curl -L $APPURL > /tmp/${app_name}.tgz
 	tar xf /tmp/${app_name}.tgz -C /opt/
 	CHECK_ERROR $? ${app_name}_extract
@@ -43,11 +65,9 @@ if [ ! -f /usr/local/bin/mono ]; then
 	/opt/talecaster/bin/install_dotnet.sh
 	## Install the dotnet initscript
 	ln -sf /etc/init.d/radarr-dotnet /etc/init.d/radarr
-	## Set URL for .NET app
-	export APPURL="https://github.com/Radarr/Radarr/releases/download/v3.0.2.4552/Radarr.master.3.0.2.4552.linux-musl-core-x64.tar.gz"
 else
+	export MONO=true
 	ln -sf /etc/init.d/radarr-mono /etc/init.d/radarr
-	export APPURL="https://radarr.servarr.com/v1/update/master/updatefile?os=linux"
 fi
 LOG "[BUILD] Installing ${app_name}"
 application_install
