@@ -43,7 +43,7 @@ application_install()
 	if [ -f /opt/talecaster/${app_name}.version ]; then
 		local VERSION=$(cat /opt/talecaster/${app_name}.version)
 	else
-		local VERSION="3.2.0.5048"
+		local VERSION=${VERSION:-"3.2.0.5048"}
 	fi
 	local APPURL="https://github.com/Radarr/Radarr/releases/download/v${VERSION}/Radarr.master.${VERSION}.${APPARCH}.tar.gz"
 
