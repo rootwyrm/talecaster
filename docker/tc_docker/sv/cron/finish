@@ -1,7 +1,0 @@
-#!/bin/sh
-
-kill -SIGTERM $(cat /var/run/crond.pid)
-
-if [ -f /var/run/crond.pid ]; then
-	rm /var/run/crond.pid
-fi
