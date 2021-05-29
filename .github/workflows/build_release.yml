@@ -20,6 +20,11 @@ on:
     repository_dispatch:
       types: [ relbuild ]
     workflow_dispatch:
+      inputs:
+        logLevel:
+          description: 'Log Level'
+          required: true
+          default: 'warning'
 
 ## Restructure to build our cores separate...        
 jobs:
