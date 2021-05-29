@@ -19,6 +19,7 @@ on:
       - v1*
     repository_dispatch:
       types: [ relbuild ]
+    workflow_dispatch:
 
 ## Restructure to build our cores separate...        
 jobs:
