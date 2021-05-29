@@ -12,6 +12,13 @@ on:
     branches:
       - latest
       - release/*
+    paths:
+      - container/**
+      - ci/**
+    paths-ignore:
+      - docs/**
+      - plymouth/**
+      - kickstart/**
     tags:
       - v1*
     repository_dispatch:
