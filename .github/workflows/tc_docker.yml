@@ -26,15 +26,10 @@ jobs:
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
-      - name: Get job_id
-        id: jobid
-        uses: Tiryoh/gha-jobid-action@v0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          job_name: pr_tc_docker
       - name: Show job_id
         run: |
-          echo "job_id ${{ steps.jobid.outputs }}"
+          echo "RUN_ID ${GITHUB_RUNID}" &&
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/json" -H "Accept: application/vnd.github.v3+json" -X GET https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs
       - name: Check out from ${{ github.ref }}
         id: checkout
         uses: actions/checkout@v2
