@@ -12,6 +12,8 @@ on:
   pull_request:
     paths:
       - container/tc_docker/**
+    repository_dispatch:
+      types: [ pr_tc_docker ]
   workflow_dispatch:
 
 jobs:
