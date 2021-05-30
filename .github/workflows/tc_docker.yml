@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tc_docker:
+  pr_tc_docker:
     name: PR Check - tc_docker
     runs-on: ubuntu-latest
     strategy:
@@ -26,12 +26,15 @@ jobs:
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
-      - name: Show job_id
+      - name: Get job_id
         id: jobid
         uses: Tiryoh/gha-jobid-action@v0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          job_name: tc_docker
+          job_name: pr_tc_docker
+      - name: Show job_id
+        run: |
+          echo "job_id ${{ steps.jobid.outputs.job_id }}"
       - name: Check out from ${{ github.ref }}
         id: checkout
         uses: actions/checkout@v2
