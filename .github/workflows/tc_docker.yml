@@ -26,6 +26,12 @@ jobs:
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
+      - name: Show job_id
+        id: jobid
+        uses: Tiryoh/gha-jobid-action@v0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: @@JOB_NAME@@
       - name: Check out from ${{ github.ref }}
         id: checkout
         uses: actions/checkout@v2
