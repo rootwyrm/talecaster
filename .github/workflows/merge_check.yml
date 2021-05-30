@@ -11,9 +11,14 @@ on:
   pull_request:
     branches:
       - latest
+      - devel
       - release/*
+    paths:
+      - container/**
+      - ci/**
     tags:
       - v1*
+  workflow_dispatch: 
 
 ## Restructure to build our cores separate...        
 jobs:
