@@ -34,7 +34,7 @@ jobs:
           job_name: pr_tc_docker
       - name: Show job_id
         run: |
-          echo "job_id ${{ steps.jobid.outputs.job_id }}"
+          echo "job_id ${{ steps.jobid.outputs }}"
       - name: Check out from ${{ github.ref }}
         id: checkout
         uses: actions/checkout@v2
