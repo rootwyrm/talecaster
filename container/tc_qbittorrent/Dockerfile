@@ -9,7 +9,7 @@
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
 FROM	alpine:3.13 AS inter
 WORKDIR	/intermediate
-RUN		apk update && apk upgrade && apk add git bash gcc g++ && \
+RUN		apk update && apk upgrade && apk add git bash bash-completion build-base curl curl-dev autoconf automake libtool perl python3 python3-dev py3-numpy py3-numpy-dev linux-headers && \
 	cd /intermediate ; \
 	wget https://raw.githubusercontent.com/userdocs/qbittorrent-nox-static/master/qbittorrent-nox-static.sh ; \
 	chmod +x qbittorrent-nox-static.sh ; \
@@ -17,7 +17,7 @@ RUN		apk update && apk upgrade && apk add git bash gcc g++ && \
 
 FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
-COPY	--from=inter /intermediate/qb-build/completed/qbittorrent-nox /usr/local/bin/
+COPY	--from=inter /intermediate/qbt-build/completed/qbittorrent-nox /usr/local/bin/
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
