@@ -51,10 +51,13 @@ install_buildpkg()
 build_libgdiplus()
 {
 	echo "$(date '+%b %d %H:%M:%S') [libgdiplus] Retrieving libgdiplus $libgdiplusv"
-	cd /opt/talecaster/build
-	$curl_cmd https://github.com/mono/libgdiplus/archive/refs/tags/$libgdiplusv.tar.gz > $libgdiplusv.tar.gz
-	tar xf $libgdiplusv.tar.gz
-	rm $libgdiplusv.tar.xz
+	if [ ! -d /usr/local/src ]; then
+		mkdir -p /usr/local/src
+	fi
+	cd /usr/local/src
+	$curl_cmd https://github.com/mono/libgdiplus/archive/refs/tags/$libgdiplusv.tar.gz > libgdiplus-$libgdiplusv.tar.gz
+	tar xf libgdiplus-$libgdiplusv.tar.gz
+	rm libgdiplus-$libgdiplusv.tar.gz
 	cd libgdiplus-$libgdiplusv
 
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Configuring..."
@@ -89,7 +92,7 @@ clean_libgdiplus()
 	echo "$(date '+%b %d %H:%M:%S') [libgdiplus] Cleaning up build."
 	make clean
 	cd /root
-	rm -rf /opt/talecaster/build/$libgdiplusv
+	rm -rf /usr/local/src/libgdiplus-$libgdiplusv
 	CHECK_ERROR $? "libgdiplus_clean_delete_source"
 	## Strip to get the size back down
 	/sbin/apk --no-cache del $vbpkg

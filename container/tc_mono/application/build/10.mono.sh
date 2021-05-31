@@ -51,7 +51,10 @@ install_buildpkg()
 build_mono()
 {
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Retrieving $monov"
-	cd /opt/talecaster/build
+	if [ ! -d /usr/local/src ]; then
+		mkdir -p /usr/local/src
+	fi
+	cd /usr/local/src
 	$curl_cmd https://download.mono-project.com/sources/mono/mono-$monov.tar.xz > mono-$monov.tar.xz
 	xzcat mono-$monov.tar.xz | tar xf -
 	rm mono-$monov.tar.xz
@@ -109,7 +112,7 @@ clean_mono()
 	echo "$(date '+%b %d %H:%M:%S') [MONO] Cleaning up build."
 	make clean
 	cd /root
-	rm -rf /opt/talecaster/build/mono-$monov
+	rm -rf /usr/local/src/mono-$monov
 	CHECK_ERROR $? "mono_clean_delete_source"
 	## Strip to get the size back down
 	find /usr/local -type f -exec strip {} \; > /dev/null
