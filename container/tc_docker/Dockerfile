@@ -40,6 +40,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ADD		[ "init.d/", "/etc/init.d/" ]
+ADD		[ "cron/", "/etc/periodic/" ]
 COPY	[ "application/", "/opt/talecaster/" ]
 VOLUME	[ "/run", "/talecaster/shared" ]
 
