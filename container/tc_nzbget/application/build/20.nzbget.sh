@@ -15,7 +15,7 @@ export app_url="http://www.nzbget.net/"
 export app_destdir="/opt/nzbget"
 
 export MAJOR="21"
-export MINOR="0"
+export MINOR="1"
 export NZBGET_URL="https://github.com/nzbget/nzbget/releases/download"
 
 ######################################################################
