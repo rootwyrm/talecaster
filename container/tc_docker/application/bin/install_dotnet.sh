@@ -11,14 +11,12 @@
 . /opt/talecaster/lib/talecaster.lib.sh
 
 DOTNET_VERSION=$(cat /opt/talecaster/etc/dotnet.release)
-DOTNET_PR=$(cat /opt/talecaster/etc/dotnet.pr)
-DOTNET_KEY=$(cat /opt/talecaster/etc/dotnet.key)
 DOTNET_SHA512=$(cat /opt/talecaster/etc/dotnet.sha512)
 
 function download()
 {
 	export TARFILE=/tmp/dotnet.tgz
-	wget -O $TARFILE https://download.visualstudio.microsoft.com/download/pr/${DOTNET_PR}/${DOTNET_KEY}/dotnet-runtime-${DOTNET_VERSION}-linux-musl-x64.tar.gz
+	wget -O $TARFILE https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-musl-x64.tar.gz
 	CHECK_ERROR $? retrieve_dotnet
 	local sha512=$(sha512sum $TARFILE | awk '{print $1}')
 	if [ ${sha512} != ${DOTNET_SHA512} ]; then
