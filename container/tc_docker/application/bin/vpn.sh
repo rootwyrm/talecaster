@@ -72,6 +72,7 @@ function update_rc()
 	##      we have a workaround.
 	echo 'peer_dns="no"' >> $confd
 	## NYI: need our own vpn up and down scripts.
+	echo 'up_script="/etc/openvpn/vpn_up.sh"' >> $confd
 	/sbin/rc-update enable openvpn.talecaster
 }
 
