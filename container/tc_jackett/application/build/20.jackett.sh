@@ -24,7 +24,7 @@ case $(uname -m) in
 		exit 255
 		;;
 esac
-export VERSION="0.18.98"
+export VERSION="0.18.379"
 export APPURL="https://github.com/Jackett/Jackett/releases/download/v${VERSION}/Jackett.Binaries.${APPARCH}.tar.gz"
 
 ######################################################################

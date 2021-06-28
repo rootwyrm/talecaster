@@ -10,18 +10,18 @@
 # init.d/jackett
 
 : ${datadir:="/talecaster/config"}
-: ${jackettbin:="/opt/Jackett/JackettConsole.exe"}
+: ${jackettbin:="/opt/Jackett/jackett"}
 : ${command_user:="talecaster:media"}
 
 name="Jackett"
-description="Jackett - a Torznab search proxy"
+description="Jackett - a .NET torznab proxy"
 supervisor="supervise-daemon"
 
-command="/usr/local/bin/mono"
-command_args="--debug ${jackettbin} -d ${datadir}"
+command="${jackett}"
+command_args="-d ${datadir}"
 command_args_foreground=""
 
 depend() {
-	need net mono
-	after firewall mono talecaster
+	need net
+	after firewall talecaster
 }
