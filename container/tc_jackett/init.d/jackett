@@ -17,7 +17,7 @@ name="Jackett"
 description="Jackett - a .NET torznab proxy"
 supervisor="supervise-daemon"
 
-command="${jackett}"
+command="${jackettbin}"
 command_args="-d ${datadir}"
 command_args_foreground=""
 
