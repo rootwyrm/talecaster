@@ -6,9 +6,20 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		TALECASTER_BASE=latest
-FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
+ARG     TALECASTER_BASE=latest
+## XXX: Temporary 
+## See https://github.com/Jackett/Jackett/issues/11969
+FROM    mcr.microsoft.com/dotnet/sdk:5.0-alpine-amd64 AS build
+WORKDIR /artifact
+RUN     apk update && apk upgrade && apk add git bash build-base linux-headers && \
+        cd /artifact && \
+        export JVER="0.18.402" && \
+        wget https://github.com/Jackett/Jackett/archive/refs/tags/v0.18.402.tar.gz && \
+        tar xf v0.18.402.tar.gz && \
+        cd Jackett-0.18.402/src && \
+        dotnet publish Jackett.Server -f net5.0 -r linux-musl-x64 --self-contained
 
+FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		com.rootwyrm.product="TaleCaster" \
@@ -34,10 +45,13 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.source="%%GITHUB_REPOSITORY%%" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
+## XXX: Temporary
+COPY    --from=build /artifact/Jackett-0.18.402/src/Jackett.Server/bin/Debug/net5.0/linux-musl-x64/* /opt/Jackett/
+
 ## Ports
 EXPOSE	9117/tcp
 
 ## Volumes
 VOLUME [ "/talecaster/blackhole", "/talecaster/config" ]
 
-# vim:sw=4:ts=4
+# vim:sw=4:ts=4:et
