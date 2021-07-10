@@ -10,7 +10,7 @@
 ## build/20.radarr.sh
 . /opt/talecaster/lib/talecaster.lib.sh
 
-export app_name="Radarr"
+export app_name="radarr"
 export app_url="http://www.radarr.video/"
 export app_destdir="/opt/Radarr"
 
@@ -36,14 +36,14 @@ application_install()
 			exit 255
 			;;
 	esac
-	if [ $MONO == 'true' ]; then
+	if [[ $MONO == 'true' ]]; then
 		local APPARCH="linux"
 	fi
 	## Determine our version
 	if [ -f /opt/talecaster/${app_name}.version ]; then
 		local VERSION=$(cat /opt/talecaster/${app_name}.version)
 	else
-		local VERSION=${VERSION:-"3.2.0.5048"}
+		local VERSION=${VERSION:-"3.2.2.5080"}
 	fi
 	local APPURL="https://github.com/Radarr/Radarr/releases/download/v${VERSION}/Radarr.master.${VERSION}.${APPARCH}.tar.gz"
 
