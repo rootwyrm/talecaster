@@ -12,13 +12,13 @@ ARG     TALECASTER_BASE=latest
 FROM    mcr.microsoft.com/dotnet/sdk:5.0-alpine-amd64 AS build
 WORKDIR /artifact
 RUN     apk update && apk upgrade && apk add git bash build-base linux-headers && \
-        cd /artifact && \
+        cd /tmp && \
         export JVER="0.18.402" && \
         wget https://github.com/Jackett/Jackett/archive/refs/tags/v0.18.402.tar.gz && \
         tar xf v0.18.402.tar.gz && \
         cd Jackett-0.18.402 && \
-        dotnet publish src/Jackett.Server -f net5.0 -r linux-musl-x64 --force -c Release -o /artifact/build
-        #dotnet restore src/Jackett.Server -f -r linux-musl-x64 && \
+        dotnet publish src/Jackett.Server -f net5.0 -r linux-musl-x64 --force -c Release -o /tmp/build && \
+        tar cf /artifact/jackett.tar /tmp/build
 
 FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 ## Labels
@@ -47,7 +47,8 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## XXX: Temporary
-COPY    --from=build /artifact/build/* /opt/Jackett/
+COPY    --from=build /artifact/jackett.tar /opt/Jackett/
+RUN tar xf /opt/Jackett/jackett.tar -C /opt/Jackett && rm /opt/Jackett/jackett.tar
 
 ## Ports
 EXPOSE	9117/tcp
