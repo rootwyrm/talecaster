@@ -17,8 +17,9 @@ RUN     apk update && apk upgrade && apk add git bash build-base linux-headers &
         wget https://github.com/Jackett/Jackett/archive/refs/tags/v0.18.402.tar.gz && \
         tar xf v0.18.402.tar.gz && \
         cd Jackett-0.18.402 && \
-        dotnet publish src/Jackett.Server -f net5.0 -r linux-musl-x64 --force -c Release -o /tmp/build && \
-        tar cf /artifact/jackett.tar /tmp/build
+        dotnet publish src/Jackett.Server -f net5.0 -r linux-musl-x64 --force -c Release && \
+        cd /tmp/Jackett-0.18.402/src/Jackett.Server/bin/Release/net5.0/linux-musl-x64/publish/ && \
+        tar cf /artifact/jackett.tar .
 
 FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 ## Labels
@@ -47,8 +48,8 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.created="%%RW_BUILDDATE%%" 
 
 ## XXX: Temporary
-COPY    --from=build /artifact/jackett.tar /opt/Jackett/
-RUN tar xf /opt/Jackett/jackett.tar -C /opt/Jackett && rm /opt/Jackett/jackett.tar
+COPY    --from=build /artifact/jackett.tar /tmp/jackett.tar
+RUN tar xf /tmp/jackett.tar -C /opt/Jackett && rm /tmp/jackett.tar
 
 ## Ports
 EXPOSE	9117/tcp
