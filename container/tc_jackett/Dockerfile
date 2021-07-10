@@ -17,8 +17,8 @@ RUN     apk update && apk upgrade && apk add git bash build-base linux-headers &
         wget https://github.com/Jackett/Jackett/archive/refs/tags/v0.18.402.tar.gz && \
         tar xf v0.18.402.tar.gz && \
         cd Jackett-0.18.402 && \
-        dotnet restore src/Jackett.Server -f -r linux-musl-x64 && \
         dotnet publish src/Jackett.Server -f net5.0 -r linux-musl-x64 --force -c Release -o /artifact/build
+        #dotnet restore src/Jackett.Server -f -r linux-musl-x64 && \
 
 FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
 ## Labels
