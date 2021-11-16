@@ -12,9 +12,12 @@ on:
     branches:
       - latest
       - release/*
+      - hybrid
+      - hybrid/*
     paths:
       - container/**
       - ci/**
+      - dcontainer/**
     tags:
       - v1*
     repository_dispatch:
