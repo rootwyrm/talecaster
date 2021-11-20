@@ -41,6 +41,6 @@ EXPOSE	8989/tcp
 COPY	[ "cron/", "/etc/periodic/" ]
 
 ## Volumes
-VOLUME [ "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/television" ]
+VOLUME [ "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/television", "/talecaster/archive" ]
 
 # vim:sw=4:ts=4

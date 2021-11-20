@@ -38,6 +38,6 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 EXPOSE	7878/tcp
 
 ## Volumes
-VOLUME [ "/talecaster/downloads", "/talecaster/blackhole", "/talecaster/movies", "/talecaster/config" ]
+VOLUME [ "/talecaster/downloads", "/talecaster/blackhole", "/talecaster/movies", "/talecaster/config", "/talecaster/archive" ]
 
 # vim:sw=4:ts=4
