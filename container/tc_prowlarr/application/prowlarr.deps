@@ -1,0 +1,5 @@
+curl
+sqlite
+sqlite-libs
+icu
+glib
