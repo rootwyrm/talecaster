@@ -12,14 +12,9 @@ on:
     branches:
       - latest
       - release/*
-      - hybrid
-      - hybrid/*
     paths:
       - container/**
       - ci/**
-      - dcontainer/**
-    tags:
-      - v1*
     repository_dispatch:
       types: [ relbuild ]
   workflow_dispatch:
@@ -172,7 +167,7 @@ jobs:
     needs: tc_docker
     strategy:
       matrix:
-        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_jackett ]
+        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_jackett, tc_prowlarr ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:

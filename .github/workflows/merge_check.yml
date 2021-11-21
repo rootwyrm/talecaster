@@ -12,12 +12,11 @@ on:
     branches:
       - latest
       - devel
+      - dev/*
       - release/*
     paths:
       - container/**
       - ci/**
-    tags:
-      - v1*
   workflow_dispatch: 
 
 ## Restructure to build our cores separate...        
@@ -121,7 +120,7 @@ jobs:
     needs: tc_docker
     strategy:
       matrix:
-        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr ]
+        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_prowlarr ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
