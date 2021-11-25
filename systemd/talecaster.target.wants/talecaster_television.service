@@ -1,0 +1,12 @@
+[Unit]
+Description=TaleCaster Television Container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a television
+ExecStop=/usr/bin/docker stop -t 2 television
+
+[Install]
+WantedBy=talecaster.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=TaleCaster BitTorrent Container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a torrent
+ExecStop=/usr/bin/docker stop -t 2 torrent
+
+[Install]
+WantedBy=talecaster.target

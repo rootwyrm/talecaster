@@ -1,0 +1,12 @@
+[Unit]
+Description=TaleCaster Indexer Container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a indexer
+ExecStop=/usr/bin/docker stop -t 2 indexer 
+
+[Install]
+WantedBy=talecaster.target
