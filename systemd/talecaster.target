@@ -1,0 +1,6 @@
+[Unit]
+Description=TaleCaster boot target
+Requires=multi-user.target docker.service
+Conflicts=rescue.service rescue.target
+After=multi-user.target rescue.service rescue.target docker.service
+AllowIsolate=yes
