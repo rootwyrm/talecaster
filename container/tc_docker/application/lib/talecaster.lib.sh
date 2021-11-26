@@ -121,6 +121,7 @@ function generate_message()
 	elif [ -f $relfile ]; then
 		release=$(cat $relfile)
 	fi
+	appname=$(cat /opt/talecaster/id.provides)
 
 	msgfile="/message"
 	if [ ! -f /message ]; then
