@@ -115,7 +115,6 @@ function load_pyenv()
 ## Message generator
 function generate_message()
 {
-	## Still not really used, always just runs latest...
 	relfile="/opt/talecaster/id.release"
 	if [ ! -f $relfile ]; then
 		release=${release:-"latest"}
@@ -124,6 +123,9 @@ function generate_message()
 	fi
 
 	msgfile="/message"
+	if [ ! -f /message ]; then
+		cp /opt/talecaster/etc/message.tpl $msgfile
+	fi
 	sed -i -e 's,%RELEASE%,'$release',g' $msgfile
 	sed -i -e 's,%APPNAME%,'$appname',g' $msgfile
 }
@@ -132,6 +134,7 @@ function generate_message()
 function check_firstrun()
 {
 	if [ -f /firstboot ]; then
+		printf '\n'
 		printf ' * TaleCaster: found /firstboot, running initial setup\n'
 		return 1
 	fi
