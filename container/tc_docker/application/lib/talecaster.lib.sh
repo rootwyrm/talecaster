@@ -136,12 +136,11 @@ function check_firstrun()
 	if [ -f /firstboot ]; then
 		printf '\n'
 		printf ' * TaleCaster: found /firstboot, running initial setup\n'
-		return 1
+		export FIRSTBOOT=1
 	fi
 	if [ -f /factory.reset ]; then
 		printf ' * TaleCaster: found /factory.reset, performing reset\n'
 		export FACTORY_RESET=1
-		return 1
 	fi
 }
 

@@ -61,8 +61,5 @@ deploy_talecaster_user
 user_ownership
 config
 permissions
-if [ ! -f /message ]; then
-	touch /message
-fi
 generate_message
 cat /message

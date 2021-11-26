@@ -58,8 +58,5 @@ user_ownership
 check_firstrun
 config
 permissions
-if [ ! -f /message ]; then
-	touch /message
-fi
 generate_message
 cat /message
