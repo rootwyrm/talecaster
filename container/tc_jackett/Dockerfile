@@ -9,7 +9,7 @@
 ARG     TALECASTER_BASE=latest
 ## XXX: Temporary 
 ## See https://github.com/Jackett/Jackett/issues/11969
-FROM    mcr.microsoft.com/dotnet/sdk:5.0-alpine-amd64 AS build
+FROM    mcr.microsoft.com/dotnet/sdk:6.0-alpine-amd64 AS build
 WORKDIR /artifact
 RUN     apk update && apk upgrade && apk add git bash build-base linux-headers && \
         cd /tmp && \
