@@ -1,0 +1,10 @@
+## Dependabot
+
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/container/tc_*/"
+    schedule:
+      interval: "daily"
+
+# vim:ft=yaml:sw=2:ts=2:et
