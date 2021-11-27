@@ -3,6 +3,7 @@ py3-pip
 sqlite
 git
 tzdata
+unrar
 libjpeg-turbo
 zlib
 tiff
