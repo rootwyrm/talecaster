@@ -1,0 +1,10 @@
+python3
+py3-pip
+sqlite
+git
+tzdata
+libjpeg-turbo
+zlib
+tiff
+libwebp
+lcms2
