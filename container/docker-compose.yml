@@ -74,6 +74,27 @@ services:
       - /opt/talecaster/config/torrent:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
       - /sys:/sys
+  indexer:
+    container_name: indexer
+    image: docker.io/rootwyrm/tc_${INDEXER_PROVIDER:-prowlarr}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.22
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${INDEXER_PORT:-9696}:9696"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - /opt/talecaster/config/indexer:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
   television:
     container_name: television
     image: docker.io/rootwyrm/tc_${TELEVISION_PROVIDER:-sonarr}:${RELEASE:-latest}
@@ -138,6 +159,50 @@ services:
       - tc-downloads:/talecaster/downloads
       - tc-music:/talecaster/music
       - /opt/talecaster/config/music:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+  books:
+    container_name: books
+    image: docker.io/rootwyrm/tc_${BOOKS_PROVIDER:-readarr}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.33
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${BOOKS_PORT:-8787}:8787"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-books:/talecaster/books
+      - /opt/talecaster/config/books:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+      - /sys:/sys
+  comics:
+    container_name: comics
+    image: docker.io/rootwyrm/tc_${COMICS_PROVIDER:-mylar}:${RELEASE:-latest}
+    restart: on-failure
+    env_file:
+      - /opt/talecaster/docker.env
+    networks:
+      talecaster:
+        ipv4_address: 172.16.100.34
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${COMICS_PORT:-8090}:8090"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-comics:/talecaster/comics
+      - /opt/talecaster/config/comics:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
       - /sys:/sys
 
