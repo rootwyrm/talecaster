@@ -7,9 +7,9 @@
 # See /LICENSE for details
 ################################################################################
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-FROM	alpine:3.13 AS inter
+FROM	alpine:3.15 AS inter
 WORKDIR	/intermediate
-RUN		apk update && apk upgrade && apk add git bash bash-completion build-base curl curl-dev autoconf automake libtool perl python3 python3-dev py3-numpy py3-numpy-dev linux-headers && \
+RUN		apk update && apk upgrade && apk add git bash bash-completion build-base curl curl-dev autoconf automake libtool perl python3 python3-dev py3-numpy py3-numpy-dev gcc linux-headers && \
 	cd /intermediate ; \
 	wget https://raw.githubusercontent.com/userdocs/qbittorrent-nox-static/master/qbittorrent-nox-static.sh ; \
 	chmod +x qbittorrent-nox-static.sh ; \
