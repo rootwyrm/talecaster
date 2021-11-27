@@ -3,7 +3,59 @@
 version: 2
 updates:
   - package-ecosystem: "docker"
-    directory: "/container/tc_*/"
+    directory: "/container/tc_mono/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_frontend/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_readarr/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_lidarr/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_mylar/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_docker/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_sonarr/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_prowlarr/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_qbittorrent/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_radarr/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_jackett/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_headphones/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_transmission/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/container/tc_nzbget/"
     schedule:
       interval: "daily"
 
