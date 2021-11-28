@@ -7,17 +7,7 @@
 # See /LICENSE for details
 ################################################################################
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-FROM	alpine:3.15 AS inter
-WORKDIR	/intermediate
-RUN		apk update && apk upgrade && apk add git bash bash-completion build-base curl curl-dev autoconf automake libtool perl python3 python3-dev py3-numpy py3-numpy-dev gcc linux-headers linux-lts-dev && \
-	cd /intermediate ; \
-	wget -O qbittorrent-nox-static.sh https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/$(uname -m)-qbittorrent-nox && \
-	chmod +x qbittorrent-nox-static.sh ; \
-	./qbittorrent-nox-static.sh all
-
 FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
-
-COPY	--from=inter /intermediate/qbt-build/completed/qbittorrent-nox /usr/local/bin/
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
@@ -47,9 +37,10 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 ## PORTS
 EXPOSE	8081/tcp
 
+## Retrieve a prebuilt for now
+RUN		wget -qO /usr/local/bin/qbittorrent-nox https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/$(uname -m)-qbittorrent-nox ; chmod +x /usr/local/bin/qbittorrent-nox
+
 ## VOLUMES
-VOLUME	[ "/talecaster/shared" ]
-VOLUME	[ "/talecaster/blackhole" ]
-VOLUME	[ "/talecaster/downloads" ]
+VOLUME	[ "/talecaster/shared", "/talecaster/blackhole", "/talecaster/downloads" ]
 
 # vim: sw=4:ts=4
