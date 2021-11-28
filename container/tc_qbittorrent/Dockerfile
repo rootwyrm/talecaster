@@ -11,7 +11,7 @@ FROM	alpine:3.15 AS inter
 WORKDIR	/intermediate
 RUN		apk update && apk upgrade && apk add git bash bash-completion build-base curl curl-dev autoconf automake libtool perl python3 python3-dev py3-numpy py3-numpy-dev gcc linux-headers linux-lts-dev && \
 	cd /intermediate ; \
-	wget -O qbittorrent-nox-static.sh https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/$(uname -m)-qbittorrent-nox
+	wget -O qbittorrent-nox-static.sh https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/$(uname -m)-qbittorrent-nox && \
 	chmod +x qbittorrent-nox-static.sh ; \
 	./qbittorrent-nox-static.sh all
 
