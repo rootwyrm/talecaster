@@ -19,7 +19,7 @@ function config()
 		LOG "Configuration storage volume missing!" E 255
 	fi
 	if [ ! -f $conffile ]; then
-		if [ -d /talecaster/config/qBittorrent/config ]; then
+		if [ ! -d /talecaster/config/qBittorrent/config ]; then
 			mkdir -p /talecaster/config/qBittorrent/config
 			chown -R $tcuser:$tcgroup /talecaster/config/qBittorrent
 		fi
