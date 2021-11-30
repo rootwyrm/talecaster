@@ -1,0 +1,4 @@
+[submodule "dependency/Sonarr"]
+	path = dependency/Sonarr
+	url = https://github.com/Sonarr/Sonarr.git
+	branch = develop
