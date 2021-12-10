@@ -11,6 +11,52 @@
 ## XXX: DO NOT USE TABS IN THIS FILE, ONLY USE SPACES!!
 
 ## Tools for working with Servarr
+
+# xml_generate_from_template $XMLFILE
+function xml_generate_from_template()
+{
+    if [ -z $1 ]; then
+        printf 'No XML file provided.\n'
+        exit 20
+    elif [ ! -f $1 ]; then
+        cp /opt/talecaster/etc/config.xml.tpl $1
+        sed -i -e 's,\<LogLevel.*,\<LogLevel\>info\<\/LogLevel>,' $1
+        sed -i -e 's,\<UpdateMech.*,\<UpdateMechanism\>BuiltIn\<\/UpdateMechanism\>,' $1
+        sed -i -e 's,\<BindAddress.*,\<BindAddress\>*\<\/BindAddress\>,' $1
+        sed -i -e 's,\<Port.*,\<Port\>'$SERVICE_PORT'\<\/Port\>,' $1
+        xml_update_url_base $1
+        xml_generate_apikey $1
+        sed -i -e 's,\<LaunchBrowser.*,\<LaunchBrowser\>False\<\/LaunchBrowser\>,' $1
+        BRANCH=${BRANCH:-develop}
+        sed -i -e 's,%%SERVICE_BRANCH%%,'${BRANCH}',' $1
+        SERVICE_PORT_SSL=${SERVICE_PORT_SSL:-}
+        sed -i -e 's,\<SslPort.*,\<SslPort\>\<\/SslPort\>,' $1
+        sed -i -e 's,\<SslCertPath.*,\<SslCertPath\>\<\/SslCertPath\>,' $1
+        sed -i -e 's,\<SslCertPass.*,\<SslCertPassword\>\<\/SslCertPassword\>,' $1
+    fi 
+}
+
+# xml_generate_apikey $XMLFILE
+function xml_generate_apikey()
+{
+    if [ -z $1 ]; then
+        printf 'No XML file provided.\n'
+        exit 20
+    elif [ ! -f $1 ]; then
+        printf 'Configuration XML %s does not exist\n' "$1"
+        exit 20
+    fi
+    if [ -f $1 ]; then
+        newkey=$(uuidgen -r | sed -e 's/-//g')
+        sed -i -e 's,\<ApiKey.*,\<ApiKey>'${newkey}'</ApiKey>,' $1
+        if [ $? -ne 0 ]; then
+            printf 'Error updating ApiKey in %s\n' "$1"
+            exit 255
+        fi
+        unset newkey
+    fi
+}
+
 # xml_extract_apikey $XMLFILE
 function xml_extract_apikey()
 {

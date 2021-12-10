@@ -45,7 +45,7 @@ COPY	[ "application/", "/opt/talecaster/" ]
 VOLUME	[ "/run", "/talecaster/shared" ]
 
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata jq rsyslog && \
+	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata jq rsyslog python3 uuidgen && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
@@ -65,6 +65,10 @@ RUN	apk update && apk upgrade && \
 	/sbin/rc-update add rsyslog default ; \
 	/sbin/rc-update add talecaster default ; \
 	sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh ; \
+	python3 -m venv /opt/talecaster/venv ; \
+	. /opt/talecaster/venv/bin/activate ; \
+	/opt/talecaster/venv/bin/python3 -m pip install --upgrade pip && \
+	/opt/talecaster/venv/bin/pip install -r /opt/talecaster/venv/requirements.txt && \
 	echo "TaleCaster is Copyright (C) 2016-* Phillip Jaenke and its contributors" > /LICENSE ; \
 	echo "https://github.com/rootwyrm/talecaster/" >> /LICENSE ; \
 	echo "" >> /LICENSE ; \

@@ -1,0 +1,15 @@
+<Config>
+  <LogLevel>info</LogLevel>
+  <UpdateMechanism>BuiltIn</UpdateMechanism>
+  <BindAddress>*</BindAddress>
+  <Port>%%SERVICE_PORT%%</Port>
+  <UrlBase>%%SERVICE_URL%%</UrlBase>
+  <ApiKey>%%APIKEY%%</ApiKey>
+  <AuthenticationMethod>None</AuthenticationMethod>
+  <LaunchBrowser>False</LaunchBrowser>
+  <Branch>%%SERVICE_BRANCH%%</Branch>
+  <SslPort>%%SERVICE_PORT_SSL%%</SslPort>
+  <EnableSsl>False</EnableSsl>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
+</Config>
