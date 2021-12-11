@@ -72,7 +72,7 @@ function xml_extract_apikey()
     fi
     if [ -f $1 ]; then
         apikey=$(grep -oP '(?<=ApiKey>)[^<]+' $1)
-        printf '%s\n' $apikey
+        printf '%s' $apikey
     fi
 }
 
