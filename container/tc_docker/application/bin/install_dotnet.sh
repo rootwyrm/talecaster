@@ -16,7 +16,8 @@ DOTNET_SHA512=$(cat /opt/talecaster/etc/dotnet.sha512)
 function download()
 {
 	export TARFILE=/tmp/dotnet.tgz
-	wget -O $TARFILE https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-musl-x64.tar.gz
+	printf 'Downloading ${DOTNET_VERSION}... \n'
+	wget -q -O $TARFILE https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-musl-x64.tar.gz
 	CHECK_ERROR $? retrieve_dotnet
 	local sha512=$(sha512sum $TARFILE | awk '{print $1}')
 	if [ ${sha512} != ${DOTNET_SHA512} ]; then

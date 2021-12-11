@@ -22,6 +22,6 @@ command_args="-data=${datadir} -nobrowser"
 command_args_foreground=""
 
 depend() {
-	need net
+	need net talecaster
 	after firewall talecaster
 }

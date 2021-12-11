@@ -1,0 +1,16 @@
+nntp	6789
+nntp	6790	ssl
+torrent	8081
+torrent	8082	ssl
+indexer	9696
+indexer	9697	ssl
+television	8989
+television	8990	ssl
+movies	7878
+movies	7879	ssl
+music	8686
+music	8687	ssl
+comics	8090
+comics	8091	ssl
+books	8787
+books	8788	ssl

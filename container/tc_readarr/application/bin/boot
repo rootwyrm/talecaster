@@ -9,6 +9,7 @@
 ################################################################################
 
 . /opt/talecaster/lib/talecaster.lib.sh
+. /opt/talecaster/lib/servarr_tools
 appbase="/opt/Readarr"
 
 function config()
@@ -23,10 +24,7 @@ function permissions()
 	tcuid=${tcuid:-"30000"}
 	tcgid=${tcuid:-"30000"}
 	chown -R $tcuid:$tcgid $appbase
-	chown $tcuid:$tcgid /talecaster/config
-	if [ -d /talecaster/config/.config ]; then
-		chown -R $tcuid:$tcgid /talecaster/config/.config
-	fi
+	chown -R $tcuid:$tcgid /talecaster/config
 }
 
 load_config
@@ -34,6 +32,9 @@ check_firstrun
 deploy_talecaster_user
 user_ownership
 config
+if [ ! -f /talecaster/config/config.xml ]; then
+	xml_generate_from_template /talecaster/config/config.xml
+fi
 permissions
 generate_message
 cat /message

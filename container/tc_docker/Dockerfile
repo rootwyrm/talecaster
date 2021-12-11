@@ -6,7 +6,7 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		ALPINE_BASE=3.14
+ARG		ALPINE_BASE=3.15
 FROM	alpine:${ALPINE_BASE}
 
 ENV tcuid=${tcuid:-30000}

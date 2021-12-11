@@ -1,0 +1,8 @@
+certifi
+fake-useragent
+lxml
+pyarr
+requests
+requests-xml >= 0.2.3
+xml-miner >= 0.0.5
+xmljson

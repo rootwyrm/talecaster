@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -x
 ################################################################################
 # TaleCaster - https://github.com/rootwyrm/talecaster
 # Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
@@ -9,7 +9,8 @@
 ################################################################################
 
 . /opt/talecaster/lib/talecaster.lib.sh
-appbase="/opt/Radarr"
+. /opt/talecaster/lib/servarr_tools
+appbase="/opt/Prowlarr"
 
 function config()
 {
@@ -22,15 +23,27 @@ function permissions()
 {
 	tcuid=${tcuid:-"30000"}
 	tcgid=${tcuid:-"30000"}
-	chown -R $tcuid:$tcgid /opt/Radarr
-	chown $tcuid:$tcgid /talecaster/config
-	if [ -d /talecaster/config/.config ]; then
-		chown -R $tcuid:$tcgid /talecaster/config/.config
+	chown -R $tcuid:$tcgid $appbase
+	chown -R $tcuid:$tcgid /talecaster/config
+}
+
+function prowlarr_bootstrap()
+{
+	if [ ! -f /talecaster/config/config.xml ]; then
+		printf 'No existing configuration found, bootstrapping...\n'
+		/opt/Prowlarr/Prowlarr -data=/talecaster/config -nobrowser > /dev/null &
+		runpid=$!
+		sleep 10
+		kill -KILL $runpid
 	fi
+	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/indexer.api
+	xml_update_urlbase /talecaster/config/config.xml /indexer
 }
 
 load_config
 check_firstrun
+## Prowlarr configuration bootstrap
+prowlarr_bootstrap
 deploy_talecaster_user
 user_ownership
 config

@@ -9,6 +9,7 @@
 ################################################################################
 
 . /opt/talecaster/lib/talecaster.lib.sh
+. /opt/talecaster/lib/servarr_tools
 appbase="/opt/Lidarr"
 
 function config()
@@ -32,7 +33,7 @@ deploy_talecaster_user
 user_ownership
 config
 if [ ! -f /talecaster/config/config.xml ]; then
-	xml_construct_from_template
+	xml_generate_from_template /talecaster/config/config.xml
 fi
 permissions
 generate_message

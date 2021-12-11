@@ -1,12 +1,12 @@
 [Unit]
-Description=TaleCaster Movies Container
+Description=TaleCaster Comics Container
 Requires=docker.service
 After=docker.service talecaster_indexer.service talecaster_nntp.service talecaster_torrent.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker start -a movies
-ExecStop=/usr/bin/docker stop -t 2 movies
+ExecStart=/usr/bin/docker start -a comics
+ExecStop=/usr/bin/docker stop -t 2 comics
 
 [Install]
 WantedBy=talecaster.target

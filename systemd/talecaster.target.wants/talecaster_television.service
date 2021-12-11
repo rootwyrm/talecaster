@@ -1,7 +1,7 @@
 [Unit]
 Description=TaleCaster Television Container
 Requires=docker.service
-After=docker.service
+After=docker.service talecaster_indexer.service talecaster_nntp.service talecaster_torrent.service
 
 [Service]
 Restart=always
