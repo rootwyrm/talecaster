@@ -1,0 +1,12 @@
+[Unit]
+Description=TaleCaster Music Container
+Requires=docker.service
+After=docker.service talecaster_indexer.service talecaster_nntp.service talecaster_torrent.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a music
+ExecStop=/usr/bin/docker stop -t 2 music
+
+[Install]
+WantedBy=talecaster.target
