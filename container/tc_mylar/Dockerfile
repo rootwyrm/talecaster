@@ -52,6 +52,6 @@ EXPOSE	8090/tcp
 COPY	--from=pybuild /opt/mylar/ /opt/mylar
 
 ## Volumes
-VOLUME [ "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/comics" ]
+VOLUME [ "/talecaster/config", "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/comics" ]
 
 # vim:sw=4:ts=4

@@ -24,9 +24,85 @@ function permissions()
 	tcuid=${tcuid:-"30000"}
 	tcgid=${tcuid:-"30000"}
 	chown -R $tcuid:$tcgid $appbase
-	chown $tcuid:$tcgid /talecaster/config
-	if [ -d /talecaster/config/.config ]; then
-		chown -R $tcuid:$tcgid /talecaster/config/.config
+	chown -R $tcuid:$tcgid /talecaster/config
+}
+
+function mylar_config()
+{
+	## Mylar3 uses an INI-style configuration
+	cfgfile="/talecaster/config/config.ini"
+	if [ -z $COMICVINE_APIKEY ]; then
+		printf '[NOTICE] You should define COMICVINE_APIKEY in your Compose environment!\n'
+		printf '\n'
+	fi
+	if [ ! -f /talecaster/config/config.ini ]; then
+		## We need to create the file first.
+		printf '[NOTICE] No existing configuration, bootstrapping...\n'
+		. $appbase/venv/bin/activate
+		$appbase/venv/bin/python $appbase/Mylar.py --datadir /talecaster/config --config /talecaster/config/config.ini -q --nolaunch &
+		sleep 10
+		runpid=$!
+		kill -9 $runpid > /dev/null 2>&1
+		deactivate
+	fi
+	if [ -f /talecaster/config/config.ini ]; then
+		printf '[OK] Config file now exists\n'
+	else
+		printf '[ERROR] Config file was not created?!\n'
+		exit 255
+	fi
+	sleep 5
+
+	sed -i -e 's,^destination_dir.*,destiation_dir = /talecaster/comics,' $cfgfile
+	sed -i -e 's/^move_files.*/move_files = True/' $cfgfile
+	sed -i -e 's/^rename_files.*/rename_files = True/' $cfgfile
+	sed -i -e 's/^failed_download_handling.*/failed_download_handling = True/' $cfgfile
+	sed -i -e 's/^http_port.*/http_port = 8090/' $cfgfile
+	sed -i -e 's/^http_host.*/http_host = 0.0.0.0/' $cfgfile
+	sed -i -e 's,^http_root.*,http_root = /comics,' $cfgfile
+	sed -i -e 's,^api_enabled.*,api_enabled = True,' $cfgfile
+	sed -i -e 's,^newznab =.*,newznab = True,' $cfgfile
+	sed -i -e 's,^enable_torznab.*,enable_torznab = True,' $cfgfile
+	sed -i -e 's,^blackhole_dir.*,blackhole_dir = /talecaster/blackhole,' $cfgfile
+	sed -i -e 's,^opds_enable.*,opds_enable = True,' $cfgfile
+
+	## NZBget
+	sed -i -e 's,^nzbget_host.*,nzbget_host = nntp,' $cfgfile
+	sed -i -e 's,^nzbget_port.*,nzbget_port = 6789,' $cfgfile
+	sed -i -e 's,^nzbget_username.*,nzbget_username = '${NNTP_USER}',' $cfgfile
+	sed -i -e 's,^nzbget_password.*,nzbget_password = '${NNTP_PASSWORD}',' $cfgfile
+
+	## Torrents
+	sed -i -e 's,^enable_torrents =.*,enable_torrents = True,' $cfgfile
+	sed -i -e 's,^enable_torrents_search.*,enable_torrents_search = True,' $cfgfile
+	sed -i -e 's,^qbittorrent_host.*,qbittorrent_host = http://torrent:8081,' $cfgfile
+	sed -i -e 's,^qbittorrent_username.*,qbittorrent_username = admin,' $cfgfile
+	sed -i -e 's,^qbittorrent_label.*,qbittorrent_label = comics,' $cfgfile
+
+	if [ ! -z $COMICVINE_APIKEY ]; then
+		sed -i -e 's,^comicvine_api.*,comicvine_api = '${COMICVINE_APIKEY}',' $cfgfile
+	fi
+}
+
+function mylar_api()
+{
+	## Mylar's API key generation is done in browser using JS, so we
+	## reimplement here as blocking random equivalent.
+	if [ -f /talecaster/config/config.ini ]; then
+		APIKEY=$(grep api_key /talecaster/config/config.ini | cut -d = -f 2)
+	else
+		## Bail, the config's gone away.
+		printf '[ERROR] /talecaster/config/config.ini has vanished!\n'
+		exit 255
+	fi
+	if [ $APIKEY == 'None' ]; then
+		## Generate a new key
+		printf '[NOTICE] Generating new API key for Mylar...\n'
+		APIKEY=$(head -c16 < /dev/random | xxd -p)
+		sed -i -e 's,api_key.*,api_key = '${APIKEY}',' /talecaster/config/config.ini
+		printf '%s' "$APIKEY" > /talecaster/shared/comics.api
+	else
+		printf '%s' "$APIKEY" > /talecaster/shared/comics.api
 	fi
 }
 
@@ -35,6 +111,9 @@ check_firstrun
 deploy_talecaster_user
 user_ownership
 config
+permissions
+mylar_config
+mylar_api
 permissions
 generate_message
 cat /message
