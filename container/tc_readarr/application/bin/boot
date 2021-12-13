@@ -27,14 +27,21 @@ function permissions()
 	chown -R $tcuid:$tcgid /talecaster/config
 }
 
+function config_bootstrap())
+{
+	if [ ! -f /talecaster/config/config.xml ]; then
+		printf 'No existing configuration found, installing defaults...\n'
+		xml_generate_from_template /talecaster/config/config.xml
+	fi
+	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/books.api
+	xml_update_urlbase /talecaster/config/config.xml /books
+}
+
 load_config
 check_firstrun
+config_bootstrap
 deploy_talecaster_user
 user_ownership
-config
-if [ ! -f /talecaster/config/config.xml ]; then
-	xml_generate_from_template /talecaster/config/config.xml
-fi
 permissions
 generate_message
 cat /message

@@ -9,6 +9,7 @@
 ################################################################################
 
 . /opt/talecaster/lib/talecaster.lib.sh
+. /opt/talecaster/lib/servarr_tools
 
 appbase="/opt/Sonarr"
 
@@ -23,15 +24,23 @@ function permissions()
 {
 	tcuid=${tcuid:-"30000"}
 	tcgid=${tcuid:-"30000"}
-	chown -R $tcuid:$tcgid /opt/Sonarr
-	chown $tcuid:$tcgid /talecaster/config
-	if [ -d /talecaster/config/.config ]; then
-		chown -R $tcuid:$tcgid /talecaster/config/.config
+	chown -R $tcuid:$tcgid ${appbase}
+	chown -R $tcuid:$tcgid /talecaster/config
+}
+
+function config_bootstrap()
+{
+	if [ ! -f /talecaster/config/config.xml ]; then
+		printf 'No existing configuration found, installing defaults...\n'
+		xml_generate_from_template /talecaster/config/config.xml
 	fi
+	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/television.api
+	xml_update_urlbase /talecaster/config/config.xml /television
 }
 
 load_config
 check_firstrun
+config_bootstrap
 deploy_talecaster_user
 user_ownership
 config

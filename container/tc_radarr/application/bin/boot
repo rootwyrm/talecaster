@@ -9,6 +9,8 @@
 ################################################################################
 
 . /opt/talecaster/lib/talecaster.lib.sh
+. /opt/talecaster/lib/servarr_tools
+
 appbase="/opt/Radarr"
 
 function config()
@@ -29,8 +31,19 @@ function permissions()
 	fi
 }
 
+function config_bootstrap()
+{
+	if [ ! -f /talecaster/config/config.xml ]; then
+		printf 'No existing configuration found, installing defaults...\n'
+		xml_generate_from_template /talecaster/config/config.xml
+	fi
+	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/movies.xml
+	xml_update_urlbase /talecaster/config/config.xml /movies
+}
+
 load_config
 check_firstrun
+config_bootstrap
 deploy_talecaster_user
 user_ownership
 config
