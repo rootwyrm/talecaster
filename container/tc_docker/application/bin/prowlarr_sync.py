@@ -24,40 +24,41 @@ class Application(object):
         return method()
 
     def television(self):
-        application = 'television'
-        application_port = 8989
-        sync_categories = "[5000,5010,5020,5030,5040,5045,5050]"
-        animesync_categories = "[5070]"
-        implementation = 'Sonarr'
-        implementationName = 'Sonarr'
-        configContract = 'SonarrSettings'
-        print('Selected television')
+        self.application = 'television'
+        self.application_port = 8989
+        self.sync_categories = [5000,5010,5020,5030,5040,5045,5050]
+        self.animesync_categories = [5070]
+        self.implementation = 'Sonarr'
+        self.implementationName = 'Sonarr'
+        self.configContract = 'SonarrSettings'
 
     def movies(self):
-        application = 'movies'
-        application_port = 7878
-        sync_categories = "[2000,2010,2020,2030,2040,2045,2050,2060,2070,2080]"
-        implementation = 'Radarr'
-        implementationName = 'Radarr'
-        configContract = 'RadarrSettings'
+        self.application = 'movies'
+        self.application_port = 7878
+        self.sync_categories = [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080]
+        self.animesync_categories = []
+        self.implementation = 'Radarr'
+        self.implementationName = 'Radarr'
+        self.configContract = 'RadarrSettings'
 
     def music(self):
-        application = 'music'
-        application_port = 8686
-        sync_categories = "[3000,3010,3030,3040,3050,3060]"
-        implementation = 'Lidarr'
-        implementationName = 'Lidarr'
-        configContract = 'LidarrSettings'
+        self.application = 'music'
+        self.application_port = 8686
+        self.sync_categories = [3000,3010,3030,3040,3050,3060]
+        self.animesync_categories = []
+        self.implementation = 'Lidarr'
+        self.implementationName = 'Lidarr'
+        self.configContract = 'LidarrSettings'
 
     def comics(self):
-        application = 'comics'
-        application_port = 8090
-        sync_categories = "[7030]"
-        implementation = 'Mylar'
-        implementationName = 'Mylar'
-        configContract = 'MylarSettings'
+        self.application = 'comics'
+        self.application_port = 8090
+        self.sync_categories = [7030]
+        self.implementation = 'Mylar'
+        self.implementationName = 'Mylar'
+        self.configContract = 'MylarSettings'
 
-def main(args.application):
+def main(args):
     endpoint = (str.title(args.application))
     headers = {
         'Content-type': 'application/json',
@@ -81,24 +82,24 @@ def main(args.application):
         },
         {
             "name": "baseUrl",
-            "value": f"http://{application}:{application_port}/{application}"
+            "value": f"http://{args.application}:{tgt.application_port}/{args.application}"
         },
         {
             "name": "apiKey",
-            "value": open(f'/talecaster/shared/{application}.api').read()
+            "value": open(f'/talecaster/shared/{args.application}.api').read()
         },
         {
             "name":"syncCategories",
-            "value": sync_categories
+            "value": tgt.sync_categories
         },
         {
             "name":"animeSyncCategories",
-            "value": animesync_categories
+            "value": tgt.animesync_categories
         }],
-        "implementationName": implementationName,
-        "implementation": implementation,
-        "configContract": configContract,
-        "tags":[]
+        "implementationName": tgt.implementationName,
+        "implementation": tgt.implementation,
+        "configContract": tgt.configContract,
+        "tags": []
         }
     )
     response = requests.post(target, headers=headers, data=data)
