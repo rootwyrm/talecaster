@@ -31,10 +31,7 @@ function prowlarr_bootstrap()
 {
 	if [ ! -f /talecaster/config/config.xml ]; then
 		printf 'No existing configuration found, bootstrapping...\n'
-		/opt/Prowlarr/Prowlarr -data=/talecaster/config -nobrowser > /dev/null &
-		runpid=$!
-		sleep 10
-		kill -KILL $runpid
+		xml_generate_from_template /talecaster/config/config.xml
 	fi
 	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/indexer.api
 	xml_update_urlbase /talecaster/config/config.xml /indexer
