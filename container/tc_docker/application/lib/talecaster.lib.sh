@@ -95,8 +95,11 @@ function load_config()
 	fi
 	if [ -f /opt/talecaster/id.provides ]; then
 		export SERVICE=$(cat /opt/talecaster/id.provides)
+		## Add alias to $PROVIDES
+		export PROVIDES=${SERVICE}
 	else
 		export SERVICE=${SERVICE:-"none"}
+		export PROVIDES=${SERVICE}
 	fi
 }
 
@@ -104,8 +107,8 @@ function load_config()
 function load_pyenv()
 {
 	if [ -d /opt/talecaster/pyenv ]; then
-		if [ -f /opt/talecaster/pyenv/bin/activate ]; then
-			. /opt/talecaster/pyenv/bin/activate
+		if [ -f /opt/talecaster/venv/bin/activate ]; then
+			. /opt/talecaster/venv/bin/activate
 		else
 			LOG "Container Python environment not found" E 255
 		fi
@@ -138,10 +141,12 @@ function check_firstrun()
 		printf '\n'
 		printf ' * TaleCaster: found /firstboot, running initial setup\n'
 		export FIRSTBOOT=1
+		rm /firstboot
 	fi
 	if [ -f /factory.reset ]; then
 		printf ' * TaleCaster: found /factory.reset, performing reset\n'
 		export FACTORY_RESET=1
+		rm /factory.reset
 	fi
 }
 

@@ -27,7 +27,7 @@ function permissions()
 	chown -R $tcuid:$tcgid /talecaster/config
 }
 
-function config_bootstrap())
+function config_bootstrap()
 {
 	if [ ! -f /talecaster/config/config.xml ]; then
 		printf 'No existing configuration found, installing defaults...\n'

@@ -50,10 +50,21 @@ class Application(object):
         self.implementationName = 'Lidarr'
         self.configContract = 'LidarrSettings'
 
+    def books(self):
+        self.application = 'books'
+        self.application_port = 8787
+	self.sync_categories = [3030,7000,7010,7020,7030,7040,7050,7060]
+        self.animesync_categories = []
+        self.implementation = 'Readarr'
+        self.implementationName = 'Readarr'
+        self.configContract = 'ReadarrSettings'
+}
+
     def comics(self):
         self.application = 'comics'
         self.application_port = 8090
         self.sync_categories = [7030]
+        self.animesync_categories = []
         self.implementation = 'Mylar'
         self.implementationName = 'Mylar'
         self.configContract = 'MylarSettings'

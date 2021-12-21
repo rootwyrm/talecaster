@@ -12,4 +12,5 @@
   <EnableSsl>False</EnableSsl>
   <SslCertPath></SslCertPath>
   <SslCertPassword></SslCertPassword>
+  <AnalyticsEnabled>False</AnalyticsEnabled>
 </Config>
