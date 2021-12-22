@@ -30,7 +30,7 @@ function xml_generate_from_template()
         xml_update_urlbase $1 /${PROVIDES}
         xml_generate_apikey $1
         sed -i -e 's,<LaunchBrowser.*,\<LaunchBrowser\>False\<\/LaunchBrowser\>,' $1
-        BRANCH=${BRANCH:-develop}
+        BRANCH=${BRANCH:-main}
         sed -i -e 's,%%SERVICE_BRANCH%%,'${BRANCH}',' $1
         SERVICE_PORT_SSL=${SERVICE_PORT_SSL:-}
         sed -i -e 's,<SslPort.*,\<SslPort\>'$SERVICE_PORT_SSL'\<\/SslPort\>,' $1
