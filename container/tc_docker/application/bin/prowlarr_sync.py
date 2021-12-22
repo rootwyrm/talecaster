@@ -53,12 +53,11 @@ class Application(object):
     def books(self):
         self.application = 'books'
         self.application_port = 8787
-	self.sync_categories = [3030,7000,7010,7020,7030,7040,7050,7060]
+        self.sync_categories = [3030,7000,7010,7020,7030,7040,7050,7060]
         self.animesync_categories = []
         self.implementation = 'Readarr'
         self.implementationName = 'Readarr'
         self.configContract = 'ReadarrSettings'
-}
 
     def comics(self):
         self.application = 'comics'
@@ -85,7 +84,7 @@ def main(args):
     ## Prowlarr/commit/62d15536dfe0933cee1d057b5bd2abe8d6a9bba4
     data = json.JSONEncoder().encode({
         "syncLevel":"fullSync",
-        "name":"Sonarr",
+        "name": endpoint,
         "fields":[
         {
             "name":"prowlarrUrl",

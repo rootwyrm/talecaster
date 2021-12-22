@@ -37,7 +37,7 @@ function config_bootstrap()
 		printf 'No existing configuration found, installing defaults...\n'
 		xml_generate_from_template /talecaster/config/config.xml
 	fi
-	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/movies.xml
+	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/movies.api
 	xml_update_urlbase /talecaster/config/config.xml /movies
 }
 

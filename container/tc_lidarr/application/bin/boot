@@ -35,6 +35,7 @@ function config_bootstrap()
 	fi
 	xml_extract_apikey /talecaster/config/config.xml > /talecaster/shared/music.api
 	xml_update_urlbase /talecaster/config/config.xml /music
+}
 
 load_config
 check_firstrun
