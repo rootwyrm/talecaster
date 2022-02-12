@@ -53,7 +53,7 @@ function mylar_config()
 	fi
 	sleep 5
 
-	sed -i -e 's,^destination_dir.*,destiation_dir = /talecaster/comics,' $cfgfile
+	sed -i -e 's,^destination_dir.*,destination_dir = /talecaster/comics,' $cfgfile
 	sed -i -e 's/^move_files.*/move_files = True/' $cfgfile
 	sed -i -e 's/^rename_files.*/rename_files = True/' $cfgfile
 	sed -i -e 's/^failed_download_handling.*/failed_download_handling = True/' $cfgfile
