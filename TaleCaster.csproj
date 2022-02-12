@@ -4,6 +4,80 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NBuilder" Version="6.1.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="Ical.Net" Version="4.2.0" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+    <PackageReference Include="Selenium.Support" Version="3.141.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="90.0.4430.2400" />
+    <PackageReference Include="DryIoc.dll" Version="4.7.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
+    <PackageReference Include="Sentry" Version="3.12.3" />
+    <PackageReference Include="SharpZipLib" Version="1.3.1" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="FluentMigrator.Runner" Version="4.0.0-alpha.268" />
+    <PackageReference Include="FluentMigrator.Runner.SQLite" Version="4.0.0-alpha.268" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="MailKit" Version="2.11.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.2" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+    <PackageReference Include="TagLibSharp-Lidarr" Version="2.2.0.25" />
+    <PackageReference Include="Kveer.XmlRPC" Version="1.1.1" />
+    <PackageReference Include="SpotifyAPI.Web" Version="4.2.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+    <PackageReference Include="Equ" Version="2.3.0" />
+    <PackageReference Include="MonoTorrent" Version="1.0.29" />
+    <PackageReference Include="NBuilder" Version="6.1.0" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.29" />
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
+    <PackageReference Include="DryIoc.dll" Version="4.7.4" />
+    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.1" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1.34-servarr18" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1.34-servarr18" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="NUnit" Version="3.13.1" />
+    <PackageReference Include="RestSharp" Version="106.15.0" />
+	<PackageReference Include="RestSharp.Serializers.SystemTextJson" Version="106.15.0" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+    <PackageReference Include="Unity" Version="5.11.10" />
+    <PackageReference Include="DryIoc.dll" Version="4.7.4" />
+    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+    <PackageReference Include="NBuilder" Version="6.1.0" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="Ical.Net" Version="4.2.0" />
     <PackageReference Include="NLog" Version="4.7.12" />
@@ -17,9 +91,9 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
     <PackageReference Include="Sentry" Version="3.11.1" />
     <PackageReference Include="SharpZipLib" Version="1.3.3" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.113.0-0" />
+    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
@@ -27,7 +101,8 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="MailKit" Version="2.15.0" />
-    <PackageReference Include="Servarr.FFprobe" Version="4.4.1.41" />
+    <PackageReference Include="Servarr.FFMpegCore" Version="4.5.0-25" />
+    <PackageReference Include="Servarr.FFprobe" Version="4.4.1.63" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -38,14 +113,12 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.12" />
-    <PackageReference Include="Kveer.XmlRPC" Version="1.2.0" />
-    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.113.0-0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1" />
     <PackageReference Include="MonoTorrent" Version="2.0.1" />
-    <PackageReference Include="FFMpegCore" Version="4.6.16" />
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="NBuilder" Version="6.1.0" />
-    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.113.0-0" />
+    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
     <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
@@ -54,121 +127,34 @@
     <PackageReference Include="FluentValidation" Version="8.6.2" />
 	<PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="NLog" Version="4.7.12" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0" />
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-servarr1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.1" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1.34-servarr18" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-servarr1" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1.34-servarr18" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="RestSharp" Version="106.13.0" />
+    <PackageReference Include="RestSharp" Version="106.15.0" />
     <PackageReference Include="Unity" Version="5.11.10" />
     <PackageReference Include="DryIoc.dll" Version="4.8.4" />
     <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
     <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NBuilder" Version="6.1.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="Ical.Net" Version="4.2.0" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
-    <PackageReference Include="Selenium.Support" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="90.0.4430.2400" />
-    <PackageReference Include="DryIoc.dll" Version="4.7.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="DotNet4.SocksProxy" Version="1.4.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="Sentry" Version="2.1.1" />
-    <PackageReference Include="SharpZipLib" Version="1.3.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.113.0-0" />
-    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Dapper" Version="2.0.78" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-    <PackageReference Include="FluentMigrator.Runner" Version="4.0.0-alpha.268" />
-    <PackageReference Include="FluentMigrator.Runner.SQLite" Version="4.0.0-alpha.268" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="MailKit" Version="2.11.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.2" />
-    <PackageReference Include="RestSharp" Version="106.11.7" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
-    <PackageReference Include="TagLibSharp-Lidarr" Version="2.2.0.25" />
-    <PackageReference Include="Kveer.XmlRPC" Version="1.1.1" />
-    <PackageReference Include="SpotifyAPI.Web" Version="4.2.2" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
-    <PackageReference Include="Equ" Version="2.3.0" />
-    <PackageReference Include="MonoTorrent" Version="1.0.29" />
-    <PackageReference Include="NBuilder" Version="6.1.0" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.29" />
-    <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
-    <PackageReference Include="DryIoc.dll" Version="4.7.4" />
-    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.5" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-servarr1" />
-    <PackageReference Include="Mono.Posix-4.5" Version="4.5.0" PrivateAssets="all" />
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-servarr1" />
-    <PackageReference Include="Mono.Posix-4.5" Version="4.5.0" PrivateAssets="all" />
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-servarr1" />
-    <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="NUnit" Version="3.13.1" />
-    <PackageReference Include="RestSharp" Version="106.11.7" />
-	<PackageReference Include="RestSharp.Serializers.SystemTextJson" Version="106.11.7" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
-    <PackageReference Include="Unity" Version="5.11.10" />
-    <PackageReference Include="DryIoc.dll" Version="4.7.4" />
-    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="NLog" Version="4.7.9" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net462</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.5" />
-    <PackageReference Include="Mono.Posix-4.5" Version="4.5.0" PrivateAssets="all" />
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-servarr1" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="FluentValidation" Version="8.4.0" />
     <PackageReference Include="Ical.Net" Version="2.2.32" />
@@ -204,6 +190,7 @@
     <PackageReference Include="RestSharp" Version="106.15.0" />
     <PackageReference Include="TinyTwitter" Version="1.1.2" />
     <PackageReference Include="xmlrpcnet" Version="3.0.0.266" />
+    <PackageReference Include="MonoTorrent" Version="1.0.29" />
     <PackageReference Include="NBuilder" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNet.SignalR.SelfHost" Version="2.4.0" />
     <PackageReference Include="Nancy.Owin" Version="2.0.0" />
