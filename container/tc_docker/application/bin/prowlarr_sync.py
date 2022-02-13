@@ -68,7 +68,7 @@ class Application(object):
         self.implementationName = 'Mylar'
         self.configContract = 'MylarSettings'
 
-def main(args):
+def add_application(args):
     endpoint = (str.title(args.application))
     headers = {
         'Content-type': 'application/json',
@@ -115,7 +115,36 @@ def main(args):
     response = requests.post(target, headers=headers, data=data)
     print('Response %s' % response.status_code)
 
+def check_registration(args):
+    endpoint = (str.title(args.application))
+    tgt=Application()
+    tgt.indirect(args.application)
+    headers = {
+        'Content-type': 'application/json',
+        'User-Agent': 'rootwyrm/talecaster',
+        'X-Api-Key': str(prowlarr_key)
+    }
+    target = f"http://indexer:9696/indexer/api/v1/applications?"
+    response = requests.get(target, headers=headers)
+    conf = response.json()
+    cfgidx = None
+    ## TODO: 
+    ## - needs to test if API keys match
+    ## - doesn't handle re-priming the applications
+    for index in conf:
+        ## Work with it as native JSON
+        if endpoint in index['name']:
+            cfgidx = index
+    if cfgidx is None:
+        if os.path.exists(f'/opt/talecaster/etc/'args.application):
+            os.remove(f'/opt/talecaster/etc/'args.application)
+        add_application(args)
+    else:
+        state = open(f'/opt/talecaster/etc/'args.application, w)
+        state.write('configured')
+        return 0
+
 parser = ArgumentParser(description="Prowlarr application sync")
 parser.add_argument("-a", "--app", dest="application", type=str, help="Application to configure", required=True)
 args = parser.parse_args()
-main(args)
+check_registration(args)

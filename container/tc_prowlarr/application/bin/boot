@@ -47,3 +47,7 @@ config
 permissions
 generate_message
 cat /message
+## Prowlarr Specific
+for app in television movies music books comics; do
+	/opt/talecaster/bin/prowlarr_sync.py -a $app
+done
