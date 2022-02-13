@@ -33,7 +33,7 @@ class SelectApplication(object):
         self.implementation = 'Sonarr'
         self.implementationName = 'Sonarr'
         self.configContract = 'SonarrSettings'
-        self.api = 'api/v3/'
+        self.api = 'api/v3'
         self.client_category = 'tvCategory'
         self.recent_priority = 'recentTvPriority'
         self.older_priority = 'olderTvPriority'
@@ -47,7 +47,7 @@ class SelectApplication(object):
         self.implementation = 'Radarr'
         self.implementationName = 'Radarr'
         self.configContract = 'RadarrSettings'
-        self.api = 'api/v3/'
+        self.api = 'api/v3'
         self.client_category = 'movieCategory'
         self.recent_priority = 'recentMoviePriority'
         self.older_priority = 'olderMoviePriority'
@@ -61,7 +61,7 @@ class SelectApplication(object):
         self.implementation = 'Lidarr'
         self.implementationName = 'Lidarr'
         self.configContract = 'LidarrSettings'
-        self.api = 'api/v1/'
+        self.api = 'api/v1'
         self.client_category = 'musicCategory'
         ## XXX: Upstream fix is still pending
         self.recent_priority = 'recentTvPriority'
@@ -76,7 +76,7 @@ class SelectApplication(object):
         self.implementation = 'Readarr'
         self.implementationName = 'Readarr'
         self.configContract = 'ReadarrSettings'
-        self.api = 'api/v1/'
+        self.api = 'api/v1'
         ## XXX: Upstream fix is still pending
         self.client_category = 'musicCategory'
         self.recent_priority = 'recentTvPriority'
@@ -92,8 +92,20 @@ class SelectApplication(object):
         self.implementation = 'Mylar'
         self.implementationName = 'Mylar'
         self.configContract = 'MylarSettings'
-        self.api = 'api/v1/'
+        self.api = 'api/v1'
         ## XXX: Upstream fix is still pending
+    
+    ## Prowlarr 
+    def indexer(self):
+        self.application = 'indexer'
+        self.application_port = os.environ['INDEXER_PORT']
+        self.sync_categories = []
+        self.animesync_categories = []
+        self.implementation = 'Prowlarr'
+        self.implementationName = 'Prowlarr'
+        self.configContract = 'ProwlarrSettings'
+        self.api = 'api/v1'
+        self.client_category = ''
 
 ## Add nzbget client to a Servarr application only
 def add_nzbget_client(args):
@@ -104,14 +116,23 @@ def add_nzbget_client(args):
     nntp_port = os.environ['NNTP_PORT']
     nntp_category = (str.title(tgt.application))
 
+    apikeypath = f'/talecaster/shared/{tgt.application}.api'
+    apikey = open(apikeypath).read()
+
     ## Sonarr is v3??
     target = f"http://{tgt.application}:{tgt.application_port}/{tgt.application}/{tgt.api}/downloadclient?"
+    headers = {
+        'Content-type': 'application/json',
+        'User-Agent': 'rootwyrm/talecaster',
+        'X-Api-Key': str(apikey)
+    }
+
     data = json.JSONEncoder().encode({
         "enable": true,
         "protocol": "usenet",
         "priority": 1,
-        "removeCompletedDownloads": true,
-        "removeFailedDownloads": true,
+        "removeCompletedDownloads": True,
+        "removeFailedDownloads": True,
         "name": "TaleCaster - NZBget",
         "implementationname": "NZBGet",
         "implementation": "Nzbget",
@@ -127,7 +148,7 @@ def add_nzbget_client(args):
             },
             {
                 "name": "useSsl",
-                "value": false
+                "value": False
             },
             {
                 "name": "urlBase"
@@ -135,13 +156,14 @@ def add_nzbget_client(args):
             {
                 "name": tgt.category,
                 "value": nntp_category
-            }
+            },
             { "name": tgt.recent_category, "value": 0 },
             { "name": tgt.older_category, "value": 0 },
-            { "name": "addPaused", "value": false }
+            { "name": "addPaused", "value": False }
         ],
         "tags": []
-    }
+    })
+
     try:
         requests.post(target, headers=headers, data=data)
     except:
@@ -163,5 +185,5 @@ def main(args):
 parser = ArgumentParser(description="TaleCaster Servarr Tool")
 parser.add_argument("-a", "--app", dest="application", type=str, help="Application to configure", required=True)
 parser.add_argument("-b", "--blackhole", dest="blackhole", type=str, help="Configure blackhole directory", required=False)
-parser.add_argument("-d", "--download", dest="download", type=boolean, help="Configure a download client", required=False)
+parser.add_argument("-d", "--download", dest="download", type=BooleanOptionalAction, help="Configure a download client", required=False)
 parser.add_argument("-c", "--client", dest="client", type=str, help="Download client to configure", required=False)
