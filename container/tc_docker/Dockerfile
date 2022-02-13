@@ -45,7 +45,7 @@ COPY	[ "application/", "/opt/talecaster/" ]
 VOLUME	[ "/run", "/talecaster/shared" ]
 
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc haveged logrotate tzdata jq rsyslog python3 uuidgen && \
+	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc logrotate tzdata jq rsyslog python3 uuidgen && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
@@ -61,7 +61,6 @@ RUN	apk update && apk upgrade && \
 	rm -f /etc/init.d/modules-load ; \
 	rm -f /etc/init.d/modloop ; \
 	/sbin/rc-update add dcron default ; \
-	/sbin/rc-update add haveged default ; \
 	/sbin/rc-update add rsyslog default ; \
 	/sbin/rc-update add talecaster default ; \
 	sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh ; \
