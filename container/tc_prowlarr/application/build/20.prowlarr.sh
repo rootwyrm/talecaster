@@ -67,3 +67,6 @@ if [ ! -f /usr/bin/dotnet ]; then
 fi
 LOG "[BUILD] Installing ${app_name}"
 application_install
+if [ $? -eq 0 ]; then
+	rc-update add prowlarr_sync
+fi
