@@ -136,11 +136,11 @@ def check_registration(args):
         if endpoint in index['name']:
             cfgidx = index
     if cfgidx is None:
-        if os.path.exists(f'/opt/talecaster/etc/'args.application):
-            os.remove(f'/opt/talecaster/etc/'args.application)
+        if os.path.exists(f'/opt/talecaster/etc/{args.application}'):
+            os.remove(f'/opt/talecaster/etc/{args.application}')
         add_application(args)
     else:
-        state = open(f'/opt/talecaster/etc/'args.application, w)
+        state = open(f'/opt/talecaster/etc/{args.application}', w)
         state.write('configured')
         return 0
 
