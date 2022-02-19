@@ -167,7 +167,7 @@ jobs:
     needs: tc_docker
     strategy:
       matrix:
-        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_jackett, tc_prowlarr, tc_mylar, tc_readarr ]
+        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_jackett, tc_prowlarr, tc_mylar, tc_readarr, tc_bazarr ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
