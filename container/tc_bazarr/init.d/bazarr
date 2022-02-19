@@ -1,0 +1,39 @@
+#!/sbin/openrc-run
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+# init.d/bazarr
+
+: ${datadir:="/talecaster/config"}
+: ${venv:="/opt/bazarr/venv/bin/activate"}
+: ${command_user:="talecaster:media"}
+
+name="Bazarr"
+description="Bazarr is a companion application to Sonarr and Radarr that manages and downloads subtitles based on your requirements."
+supervisor="supervise-daemon"
+
+command="/opt/bazarr/venv/bin/python3"
+command_args="/opt/bazarr/bazarr.py -c ${datadir}" 
+command_args_foreground=""
+
+start_pre() {
+	## Switch to the mylar3 venv
+	if [ -d /opt/bazarr/venv ]; then
+		ebegin "Initializing Python virtual environment"
+		. /opt/bazarr/venv/bin/activate
+		eend $?
+	else
+		echo "Virtual environment missing!"
+		exit 1
+	fi
+}
+
+depend() {
+	need net
+	after firewall talecaster
+}

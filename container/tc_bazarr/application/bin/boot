@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+################################################################################
+# TaleCaster - https://github.com/rootwyrm/talecaster
+# Copyright (C) 2015-* Phillip R. Jaenke <talecaster@rootwrym.com> and its
+# contributors, all rights reserved.
+#
+# Licensed under CC-BY-NC-4.0
+# See /LICENSE for details
+################################################################################
+
+. /opt/talecaster/lib/talecaster.lib.sh
+
+appbase="/opt/mylar"
+
+function config()
+{
+	if [ ! -d /talecaster/config ]; then
+		LOG "Configuration storage volume missing!" E 255
+	fi
+}
+
+function permissions()
+{
+	tcuid=${tcuid:-"30000"}
+	tcgid=${tcuid:-"30000"}
+	chown -R $tcuid:$tcgid $appbase
+	chown -R $tcuid:$tcgid /talecaster/config
+}
+
+function bazarr_config()
+{
+	## Bazarr uses an INI-style configuration
+	cfgfile="/talecaster/config/config/config.ini"
+	if [ ! -f $cfgfile ]; then
+		## We need to create the file first.
+		printf '[NOTICE] No existing configuration, bootstrapping...\n'
+		. $appbase/venv/bin/activate
+		$appbase/venv/bin/python $appbase/bazarr.py -c /talecaster/config &
+		## CAUTION: Bazarr starts fairly slow.
+		sleep 30
+		runpid=$!
+		kill -9 $runpid > /dev/null 2>&1
+		deactivate
+	fi
+	if [ -f $cfgfile ]; then
+		printf '[OK] Config file now exists\n'
+	else
+		printf '[ERROR] Config file was not created?!\n'
+		exit 255
+	fi
+	sleep 5
+	
+	## Fix our port
+	SUBTITLE_PORT=${SUBTITLE_PORT:-6767}
+	sed -i -e 's,^port.*,port = '$SUBTITLE_PORT',' $cfgfile
+	sed -i -e 's,^base_url.*,base_url = /subtitle,' $cfgfile
+	sed -i -e 's,^auto_update.*,auto_update = False,' $cfgfile
+	if [[ $TELEVISION_PROVIDER == 'sonarr' ]]; then
+		sed -i -e 's,^use_sonarr.*,use_sonarr = True,' $cfgfile
+	fi
+	if [[ $MOVIES_PROVIDER == 'radarr' ]]; then
+		sed -i -e 's,^use_radarr.*,use_radarr = True,' $cfgfile
+	fi
+}
+
+function bazarr_api()
+{
+	## Bazarr's API key generation is fully automatic
+	cfgfile="/talecaster/config/config/config.ini"
+	if [ -f $cfgfile ]; then
+		APIKEY=$(grep flask_secret_key $cfgfile | cut -d = -f 2)
+	else
+		## Bail, the config's gone away.
+		printf '[ERROR] %s has vanished!\n' "$cfgfile"
+		exit 255
+	fi
+	printf '%s' "$APIKEY" > /talecaster/shared/subtitle.api
+}
+
+load_config
+check_firstrun
+deploy_talecaster_user
+user_ownership
+config
+permissions
+bazarr_config
+bazarr_api
+permissions
+generate_message
+cat /message
