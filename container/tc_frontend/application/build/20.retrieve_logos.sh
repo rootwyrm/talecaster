@@ -24,6 +24,7 @@ curl -L https://github.com/Lidarr/Lidarr/raw/develop/Logo/64.png > $IMAGEDIR/lid
 curl -L https://github.com/Readarr/Readarr/raw/develop/Logo/64.png > $IMAGEDIR/readarr.png
 ## Mylar
 curl -L https://github.com/mylar3/mylar3/raw/v0.6.1/data/images/mylar_logo_128x128.png > $IMAGEDIR/mylar.png
+## Bazarr 
 
 ## Nzbget, use their favicon
 curl -L https://github.com/nzbget/nzbget/raw/develop/webui/img/favicon-256x256.png > $IMAGEDIR/nzbget.png
@@ -32,6 +33,8 @@ curl -L https://github.com/nzbget/nzbget/raw/develop/webui/img/favicon-256x256.p
 curl -L https://github.com/qbittorrent/qBittorrent/raw/master/src/webui/www/public/images/qbittorrent32.png > $IMAGEDIR/qbittorrent.png
 ## Prowlarr
 curl -L https://github.com/Prowlarr/Prowlarr/raw/develop/Logo/64.png > $IMAGEDIR/prowlarr.png
+## Bazarr, use from their website
+curl -L https://www.bazarr.media/assets/img/logo.png > $IMAGEDIR/bazarr.png
 
 ## Fix permissions
 chmod 0755 $IMAGEDIR/*png
