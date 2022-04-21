@@ -1,7 +1,6 @@
 [Unit]
 Description=TaleCaster Front End Container
-Requires=docker.service
-After=docker.service talecaster_nntp.service talecaster_torrent.service talecaster_indexer.service talecaster_books.service talecaster_comics.service talecaster_movies.service talecaster_music.service talecaster_television.service
+Requires=docker.service talecaster_nntp.service talecaster_torrent.service talecaster_indexer.service talecaster_books.service talecaster_comics.service talecaster_movies.service talecaster_music.service talecaster_television.service
 
 [Service]
 Restart=always
