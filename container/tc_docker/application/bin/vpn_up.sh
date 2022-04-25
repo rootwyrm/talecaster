@@ -9,32 +9,30 @@
 ################################################################################
 # application/bin/vpn_up.sh
 
-## XXX: This has to be re-run every time the VPN comes up.
+## FYI: This has to be re-run every time the VPN comes up.
 ## Set resolvers, default to Quad9
 TC_RESOLV0="${TC_RESOLV0:-9.9.9.9}"
 TC_RESOLV1="${TC_RESOLV1:-149.112.112.112}"
 
-## XXX: We ignore a bunch of dhcp options deliberately here. Too often they're
-##      broken by the provider, or the provider's DNS doesn't work, etc.
-##		We also have to actively block some that Docker sets, or DNS stops
-##      working for VPN'd containers because of enforced bad routing. >:|
-if [ -f /etc/resolv.conf ]; then
-	mv /etc/resolv.conf /etc/resolv.conf.bak
-fi
-if [ -z $TC_DOMAIN ]; then
-	grep ^search /etc/resolv.conf.bak > /dev/null
-	if [ $? -eq 0 ]; then
-		grep ^search /etc/resolv.conf.bak > /opt/talecaster/resolv.conf
-	else
-		echo "search ${TC_DOMAIN}" > /opt/talecaster/resolv.conf
-	fi
-fi
-echo "nameserver ${TC_RESOLV0}" >> /opt/talecaster/resolv.conf
-echo "nameserver ${TC_RESOLV1}" >> /opt/talecaster/resolv.conf
-## Options are always set this way. Always.
-echo "options ndots:0" >> /opt/talecaster/resolv.conf
+## So, a brief digression. In the name of 'service discovery,' Docker does a
+#  lot of incredibly stupid, wrong, and outright broken things with DNS. How
+#  broken? DNSSEC is completely compromised. This is obviously not simply bad,
+#  but the height of incompetence. And this insecurity is forced.
+#  It also means that without doing some serious manipulation here, DNS will 
+#  leak like a damn sieve. Because it proxies the external request through the
+#  non-VPN'd host! Idiots. As is, this would still end up leaking because of the
+#  forced service-discovery crap. And 127.0.0.11 will never, ever not attempt a
+#  lookup. Even if an authoritative NX should have been cached.
+#
+#  Moral of the story? Learn to do DNS correctly or don't do it at all.
 
-ln -sf /opt/talecaster/resolv.conf /etc/resolv.conf
+cp /etc/resolv.conf /etc/resolv.conf.bak
+## Anyway, rewrite our resolv.conf in-place because Docker locks it. 
+cat /dev/null > /etc/resolv.conf
+echo "nameserver ${TC_RESOLV0}" >> /etc/resolv.conf
+echo "nameserver ${TC_RESOLV1}" >> /etc/resolv.conf
+echo "nameserver 127.0.0.11" >> /etc/resolv.conf
+echo "options ndots:0" >> /etc/resolv.conf
 
 ## Restart our service so that it picks up interfaces correctly.
 SERVICE=$(cat /opt/talecaster/id.service)
