@@ -13,6 +13,10 @@
 
 function existing_version()
 {
+	if [ $(dotnet --info > /dev/null | echo $?) != '0' ]; then
+		printf '.NET is not installed, aborting.\n'
+		exit 1
+	fi
 	export CUR_VERSION=$(dotnet --info | grep Version | cut -d : -f 2)
 	export CUR_COMMIT=$(dotnet --info | grep Commit | cut -d : -f 2)
 	if [ -f /opt/talecaster/etc/dotnet.sha512 ]; then
