@@ -31,7 +31,7 @@ stop_pre() {
 	fi
 	if [ -z $VPN_CONFIG ] || [ -z ${appid^^}_VPN_CONFIG ]; then
 		ebegin "Performing VPN setup..."
-		/opt/talecaster/bin/vpn.sh
+		/opt/talecaster/bin/vpn_config.py
 		eend $?
 	fi
 }
