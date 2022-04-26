@@ -19,16 +19,7 @@ RUN		apk update && apk upgrade && \
 	/opt/bazarr/venv/bin/python3 -m pip install --upgrade pip && \
 	pip install --no-cache-dir wheel && \
 	apk add gcc g++ musl-dev python3-dev && \
-	pip install --no-cache-dir --compile -r /opt/bazarr/requirements.txt && \
-	cp /usr/bin/unrar /opt/bazarr/bin/
-	case `uname -m` in
-		x86_64)
-			cp /usr/bin/unrar /opt/bazarr/bin/Linux/x86_64/unrar
-			;;
-		aarch64)
-			cp /usr/bin/unrar /opt/bazarr/bin/Linux/aarch64/unrar
-			;;
-	esac
+	pip install --no-cache-dir --compile -r /opt/bazarr/requirements.txt 
 	
 	#apk add gcc musl-dev python3-dev libjpeg-turbo-dev zlib-dev tiff-dev libwebp-dev lcms2-dev && \
 
