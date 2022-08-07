@@ -7,7 +7,7 @@
 # See /LICENSE for details
 ################################################################################
 ARG		TALECASTER_BASE=latest
-FROM	alpine:3.15.1 AS pybuild
+FROM	alpine:3.16.1 AS pybuild
 WORKDIR	/opt/mylar
 RUN		apk update && apk upgrade && \
 	apk add git bash python3 sqlite && \
