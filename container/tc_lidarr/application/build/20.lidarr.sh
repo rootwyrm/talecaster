@@ -33,7 +33,7 @@ application_install()
 	fi
 
 	## Downloading from Github is funky.
-	echo "[INSTALL] Retrieving ${app_name}..."
+	printf '[INSTALL] Retrieving %s version %s...\n' "$app_name" "$VERSION"
 	curl -L $APPURL > /tmp/${app_name}.tgz
 	tar xf /tmp/${app_name}.tgz -C /opt/
 	CHECK_ERROR $? ${app_name}_extract
