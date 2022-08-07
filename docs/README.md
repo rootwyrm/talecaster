@@ -11,6 +11,8 @@ Our primary development environment is generously hosted by @rootwyrm using [Dra
 
 Our secondary development hardware, named `alexandria.dragonnorth.systems`, is a Dragon North RedTail Gen.7B provided by [Dragon North Enterprise Systems](https://www.dragonnorth.systems).
 
+![CC-BY-NC-4.0](https://i.creativecommons.org/l/by-nc/4.0/88x31.png)
+
 ## WARNING: Under active development. Pre-release software.
 
 # Build Status
@@ -25,7 +27,7 @@ Work is ongoing for a Kubernetes-friendlier version of TaleCaster. Note that you
 
 # HALP PLEASE!
 * Documentation! Documenting how to set up TaleCaster, Synology, etc.
-* The build status table is a nightmare. There has to be a better way?
+* Actual web development for the frontend interface
 
 # FreeBSD
 Work on FreeBSD has been discontinued due to applications migrating to .NET Runtime. FreeBSD core and portmgr have been openly hostile to Mono and .NET, preventing any serious porting efforts. Existing installations should migrate to the Linux distribution of their preference and use Docker.
