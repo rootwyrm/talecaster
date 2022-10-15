@@ -32,6 +32,7 @@ function LOG()
 				## An error code was pushed as well.
 				RC=$3
 				printf '%s [ERROR] %s %s\n' "$(date -Iseconds)" "$1" "$3" | tee -a $logfile
+				exit $RC
 			else
 				printf '%s [ERROR] %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
 			fi
@@ -71,6 +72,28 @@ function CHECK_ERROR()
 	else
 		return 0
 	fi
+}
+
+## Check if required volumes exist
+function check_base_volumes()
+{
+	## Check for volumes necessary to run TaleCaster
+	if [ ! -d /talecaster/shared ]; then
+		LOG "Shared application volume missing!" E 255
+	fi
+
+	case $SERVICE in
+		base*)
+			## Do nothing here
+			;;
+		*)
+			for d in config blackhole downloads; do
+				if [ ! -d /talecaster/${d} ]; then
+					LOG "Missing required /talecaster/${d} volume!" E 255
+				fi
+			done
+			;;
+	esac
 }
 
 ## Load all of our configuration files, in order. Last in wins.
