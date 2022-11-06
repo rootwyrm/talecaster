@@ -25,7 +25,7 @@ export vrpkg="libgdiplus_run"
 export vrpkg_content="linux-headers libgcc libstdc++ libexif pango giflib libjpeg-turbo tiff"
 
 export curl_cmd="/usr/bin/curl --tlsv1.2 -L --silent"
-export libgdiplusv="6.0.5"
+export libgdiplusv="6.1"
 
 install_runtime()
 {
@@ -42,8 +42,8 @@ install_buildpkg()
 	######################################################################
 	## Install our build packages.
 	######################################################################
-	printf '%s [BUILD] Entering Mono build phase...\n' $(date '+%b %d %H:%M:%S')
-	printf '%s [MONO] Installing build packages...\n' $(date '+%b %d %H:%M:%S')
+	printf '%s [BUILD] Entering libgdiplus build phase...\n' $(date '+%b %d %H:%M:%S')
+	printf '%s [MONO] Installing libgdiplus build packages...\n' $(date '+%b %d %H:%M:%S')
 	/sbin/apk --no-cache add --virtual $vbpkg $vbpkg_content
 	CHECK_ERROR $? $vbpkg
 }
