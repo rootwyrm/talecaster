@@ -3,7 +3,7 @@ TaleCaster - The Ultimate Media Management Solution
 
 # IMPORTANT: Image Migration!
 
-**Due to [Docker Hub's extreme hostility toward open source(https://blog.alexellis.io/docker-is-deleting-open-source-images/)], images will be migrating to a new registry. I do not have several hundred dollars per year and this project certainly doesn't. Please stay tuned.**
+**Due to [Docker Hub's extreme hostility toward open source](https://blog.alexellis.io/docker-is-deleting-open-source-images/), images will be migrating to a new registry. I do not have several hundred dollars per year and this project certainly doesn't. Please stay tuned.**
 
 [![GitHub issues](https://img.shields.io/github/issues/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/issues)[![GitHub forks](https://img.shields.io/github/forks/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/network)[![GitHub stars](https://img.shields.io/github/stars/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/stargazers)[![GitHub license](https://img.shields.io/github/license/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster)
 
