@@ -1,6 +1,8 @@
 import os
+import sys
 import subprocess
 import threading
+import rich
 
 ## TaleCasterApplication object
 class TaleCasterApplication(object):
@@ -57,7 +59,7 @@ class TaleCasterApplication(object):
         self.application_bin = '/usr/sbin/nginx'
         self.application_config = '/etc/nginx/nginx.conf'
         self.application_args = [ f'-c {self.application_config}' ] 
-        self.application_selftest = os.system(["", self.application_bin, self.application_args, '-t', '-q' ], shell=True)
+        self.application_selftest = os.system(["", self.application_bin, self.application_args, '-t', '-q' ])
 
     def nntp(self):
         self.application = 'nntp'
@@ -98,24 +100,28 @@ class TaleCaster_run_service(threading.Thread):
 
         self.queue = queue
         self.service = service
+        global app
         app=TaleCasterApplication()
         app.indirect(service)
 
         method = (app.application_method)
-        if app.application_selftest is not None:
-            selftest = (app.application_selftest)
+        #if app.application_selftest is not None:
+        #    selftest = (app.application_selftest)
+        print(f"service {self.service}")
+        self.run()
 
     def run(self):
-        if self.method == 'runtime':
+        print("enter run")
+        if app.application_method == 'runtime':
+            print("os chdir")
             os.chdir(app.application_configdir)
             os.setgid(int(os.environ["tcgid"]))
             os.setuid(int(os.environ["tcuid"]))
+            service_process = subprocess.Popen(executable=app.application_bin, args=app.application_args, shell=False)#, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
             try:
-                service_process = subprocess.Popen(executable=self.app.application_bin, args=self.app.application_args, shell=True, stdout=PIPE, stderr=PIPE)
                 self.queue.put(service_process.communicate())
-
             except OSError:
-                print(f"[[bold dark_blue]TaleCaster[/]] failed to start service {app.application}!")
+                rich.print(prefix_service, "failed to start service {app.application}!")
                 os._exit(service_process.returncode)
 
 class TaleCaster_run_openvpn(threading.Thread):
@@ -125,6 +131,18 @@ class TaleCaster_run_openvpn(threading.Thread):
         self.openvpn_config = openvpn_config
         self.queue = queue
 
+        global prefix_openvpn
+        prefix_openvpn = "[[bold dark_orange]OpenVPN[/]]"
+        ## Test for /dev/tun during __init__ to bail out quickly
+        try:
+            open("/dev/net/tun", "r")
+        except:
+            rich.print(prefix_openvpn, "[bold red]FATAL:[/] unable to open /dev/tun, check compose configuration.")
+            ## Bail out quickly
+            os._exit(100)
+
+        self.run()
+
     ## This check should be simplified and before calling class.
     def run(self):
         message_prefix = "[[bold dark_orange]OpenVPN[/]]"
@@ -133,16 +151,18 @@ class TaleCaster_run_openvpn(threading.Thread):
         
         ## XXX: needs /dev/tun check
         if self.openvpn_config is None:
-            print(message_prefix, "[bold red]FATAL:[/] openvpn_config is undefined!")
+            rich.print(prefix_openvpn, "[bold red]FATAL:[/] openvpn_config is undefined!")
             os._exit(200)
         try:
             ## Always run as root in the shared directory
-            os.chdir("/opt/talecaster/shared")
+            os.chdir("/talecaster/shared")
             os.setgid(0)
             os.setuid(0)
             ## Has to be done this way; if args aren't a single string, OpenVPN bails out.
             openvpn_process = subprocess.Popen(openvpn_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, user="root", group="root")
+            rich.print(prefix_openvpn, "running as PID", openvpn_process.pid)
+            self.queue.put(openvpn_process.pid)
             self.queue.put(openvpn_process.communicate())
-        except OSError:
-            print(f"{message_prefix} [bold red]FATAL:[/] OpenVPN failed to start!")
-            os._exit(openvpn_process.returncode)
+        except:
+            rich.print(prefix_openvpn, "[bold red]FATAL:[/] OpenVPN failed to start!")
+            os._exit(100)
