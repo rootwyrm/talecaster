@@ -28,15 +28,6 @@ jobs:
         id: hooks
         run: |
           $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Set tag
-        id: tag
-        run: |
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/*" ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [ "$VERSION" == "main" ] && VERSION="latest"
-          [ "$VERSION" == "latest" ] && VERSION="latest"
-          [ "$VERSION" == "devel" ] && VERSION="devel"
-          echo "::set-output name=VERSION::$(echo $VERSION)"
       - name: Setup qemu environment
         uses: docker/setup-qemu-action@v2
       - name: Setup buildx environment
@@ -54,6 +45,46 @@ jobs:
         with:
           context: container/${{ matrix.container }}
           platforms: linux/amd64, linux/aarch64
-          tags: ghcr.io/rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
+          tags: ghcr.io/rootwyrm/${{ matrix.container }}:devel
+          pull: true
+          push: true
+  ############################################################
+  # Services
+  ############################################################
+  tc_services:
+    name: "Development Build - ${{ matrix.container }}"
+    runs-on: ubuntu-latest
+    needs: tc_docker
+    strategy:
+      matrix:
+        container: [ tc_frontend, tc_nzbget, tc_qbittorrent, tc_lidarr, tc_radarr, tc_prowlarr, tc_mylar, tc_readarr, tc_bazarr ]
+    env:
+      CONTAINER: ${{ matrix.container }}
+    steps:
+      - name: Check out from ${{ github.ref }}
+        id: checkout
+        uses: actions/checkout@v3
+      - name: Run pre-build hooks
+        id: hooks
+        run: |
+          $GITHUB_WORKSPACE/ci/hooks/pre_build
+      - name: Setup qemu environment
+        uses: docker/setup-qemu-action@v2
+      - name: Setup buildx environment
+        uses: docker/setup-buildx-action@v2
+      - name: Log into ghcr.io
+        id: docker_login
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build ${{ matrix.container }}
+        id: docker_push
+        uses: docker/build-push-action@v3
+        with:
+          context: container/${{ matrix.container }}
+          platforms: linux/amd64, linux/aarch64
+          tags: ghcr.io/rootwyrm/${{ matrix.container }}:devel
           pull: true
           push: true
