@@ -52,4 +52,8 @@ jobs:
         id: docker_push
         uses: docker/build-push-action@v3
         with:
+          context: container/${{ matrix.container }}
+          platforms: linux/amd64, linux/aarch64
           tags: rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
+          pull: true
+          push: true
