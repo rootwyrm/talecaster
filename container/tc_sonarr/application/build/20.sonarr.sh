@@ -14,9 +14,23 @@ export app_name="Sonarr"
 export app_url="http://www.sonarr.tv/"
 export app_destdir="/opt/Sonarr"
 
-export BRANCH="phantom-develop"
-export VERSION="3"
-export APPURL="https://services.sonarr.tv/v1/download/main/latest?version=3&os=linux"
+#https://services.sonarr.tv/v1/download/develop/latest?version=4&os=linux-musl&arch=arm64
+export OSARCH="linux-musl"
+export ARCH=$(uname -m)
+case $ARCH in
+	x86*)
+		export ARCH="x64"
+		;;
+	aarch64*)
+		export ARCH="arm64"
+		;;
+	*)
+		echo "Unsupported architecture!"
+		exit 255
+		;;
+esac
+export VERSION="4"
+export APPURL='https://services.sonarr.tv/v1/download/develop/latest?version='${VERSION}'&os='${OSARCH}'&arch='${ARCH}''
 
 ######################################################################
 ## Application Install
