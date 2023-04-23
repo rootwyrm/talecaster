@@ -4,7 +4,7 @@ on:
     branches:
       - devel/*
     paths:
-      - container/**
+      - ci/**
       - container/**
   workflow_dispatch:
     
@@ -32,7 +32,7 @@ jobs:
         id: tag
         run: |
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }} == "refs/tags/*" ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [[ "${{ github.ref }}" == "refs/tags/*" ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
           [ "$VERSION" == "main" ] && VERSION="latest"
           [ "$VERSION" == "latest" ] && VERSION="latest"
           [ "$VERSION" == "devel" ] && VERSION="devel"
