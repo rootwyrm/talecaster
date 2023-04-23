@@ -54,7 +54,6 @@ jobs:
         with:
           context: container/${{ matrix.container }}
           platforms: linux/amd64, linux/aarch64
-          registry: ghcr.io
-          tags: rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
+          tags: ghcr.io/rootwyrm/${{ matrix.container }}:${{ steps.tag.outputs.VERSION }}
           pull: true
           push: true
