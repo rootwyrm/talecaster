@@ -7,6 +7,8 @@ TaleCaster - The Ultimate Media Management Solution
 
 [![GitHub issues](https://img.shields.io/github/issues/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/issues)[![GitHub forks](https://img.shields.io/github/forks/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/network)[![GitHub stars](https://img.shields.io/github/stars/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/stargazers)[![GitHub license](https://img.shields.io/github/license/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster)
 
+[![CICD - Development](https://github.com/rootwyrm/talecaster/actions/workflows/ci_check.yml/badge.svg)](https://github.com/rootwyrm/talecaster/actions/workflows/ci_check.yml)
+
 All credit goes to sgallagh for the name :)
 
 [Sponsor on GitHub](https://github.com/sponsors/rootwyrm) | [Sponsor on Patreon](https://patreon.com/rootwyrm)
