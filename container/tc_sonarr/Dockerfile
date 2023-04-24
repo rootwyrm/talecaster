@@ -6,7 +6,7 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
+ENV		TALECASTER_BASE=${TALECASTER_BASE:-latest}
 FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
 ## Labels
