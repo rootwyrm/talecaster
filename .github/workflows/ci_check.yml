@@ -14,7 +14,7 @@ jobs:
   ############################################################
   tc_docker:
     name: "Development Build - tc_docker"
-    runs-on: ubuntu-22
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         container: [ tc_docker ]
@@ -53,7 +53,7 @@ jobs:
   ############################################################
   tc_services:
     name: "Development Build - ${{ matrix.container }}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: tc_docker
     strategy:
       matrix:
