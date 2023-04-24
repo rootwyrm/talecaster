@@ -7,7 +7,7 @@
 # See /LICENSE for details
 ################################################################################
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-FROM	docker.io/rootwyrm/tc_docker:$TALECASTER_BASE
+FROM	ghcr.io/rootwyrm/tc_docker:${TALECASTER_BASE}
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 		com.rootwyrm.product="TaleCaster" \
