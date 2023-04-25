@@ -88,6 +88,6 @@ jobs:
           platforms: linux/amd64, linux/aarch64
           tags: ghcr.io/rootwyrm/${{ matrix.container }}:${TALECASTER_BASE}
           build-args: |
-            TALECASTER_BASE=${TALECASTER_BASE}
+            TALECASTER_BASE=${{ env.TALECASTER_BASE }}
           pull: true
           push: true
