@@ -17,8 +17,8 @@ if [ -z $CONTAINER ]; then
 fi
 
 export RW_BUILDDATE=$(date '+%FT%T.%N%:z')
-if [ -z $STATUS ]; then
-	export STATUS="latest"
+if [ -z $BRANCH ]; then
+	export BRANCH="latest"
 fi
 if [ -z $GITHUB_REF ]; then
 	export REF="HEAD"
@@ -40,8 +40,8 @@ else
 	TGT=$1
 fi
 
-printf 'Replacing STATUS with %s\n' "$STATUS"
-sed -i -e 's,%%STATUS%%,'${STATUS}',g' $TGT
+printf 'Replacing STATUS with %s\n' "$BRANCH"
+sed -i -e 's,%%STATUS%%,'${BRANCH}',g' $TGT
 
 printf 'Replacing VCS_REF with %s\n' "$VCS_REF"
 sed -i -e 's,%%VCS_REF%%,'$VCS_REF',g' $TGT

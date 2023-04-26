@@ -1,9 +1,12 @@
 # talecaster
 TaleCaster - The Ultimate Media Management Solution
+[Sponsor on GitHub](https://github.com/sponsors/rootwyrm) | [Sponsor on Patreon](https://patreon.com/rootwyrm)
 
 # IMPORTANT: Image Migration!
 
-**Due to [Docker Hub's extreme hostility toward open source](https://blog.alexellis.io/docker-is-deleting-open-source-images/), images will be migrating to a new registry. I do not have several hundred dollars per year and this project certainly doesn't. Please stay tuned.**
+**Due to [Docker Hub's extreme hostility toward open source](https://blog.alexellis.io/docker-is-deleting-open-source-images/), images will be migrating to GitHub Container Registry!**
+
+Containers will now be found at `ghcr.io/rootwyrm/tc_*`
 
 [![GitHub issues](https://img.shields.io/github/issues/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/issues)[![GitHub forks](https://img.shields.io/github/forks/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/network)[![GitHub stars](https://img.shields.io/github/stars/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster/stargazers)[![GitHub license](https://img.shields.io/github/license/rootwyrm/talecaster?style=for-the-badge)](https://github.com/rootwyrm/talecaster)
 
@@ -11,12 +14,9 @@ All credit goes to sgallagh for the name :)
 
 [Sponsor on GitHub](https://github.com/sponsors/rootwyrm) | [Sponsor on Patreon](https://patreon.com/rootwyrm)
 
-Our primary development environment is generously hosted by @rootwyrm using [Dragon North Enterprise Systems](https://www.dragonnorth.systems) BabyDragon Gen.5 and Gen.6 hardware. Available for purchase now.
-
-Our secondary development hardware, named `alexandria.dragonnorth.systems`, is a Dragon North RedTail Gen.7B provided by [Dragon North Enterprise Systems](https://www.dragonnorth.systems).
+Our primary development environments are hosted by @rootwyrm using [Dragon North Enterprise Systems](https://www.dragonnorth.systems) using a mix of BabyDragon, BabyGryphon, Gryphon, RedTail, and Shrike hardware.
 
 ## WARNING: Under active development. Pre-release software.
-
 
 
 # Build Status
@@ -30,11 +30,11 @@ Our secondary development hardware, named `alexandria.dragonnorth.systems`, is a
 
 # Linux
 Docker-based 'basic' configurations are validated and working, and documentation is in progress!
-TaleCaster is designed to be deployed using `docker-compose` as a full application suite and comes with a web front end.
+TaleCaster requires deployment using `docker-compose` as a full application suite and comes with a web front end.
 
 # HALP PLEASE!
 * Documentation! Documenting how to set up TaleCaster, Synology, etc.
 * The build status table is a nightmare. There has to be a better way?
 
 # FreeBSD
-Work on FreeBSD has been discontinued due to applications migrating to .NET Runtime. FreeBSD core and portmgr have been openly hostile to Mono and .NET, preventing any serious porting efforts. Existing installations should migrate to the Linux distribution of their preference and use Docker.
+Work on FreeBSD has been discontinued due to a lack of time and FreeBSD being generally ambivalent and uncooperative toward .NET, severely impeding porting efforts. 

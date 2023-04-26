@@ -19,6 +19,7 @@ jobs:
       matrix:
         container: [ tc_docker ]
     env:
+      BRANCH: devel
       CONTAINER: ${{ matrix.container }}
     steps:
       - name: Check out from ${{ github.ref }}
@@ -59,6 +60,7 @@ jobs:
       matrix:
         container: [ tc_frontend, tc_nzbget, tc_qbittorrent, tc_lidarr, tc_radarr, tc_prowlarr, tc_mylar, tc_readarr, tc_sonarr ]
     env:
+      BRANCH: devel
       TALECASTER_BASE: devel
       CONTAINER: ${{ matrix.container }}
     steps:
