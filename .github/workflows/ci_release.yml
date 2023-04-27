@@ -1,8 +1,8 @@
-name: "CICD - Development"
+name: "CICD - Release"
 on:
   push:
     branches:
-      - devel/*
+      - latest
     paths:
       - ci/**
       - container/**
@@ -13,13 +13,13 @@ jobs:
   # Base Image Check
   ############################################################
   tc_docker:
-    name: "Development Build - tc_docker"
+    name: "Release Build - tc_docker"
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         container: [ tc_docker ]
     env:
-      BRANCH: devel
+      BRANCH: latest
       CONTAINER: ${{ matrix.container }}
     steps:
       - name: Check out from ${{ github.ref }}
@@ -53,7 +53,7 @@ jobs:
   # Services
   ############################################################
   tc_services:
-    name: "Development Build - ${{ matrix.container }}"
+    name: "Release Build - ${{ matrix.container }}"
     runs-on: ubuntu-22.04
     needs: tc_docker
     strategy:

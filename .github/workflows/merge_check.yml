@@ -6,20 +6,20 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-name: CICD - Pull Request Validator
+name: CICD - Linter
 on:
   pull_request:
     branches:
       - latest
+      - devel/*
     paths:
       - container/**
       - ci/**
   workflow_dispatch: 
 
-## Restructure to build our cores separate...        
 jobs:
   ############################################################
-  # tc_docker, tc_mono
+  # Linter
   ############################################################
   tc_docker:
     name: Pull Request - tc_docker
@@ -27,35 +27,6 @@ jobs:
     strategy:
       matrix:
         container: [ tc_docker ]
-    env:
-      CONTAINER: ${{ matrix.container }}
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup qemu environment
-        uses: docker/setup-qemu-action@v1
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${{ matrix.container }}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64, linux/arm64
-          context: container/${{ matrix.container }}
-          pull: true
-          push: false
-          tags: rootwyrm/${{ matrix.container }}:merge
-  tc_mono:
-    name: Pull Request - tc_mono
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        container: [ tc_mono ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
@@ -117,40 +88,7 @@ jobs:
     needs: tc_docker
     strategy:
       matrix:
-        container: [ tc_frontend, tc_nzbget, tc_transmission, tc_lidarr, tc_radarr, tc_prowlarr ]
-    env:
-      CONTAINER: ${{ matrix.container }}
-    steps:
-      - name: Check out from ${{ github.ref }}
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Test pre-build hooks
-        id: hooks
-        run: |
-          $GITHUB_WORKSPACE/ci/hooks/pre_build
-      - name: Setup qemu environment
-        uses: docker/setup-qemu-action@v1
-      - name: Setup buildx environment
-        uses: docker/setup-buildx-action@v1
-      - name: Build ${{ matrix.container }}
-        id: docker_nopush
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64, linux/arm64
-          context: container/${{ matrix.container }}
-          pull: true
-          push: false
-          tags: rootwyrm/${{ matrix.container }}:merge
-  ############################################################
-  # tc_mono children
-  ############################################################
-  tc_mono_child:
-    name: Pull request - tc_mono children
-    runs-on: ubuntu-latest
-    needs: tc_mono
-    strategy:
-      matrix:
-        container: [ tc_jackett, tc_sonarr ]
+        container: [ tc_frontend, tc_nzbget, tc_sonarr, tc_transmission, tc_lidarr, tc_radarr, tc_prowlarr ]
     env:
       CONTAINER: ${{ matrix.container }}
     steps:
