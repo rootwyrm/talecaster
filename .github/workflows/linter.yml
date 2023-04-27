@@ -23,7 +23,7 @@ jobs:
     - name: Assemble output array
       id: list 
       run: |
-        list=$(find ./container/ -name Dockerfile)
+        list=$(find ./container/ -name Dockerfile | sed -e 's,Dockerfile,,g')
         echo lint=${list} >> ${GITHUB_OUTPUT}
       
   linter:
