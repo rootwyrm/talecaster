@@ -6,7 +6,23 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		ALPINE_BASE=3.16
+ARG		ALPINE_BASE=${ALPINE_BASE:-3.16}
+
+################################################################################
+# Build and package unrar
+################################################################################
+FROM	alpine:3.17 AS prebuild
+WORKDIR	/opt/work
+RUN		apk update && apk upgrade && \
+	apk add make g++ && \
+	wget https://www.rarlab.com/rar/unrarsrc-6.2.6.tar.gz && \
+	tar xf unrarsrc-6.2.6.tar.gz && \
+	cd unrar && \
+	make 
+
+################################################################################
+# Actual base image
+################################################################################
 FROM	alpine:${ALPINE_BASE}
 
 ENV tcuid=${tcuid:-30000}
@@ -36,6 +52,8 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 ADD		[ "init.d/", "/etc/init.d/" ]
 ADD		[ "cron/", "/etc/periodic/" ]
 COPY	[ "application/", "/opt/talecaster/" ]
+COPY	--from=prebuild /opt/work/unrar/unrar /usr/local/bin/unrar
+COPY	--from=prebuild /opt/work/unrar/license.txt /usr/local/bin/unrar.license.txt
 VOLUME	[ "/run", "/talecaster/shared" ]
 
 RUN	apk update && apk upgrade && \
