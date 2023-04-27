@@ -13,28 +13,17 @@ jobs:
   ############################################################
   # Linter
   ############################################################
-  dockerfiles:
-    runs-on: ubuntu-latest
-    outputs:
-      lint: ${{steps.list.outputs.lint}}
-    steps:
-    - name: "Checkout @ ${{ github.ref }}"
-      uses: actions/checkout@v3
-    - name: Assemble output array
-      id: list 
-      run: |
-        list=$(find ./container/ -name Dockerfile | sed -e 's,Dockerfile,,g')
-        echo lint=${list} >> ${GITHUB_OUTPUT}
-      
   linter:
+    strategy:
+      matrix:
+        lint: [ ./tc_bazarr/Dockerfile, ./tc_docker/Dockerfile, ./tc_frontend/Dockerfile, ./tc_lidarr/Dockerfile, ./tc_mylar/Dockerfile, ./tc_nzbget/Dockerfile, ./tc_prowlarr/Dockerfile, ./tc_qbittorrent/Dockerfile, ./tc_radarr/Dockerfile, ./tc_readarr/Dockerfile, ./tc_sonarr/Dockerfile ]
     runs-on: ubuntu-latest
-    needs: dockerfiles
     steps: 
     - name: Checkout
       uses: actions/checkout@master
     - name: lint
       uses: luke142367/Docker-Lint-Action@master
       with:
-        target: ${{needs.dockerfiles.outputs.lint}}
+        target: ${{ matrix.lint }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
