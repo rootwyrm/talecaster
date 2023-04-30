@@ -10,43 +10,46 @@
 
 import os
 import sys
+import rich
 
-initd = "/etc/init.d/openvpn.talecaster"
-confd = "/etc/conf.d/openvpn.talecaster"
+sini = "/etc/supervisor.d/openvpn.ini"
 
 def main():
     application = open('/opt/talecaster/id.provides').read()
     ## Other scripts require the newline.
     application = application.replace('\n', '')
-    vpn_var = f"{str.upper(application)}_VPN"
-    if str.upper(os.environ[vpn_var]) == 'TRUE':
-        ## VPN should be enabled for this service
+    vpn_config = f"{str.upper(application)}_VPN_CONFIG"
+    if vpn_config in os.environ:
+        ## VPN should be enabled for this service, regenerate on every run though.
         try:
-            os.symlink("/etc/init.d/openvpn", initd)
+            os.open(vpn_config, 'r')
+            rich.print('[bold dark_orange]OpenVPN[/] Using configuration file', vpn_config)
         except:
-            print("Failed to create symlink for %s" % initd)
-            return 255
-        ## XXX: Need a better check on this
-        vpncfgvar = f"{vpn_var}_CONFIG"
-        if os.environ[vpncfgvar] is None:
-            print("No %s defined, cannot continue!" % vpncfgvar)
-            return 1
-        ## Now we have to create our conf.d file
+            rich.print(f'[bold dark_orange]OpenVPN[/] FATAL: Could not open', vpn_config)
+            sys.exit(2)
+        ## Wrap in a try so it bails before trying to run.
         try:
-            fh = open(confd, 'w')
-            fh.write('detect_client="YES"\n')
-            fh.write(f'cfgfile=/talecaster/shared/{os.environ[vpncfgvar]}\n')
-            ## Avoid using Docker's internal resolver, leaky and broken
-            fh.write('peer_dns="yes"\n')
-            ## NYI: vpn_up.sh needs rewritten
-            #fh.write('up_script="/opt/talecaster/bin/vpn_up.sh"')
+            fh = open(sini, 'w')
+            fh.write('[program:openvpn]\n')
+            fh.write(f'/usr/sbin/openvpn --connect-retry-max 10 --log /var/log/openvpn.log --writepid /run/openvpn.pid --config ',os.environ[vpn_config].read(),'\n')
+            fh.write('process_name=%(program_name)s\n')
+            fh.write('numprocs=1\n')
+            fh.write('directory=/talecaster/shared\n')
+            fh.write('user=root\n')
+            fh.write('umask=022\n')
+            fh.write('autostart=true\n')
+            fh.write('startsecs=10\n')
+            fh.write('startretries=2\n')
+            fh.write('autorestart=unexpected\n')
+            fh.write('stopasgroup=true\n')
+            fh.close()
+            efh = open('/run/openvpn.enable')
+            efh.write('true')
+            efh.close()
         except:
-            print("Unable to write configuration file %s" % confd)
-            return 255
-        ## Now update the rc
-        rcupd = os.system("rc-update add openvpn.talecaster")
-        if rcupd != 0:
-            print("Error adding openvpn.talecaster to startup.")
-            return 255
-
+            rich.print(f'[[bold dark_orange]OpenVPN[/]]: FATAL: Could not write', sini)
+    else:
+        rich.print(f'[[bold dark_orange]OpenVPN[/]]: not configured for service', application)
+        pass
+            
 main()
