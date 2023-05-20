@@ -47,6 +47,8 @@ def main():
             efh = open('/run/openvpn.enable', 'w')
             efh.write('true')
             efh.close()
+            ## Warn the user about routing
+            rich.print(log_prefix, 'WARNING: local networks may require manual configuration.')
         except:
             rich.print(log_prefix, 'FATAL: Could not write', sini)
     else:
