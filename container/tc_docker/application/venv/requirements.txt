@@ -1,9 +1,15 @@
 argparse
 certifi
+configobj
 fake-useragent
+ifaddr
 lxml
+netifaces-plus
+psycopg2-binary
 pyarr
 requests
 requests-xml >= 0.2.3
+rich
+#sqlite-integrated
 xml-miner >= 0.0.5
 xmljson

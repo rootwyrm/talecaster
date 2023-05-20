@@ -32,6 +32,7 @@ function LOG()
 				## An error code was pushed as well.
 				RC=$3
 				printf '%s [ERROR] %s %s\n' "$(date -Iseconds)" "$1" "$3" | tee -a $logfile
+				## XXX: Why isn't this exiting immediately?
 				exit $RC
 			else
 				printf '%s [ERROR] %s\n' "$(date -Iseconds)" "$1" | tee -a $logfile
@@ -129,7 +130,7 @@ function load_config()
 ## Load python virtualenv if the container needs one.
 function load_pyenv()
 {
-	if [ -d /opt/talecaster/pyenv ]; then
+	if [ -d /opt/talecaster/venv ]; then
 		if [ -f /opt/talecaster/venv/bin/activate ]; then
 			. /opt/talecaster/venv/bin/activate
 		else
@@ -181,10 +182,10 @@ function deploy_talecaster_user()
 	## Defaults are talecaster(30000):media(30000)
 	## NOTE: Must be below 65534 due to musl limitations. AD environments
 	## should set and use the uidNumber and gidNumber values.
-	tcuid=${tcuid:="30000"}
-	tcgid=${tcgid:="30000"}
-	tcuser=${tcuser:="talecaster"}
-	tcgroup=${tcgroup:="media"}
+	tcuid=${tcuid:-"30000"}
+	tcgid=${tcgid:-"30000"}
+	tcuser=${tcuser:-"talecaster"}
+	tcgroup=${tcgroup:-"media"}
 
 	printf 'TaleCaster user is %s[%s]:%s[%s]\n' "$tcuser" "$tcuid" "$tcgroup" "$tcgid"
 	grep $tcgid /etc/group > /dev/null

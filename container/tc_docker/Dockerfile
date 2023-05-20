@@ -6,12 +6,12 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		ALPINE_BASE=${ALPINE_BASE:-3.16}
+ARG		ALPINE_BASE=${ALPINE_BASE:-3.17}
 
 ################################################################################
 # Build and package unrar
 ################################################################################
-FROM	alpine:3.17 AS prebuild
+FROM	alpine:${ALPINE_BASE} AS prebuild
 WORKDIR	/opt/work
 RUN		apk update && apk upgrade && \
 	apk add make g++ && \
@@ -49,52 +49,39 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.version="%%RW_VCSHASH%%" \
         org.opencontainers.image.revision="%%GITHUB_SHA%%"
 
-ADD		[ "init.d/", "/etc/init.d/" ]
-ADD		[ "cron/", "/etc/periodic/" ]
-COPY	[ "application/", "/opt/talecaster/" ]
-COPY	--from=prebuild /opt/work/unrar/unrar /usr/local/bin/unrar
-COPY	--from=prebuild /opt/work/unrar/license.txt /usr/local/bin/unrar.license.txt
-VOLUME	[ "/run", "/talecaster/shared" ]
-
+#ADD		[ "init.d/", "/etc/init.d/" ]
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle openrc logrotate tzdata jq rsyslog python3 uuidgen && \
+	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle supervisor logrotate tzdata jq rsyslog python3 uuidgen && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
 	sed -i -e '/.*salute$/d' /etc/inittab && \
 	ln -s /run /var/run && \
-	mkdir -p /run/openrc && \
-	mkdir -p /run/lock && \
-	chown root:uucp /run/lock && \
 	mkdir -p /opt/talecaster && \
-	mkdir -p /usr/local/src && \
-	rm -f /etc/init.d/hw* ; \
-	rm -f /etc/init.d/modules ; \
-	rm -f /etc/init.d/modules-load ; \
-	rm -f /etc/init.d/modloop ; \
-	/sbin/rc-update add dcron default ; \
-	/sbin/rc-update add rsyslog default ; \
-	/sbin/rc-update add talecaster default ; \
-	sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh ; \
-	python3 -m venv /opt/talecaster/venv ; \
+	mkdir -p /usr/local/src 
+
+ADD		[ "cron/", "/etc/periodic/" ]
+COPY	[ "application/", "/opt/talecaster/" ]
+COPY	--from=prebuild /opt/work/unrar/unrar /usr/local/bin/unrar
+COPY	--from=prebuild /opt/work/unrar/license.txt /usr/local/bin/unrar.license.txt
+COPY 	[ "etc/", "/etc/" ]
+VOLUME	[ "/run", "/talecaster/shared" ]
+
+RUN	python3 -m venv /opt/talecaster/venv ; \
 	. /opt/talecaster/venv/bin/activate ; \
 	/opt/talecaster/venv/bin/python3 -m pip install --upgrade pip && \
 	/opt/talecaster/venv/bin/pip install -r /opt/talecaster/venv/requirements.txt && \
-	echo "TaleCaster is Copyright (C) 2016-* Phillip Jaenke and its contributors" > /LICENSE ; \
-	echo "https://github.com/rootwyrm/talecaster/" >> /LICENSE ; \
-	echo "" >> /LICENSE ; \
-	echo "This work is licensed under the Creative Commons Attribution-NonCommerical 4.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA." >> /LICENSE
-
-COPY [ "etc/", "/etc/" ]
+	## Retrieve license text file direct from talecaster base
+	wget -O /LICENSE https://github.com/rootwyrm/talecaster/raw/master/LICENSE
 
 ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
-ONBUILD ADD	[ "init.d/", "/etc/init.d/" ]
+ONBUILD ADD	[ "etc/", "/etc/" ]
 ONBUILD RUN touch /firstboot ; \
 	echo "$(date '+%FT%T%z') [BUILD] Beginning build..." ; \
 	for bld in `ls /opt/talecaster/build/ | sort`; do \
 		/opt/talecaster/build/$bld ; \
 	done && \
-	echo "$(date '+%FT%T%z') [BUILD] Build complete." ; \
-	/opt/talecaster/lib/service.stub.sh
+	echo "$(date '+%FT%T%z') [BUILD] Build complete." 
 
-ENTRYPOINT	[ "/sbin/init" ]
+#ENTRYPOINT	[ "/sbin/init" ]
+ENTRYPOINT [ "/opt/talecaster/bin/entry.sh" ]
