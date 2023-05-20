@@ -6,9 +6,8 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-#ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-#FROM	ghcr.io/rootwyrm/tc_docker:${TALECASTER_BASE}
-FROM	tt_docker
+ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
+FROM	ghcr.io/rootwyrm/tc_docker:${TALECASTER_BASE}
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
