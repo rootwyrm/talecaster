@@ -6,18 +6,18 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
+ARG     TALECASTER_BASE=${TALECASTER_BASE:-latest}
+FROM    ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
 ## Labels
-LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
-		com.rootwyrm.product="TaleCaster" \
-		com.rootwyrm.talecaster.project="tc_sonarr" \
-		com.rootwyrm.talecaster.status="%%STATUS%%" \
-		com.rootwyrm.talecaster.service="television" \
-		com.rootwyrm.license="CC-BY-NC-4.0" \
-		com.rootwyrm.vcs-type="github" \
-		com.rootwyrm.vcs.url="%%GITHUB_REPOSITORY%%" \
+LABEL   maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
+        com.rootwyrm.product="TaleCaster" \
+        com.rootwyrm.talecaster.project="tc_sonarr" \
+        com.rootwyrm.talecaster.status="%%STATUS%%" \
+        com.rootwyrm.talecaster.service="television" \
+        com.rootwyrm.license="CC-BY-NC-4.0" \
+        com.rootwyrm.vcs-type="github" \
+        com.rootwyrm.vcs.url="%%GITHUB_REPOSITORY%%" \
         ## OCI
         org.opencontainers.image.created="%%RW_BUILDDATE%%" \
         org.opencontainers.image.url="https://github.com/rootwyrm/talecaster" \
@@ -29,12 +29,12 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.revision="%%GITHUB_SHA%%"
 
 ## Ports
-EXPOSE	8989/tcp
+EXPOSE  8989/tcp
 
 ## Periodic
-COPY	[ "cron/", "/etc/periodic/" ]
+COPY    [ "cron/", "/etc/periodic/" ]
 
 ## Volumes
 VOLUME [ "/talecaster/blackhole", "/talecaster/downloads", "/talecaster/television", "/talecaster/archive" ]
 
-# vim:sw=4:ts=4
+# vim:sw=4:ts=4:expandtab
