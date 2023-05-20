@@ -8,3 +8,7 @@ todo
 dbt*
 */Dockerfile.test
 */test*
+
+## SABnzbd
+*/sabnzbd.ini
+*/sabnzbd.pid
