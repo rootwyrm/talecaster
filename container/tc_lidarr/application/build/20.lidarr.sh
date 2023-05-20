@@ -17,9 +17,9 @@ export app_destdir="/opt/Lidarr"
 if [ -f /opt/talecaster/${app_name,,}.version ]; then
 	VERSION=$(cat /opt/talecaster/${app_name,,}.version)
 else
-	export VERSION="0.8.1.2135"
+	export VERSION="1.1.4.3027"
 fi
-export APPURL="https://github.com/lidarr/Lidarr/releases/download/v${VERSION}/Lidarr.master.${VERSION}.linux-musl-core-x64.tar.gz"
+export APPURL="https://github.com/lidarr/Lidarr/releases/download/v${VERSION}/Lidarr.develop.${VERSION}.linux-musl-core-x64.tar.gz"
 
 ######################################################################
 ## Application Install
@@ -45,7 +45,6 @@ application_install()
 
 echo "Entering $0"
 load_config
-/opt/talecaster/bin/install_dotnet.sh
 
 LOG "[BUILD] Installing ${app_name}"
 application_install
