@@ -259,7 +259,8 @@ def configure_servarr(this_application):
     acf.write("  <Branch>master</Branch>\n")
     acf.write(f"  <InstanceName>{service.implementation}</InstanceName>\n")
     ## Really should only expect to see this in k8s clusters, which we don't support unless it's FCoE
-    if "ENABLE_SSL" in os.environ:
+    ## XXX: ENABLE_SSL is for nginx only; k8s users will need to fuss with ENABLE_SSL_$APPLICATION
+    if f"ENABLE_SSL_{str.upper(service.application)}" in os.environ:
         acf.write("  <EnableSsl>True</EnableSsl>\n")
         acf.write("  <SslCertPath>", os.environ["SSL_CERT"].read(), "</SslCertPath>\n")
         acf.write("  <SslCertPassword>", os.environ["SSL_PASSWORD"].read(), "</SslCertPassword>\n")
@@ -439,23 +440,33 @@ def configure_sabnzbd():
     ## Now configure the servers section from /etc/sabnzbd.servers.ini
     ## XXX: should test for /talecaster/config/servers.ini and merge that in first
     serverconfig = configparser.ConfigParser()
-    serverconfig.read('/opt/talecaster/defaults/sabnzbd.servers.ini')
+    #serverconfig.read('/opt/talecaster/defaults/sabnzbd.servers.ini')
+    ## TODO: add support for multiple servers, maybe as yaml?
     if "NNTP_SERVER" in os.environ:
-        serverid = '[' + os.environ['NNTP_SERVER'] + ']'
+        print(log_prefix, "Adding server", os.environ["NNTP_SERVER"])
+        serverid = f'[{os.environ["NNTP_SERVER"]}]'
+        from pprint import pprint
+        pprint(serverid)
         serverconfig.add_section(serverid)
-        serverconfig.set[serverid]['name'] = os.environ['NNTP_SERVER']
-        serverconfig.set[serverid]['displayname'] = os.environ['NNTP_SERVER']
-        serverconfig.set[serverid]['host'] = os.environ['NNTP_SERVER']
-        if "NNTP_PORT" in os.environ:
-            serverconfig.set[serverid]['port'] = os.environ['NNTP_SERVER_PORT']
+        pprint(serverconfig.sections())
+        serverconfig.setdefault(serverid, {})
+        serverconfig.set(serverid, 'name', os.environ["NNTP_SERVER"])
+        serverconfig.set(serverid, 'displayname', os.environ["NNTP_SERVER"])
+        serverconfig.set(serverid, 'host', os.environ['NNTP_SERVER'])
+        if "NNTP_SERVER_PORT" in os.environ:
+            serverconfig.set(serverid, 'port', os.environ['NNTP_SERVER_PORT'])
         else:
-            serverconfig.set[serverid]['port'] = '563'
-        serverconfig.set[serverid]['timeout'] = '60'
-        serverconfig.set[serverid]['connections'] = '10'
-        serverconfig.set[serverid]['ssl'] = '1'
-        serverconfig.set[serverid]['ssl_verify'] = '2'
-        serverconfig.set[serverid]['username'] = os.environ['NNTP_SERVER_USER']
-        serverconfig.set[serverid]['password'] = os.environ['NNTP_SERVER_PASSWORD']
+            serverconfig.set(serverid, 'port', '563')
+        serverconfig.set(serverid, 'connections', '10')
+        if "NNTP_SERVER_LIMIT" in os.environ:
+            serverconfig.set(serverid, 'connections', os.environ['NNTP_SERVER_LIMIT'])
+        else:
+            serverconfig.set(serverid, 'connections', '10')
+        serverconfig.set(serverid, 'ssl', '1')
+        serverconfig.set(serverid, 'ssl_verify', '2')
+        serverconfig.set(serverid, 'username', os.environ['NNTP_SERVER_USER'])
+        serverconfig.set(serverid, 'password', os.environ['NNTP_SERVER_PASSWORD'])
+        runconfig.write('[servers]\n')
         serverconfig.write(runconfig)
     elif os.path.exists('/talecaster/config/servers.ini'):
         print(log_prefix, "Found /talecaster/config/servers.ini - merging configuration")
@@ -470,11 +481,6 @@ def configure_sabnzbd():
     ############################################################
     ## Debug section
     ############################################################
-    #with open('/tmp/sabnzbd.ini', 'w') as configfile:
-    #    config.write(configfile)
     #os.system('cat /tmp/sabnzbd.ini')
-
-    # read the INI section logging from configfile
-
 
 __main__()
