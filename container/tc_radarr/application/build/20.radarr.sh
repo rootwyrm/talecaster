@@ -45,7 +45,7 @@ application_install()
 	else
 		local VERSION=${VERSION:-"3.2.2.5080"}
 	fi
-	local APPURL="https://github.com/Radarr/Radarr/releases/download/v${VERSION}/Radarr.master.${VERSION}.${APPARCH}.tar.gz"
+	local APPURL="https://github.com/Radarr/Radarr/releases/download/v${VERSION}/Radarr.develop.${VERSION}.${APPARCH}.tar.gz"
 
 	## Downloading from Github is funky.
 	echo "[INSTALL] Retrieving ${app_name} release ${VERSION} ..."
@@ -61,13 +61,5 @@ application_install()
 echo "Entering $0"
 load_config
 
-if [ ! -f /usr/local/bin/mono ]; then
-	/opt/talecaster/bin/install_dotnet.sh
-	## Install the dotnet initscript
-	ln -sf /etc/init.d/radarr-dotnet /etc/init.d/radarr
-else
-	export MONO=true
-	ln -sf /etc/init.d/radarr-mono /etc/init.d/radarr
-fi
 LOG "[BUILD] Installing ${app_name}"
 application_install
