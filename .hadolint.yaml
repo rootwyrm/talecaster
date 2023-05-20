@@ -1,0 +1,4 @@
+failure-level: warning
+format: tty
+## Ignore things that TaleCaster actually needs.
+ignored:

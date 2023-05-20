@@ -7,7 +7,7 @@ SYSTEMS.md
 todo
 dbt*
 */Dockerfile.test
-*/test*
+*/test**
 
 ## SABnzbd
 */sabnzbd.ini

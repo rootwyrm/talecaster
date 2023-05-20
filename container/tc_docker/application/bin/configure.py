@@ -237,7 +237,7 @@ def configure_servarr(this_application):
         apikeyfile.close()
         config_exists = True
     except:
-        print(log_prefix, "No existing configuration found.")
+        print(log_prefix, "[bold dark_red]ERROR:[/] Unable to locate API key, generating new configuration.")
         ch = open(config_xml, 'w')
         ch.write('')
         ch.close()
@@ -253,7 +253,7 @@ def configure_servarr(this_application):
     acf.write(f"  <SslPort>{service.application_sslport}</SslPort>\n")
     acf.write(f"  <UrlBase>/{service.application}</UrlBase>\n")
     acf.write(f"  <ApiKey>{apikey}</ApiKey>\n")
-    acf.write("  <AuthenticationMethod>External</AuthenticationMethod>\n")
+    #acf.write("  <AuthenticationMethod>External</AuthenticationMethod>\n")
     acf.write("  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>\n")
     acf.write("  <LaunchBrowser>False</LaunchBrowser>\n")
     acf.write("  <Branch>master</Branch>\n")

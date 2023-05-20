@@ -60,7 +60,7 @@ RUN	apk update && apk upgrade && \
 	mkdir -p /opt/talecaster && \
 	mkdir -p /usr/local/src 
 
-ADD		[ "cron/", "/etc/periodic/" ]
+COPY	[ "cron/", "/etc/periodic/" ]
 COPY	[ "application/", "/opt/talecaster/" ]
 COPY	--from=prebuild /opt/work/unrar/unrar /usr/local/bin/unrar
 COPY	--from=prebuild /opt/work/unrar/license.txt /usr/local/bin/unrar.license.txt
@@ -69,20 +69,22 @@ VOLUME	[ "/run", "/talecaster/shared" ]
 
 RUN	python3 -m venv /opt/talecaster/venv ; \
 	. /opt/talecaster/venv/bin/activate ; \
-	/opt/talecaster/venv/bin/python3 -m pip install --upgrade pip && \
-	/opt/talecaster/venv/bin/pip install -r /opt/talecaster/venv/requirements.txt && \
+	/opt/talecaster/venv/bin/python3 -m pip install --no-cache-dir --upgrade pip && \
+	/opt/talecaster/venv/bin/pip --no-cache-dir install -r /opt/talecaster/venv/requirements.txt && \
 	## Retrieve license text file direct from CreativeCommons
 	wget -O /LICENSE https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt 
 
 
-ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
-ONBUILD ADD	[ "etc/", "/etc/" ]
+ONBUILD	COPY [ "application/", "/opt/talecaster/" ]
+ONBUILD COPY [ "etc/", "/etc/" ]
 ONBUILD RUN touch /firstboot ; \
 	echo "$(date '+%FT%T%z') [BUILD] Beginning build..." ; \
-	for bld in `ls /opt/talecaster/build/ | sort`; do \
+	for bld in $(ls /opt/talecaster/build/ | sort); do \
 		/opt/talecaster/build/$bld ; \
 	done && \
 	echo "$(date '+%FT%T%z') [BUILD] Build complete." 
 
 #ENTRYPOINT	[ "/sbin/init" ]
 ENTRYPOINT [ "/opt/talecaster/bin/entry.sh" ]
+
+#vim ft=dockerfile:ts=4:sw=4:expandtab
