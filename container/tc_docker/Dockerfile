@@ -51,7 +51,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 
 #ADD		[ "init.d/", "/etc/init.d/" ]
 RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle supervisor logrotate tzdata jq rsyslog python3 uuidgen && \
+	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle supervisor logrotate tzdata jq rsyslog python3 uuidgen openvpn && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
