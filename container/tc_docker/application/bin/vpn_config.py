@@ -12,26 +12,27 @@ import os
 import sys
 import rich
 
-sini = "/etc/supervisor.d/openvpn.ini"
-
 def main():
     application = open('/opt/talecaster/id.provides').read()
     ## Other scripts require the newline.
     application = application.replace('\n', '')
-    vpn_config = f"{str.upper(application)}_VPN_CONFIG"
-    if vpn_config in os.environ:
+    log_prefix = "[[bold dark_orange]OpenVPN[/]]"
+    vpn_config = os.environ[f"{str.upper(application)}_VPN_CONFIG"]
+    print('VPN_config is', vpn_config)
+    if os.environ[f"{str.upper(application)}_VPN"] == "true":
         ## VPN should be enabled for this service, regenerate on every run though.
         try:
-            os.open(vpn_config, 'r')
-            rich.print('[bold dark_orange]OpenVPN[/] Using configuration file', vpn_config)
-        except:
-            rich.print(f'[bold dark_orange]OpenVPN[/] FATAL: Could not open', vpn_config)
+            open(vpn_config, 'r')
+            rich.print(log_prefix, 'Using configuration file', vpn_config)
+        except IOError:
+            rich.print(log_prefix,'[bold dark_red]FATAL[/]: Could not open', vpn_config)
             sys.exit(2)
         ## Wrap in a try so it bails before trying to run.
         try:
-            fh = open(sini, 'w')
+            fh = open('/etc/supervisor.d/openvpn.ini', 'w')
+            command = '/usr/sbin/openvpn --connect-retry-max 10 --log /var/log/openvpn.log --writepid /run/openvpn.pid --config ' + vpn_config
             fh.write('[program:openvpn]\n')
-            fh.write(f'/usr/sbin/openvpn --connect-retry-max 10 --log /var/log/openvpn.log --writepid /run/openvpn.pid --config ',os.environ[vpn_config].read(),'\n')
+            fh.write(f'command={command}\n')
             fh.write('process_name=%(program_name)s\n')
             fh.write('numprocs=1\n')
             fh.write('directory=/talecaster/shared\n')
@@ -43,13 +44,13 @@ def main():
             fh.write('autorestart=unexpected\n')
             fh.write('stopasgroup=true\n')
             fh.close()
-            efh = open('/run/openvpn.enable')
+            efh = open('/run/openvpn.enable', 'w')
             efh.write('true')
             efh.close()
         except:
-            rich.print(f'[[bold dark_orange]OpenVPN[/]]: FATAL: Could not write', sini)
+            rich.print(log_prefix, 'FATAL: Could not write', sini)
     else:
-        rich.print(f'[[bold dark_orange]OpenVPN[/]]: not configured for service', application)
+        rich.print(log_prefix, "VPN is not configured for service", application)
         pass
             
 main()
