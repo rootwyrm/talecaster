@@ -7,12 +7,28 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-## build/20.radarr.sh
 . /opt/talecaster/lib/talecaster.lib.sh
+#set -e
 
 export app_name="prowlarr"
 export app_url="https://www.prowlarr.com/"
 export app_destdir="/opt/Prowlarr"
+
+#https://services.sonarr.tv/v1/download/develop/latest?version=4&os=linux-musl&arch=arm64
+export OSARCH="linux-musl"
+export ARCH=$(uname -m)
+case $ARCH in
+	x86*)
+		export ARCH="x64"
+		;;
+	aarch64*)
+		export ARCH="arm64"
+		;;
+	*)
+		echo "Unsupported architecture!"
+		exit 255
+		;;
+esac
 
 ######################################################################
 ## Application Install
@@ -25,27 +41,17 @@ application_install()
 		exit 1
 	fi
 
-	## Determine machine architecture
-	case $(uname -m) in
-		x86_64)
-			local APPARCH="linux-musl-core-x64" ;;
-		aarch64)
-			local APPARCH="linux-musl-core-arm64" ;;
-		*)
-			echo "Unsupported architecture!"
-			exit 255
-			;;
-	esac
-	if [[ $MONO == 'true' ]]; then
-		local APPARCH="linux"
-	fi
 	## Determine our version
 	if [ -f /opt/talecaster/${app_name}.version ]; then
 		local VERSION=$(cat /opt/talecaster/${app_name}.version)
 	else
-		local VERSION=${VERSION:-"0.1.3.1113"}
+		local VERSION=${VERSION:-"1.4.1.3258"}
 	fi
-	local APPURL="https://github.com/Prowlarr/Prowlarr/releases/download/v${VERSION}/Prowlarr.develop.${VERSION}.${APPARCH}.tar.gz"
+	#local APPURL="https://github.com/Prowlarr/Prowlarr/releases/download/v${VERSION}/Prowlarr.master.${VERSION}.linux-musl-core-${ARCH}.tar.gz"
+	local APPURL="https://github.com/Prowlarr/Prowlarr/releases/download/v${VERSION}/Prowlarr.master.${VERSION}.linux-musl-core-${ARCH}.tar.gz"
+#	echo "$APPURL"
+#https://github.com/Prowlarr/Prowlarr/releases/download/v1.4.1.3258/Prowlarr.master.1.4.1.3258.linux-musl-core-.tar.gz
+
 
 	## Downloading from Github is funky.
 	echo "[INSTALL] Retrieving ${app_name} release ${VERSION} ..."
@@ -61,12 +67,10 @@ application_install()
 echo "Entering $0"
 load_config
 
-## CLR only
-if [ ! -f /usr/bin/dotnet ]; then
-	/opt/talecaster/bin/install_dotnet.sh
-fi
 LOG "[BUILD] Installing ${app_name}"
 application_install
 if [ $? -eq 0 ]; then
-	rc-update add prowlarr_sync
+	# XXX: prowlarr_sync is part of firstboot and crontab
+	echo "prowlarr_sync not fixed yet"
+	#rc-update add prowlarr_sync
 fi
