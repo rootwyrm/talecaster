@@ -71,8 +71,9 @@ RUN	python3 -m venv /opt/talecaster/venv ; \
 	. /opt/talecaster/venv/bin/activate ; \
 	/opt/talecaster/venv/bin/python3 -m pip install --upgrade pip && \
 	/opt/talecaster/venv/bin/pip install -r /opt/talecaster/venv/requirements.txt && \
-	## Retrieve license text file direct from talecaster base
-	wget -O /LICENSE https://github.com/rootwyrm/talecaster/raw/master/LICENSE
+	## Retrieve license text file direct from CreativeCommons
+	wget -O /LICENSE https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt 
+
 
 ONBUILD	ADD [ "application/", "/opt/talecaster/" ]
 ONBUILD ADD	[ "etc/", "/etc/" ]
