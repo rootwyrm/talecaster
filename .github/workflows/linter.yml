@@ -28,5 +28,6 @@ jobs:
       env: 
         TARGET: ${{ matrix.lint }}
       run: |
+        curl -sL -o hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
         echo "Linting $TARGET"
-        docker run --rm -i ghcr.io/hadolint/hadolint < ./container/$TARGET
+        hadolint ./container/$TARGET
