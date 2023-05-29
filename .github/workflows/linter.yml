@@ -21,9 +21,12 @@ jobs:
     steps: 
     - name: Checkout
       uses: actions/checkout@master
+    ## https://github.com/hadolint/hadolint because there doesn't look to be a better option still.
     - name: lint
-      uses: luke142367/Docker-Lint-Action@master
-      with:
-        target: ${{ matrix.lint }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ## Use a bash shell
+      shell: bash
+      env: 
+        TARGET: ${{ matrix.lint }}
+      run: |
+        echo "Linting $TARGET"
+        docker run --rm -i ghcr.io/hadolint/hadolint < $TARGET
