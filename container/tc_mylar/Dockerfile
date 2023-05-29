@@ -7,15 +7,14 @@
 # See /LICENSE for details
 ################################################################################
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-FROM	alpine:3.16 AS pybuild
+FROM	alpine:3.17 AS pybuild
 WORKDIR	/opt/mylar
-RUN		apk update && apk upgrade && \
-	apk add git bash python3 sqlite && \
+RUN	apk add --no-cache git bash python3 sqlite && \
 	cd /opt/mylar ; git clone https://github.com/mylar3/mylar3.git . && \
 	python3 -m venv /opt/mylar/venv && \
 	. /opt/mylar/venv/bin/activate && \
 	/opt/mylar/venv/bin/python3 -m pip install --upgrade pip && \
-	apk add gcc musl-dev python3-dev libjpeg-turbo-dev zlib-dev tiff-dev libwebp-dev lcms2-dev && \
+	apk add --no-cache gcc musl-dev python3-dev libjpeg-turbo-dev zlib-dev tiff-dev libwebp-dev lcms2-dev && \
 	pip install --no-cache-dir --compile -r requirements.txt
 
 FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE

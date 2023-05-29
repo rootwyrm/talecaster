@@ -50,8 +50,7 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.revision="%%GITHUB_SHA%%"
 
 #ADD		[ "init.d/", "/etc/init.d/" ]
-RUN	apk update && apk upgrade && \
-	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle supervisor logrotate tzdata jq rsyslog python3 uuidgen openvpn && \
+RUN	apk add --no-cache wget curl file grep dcron openssl bash ca-certificates ca-certificates-bundle supervisor logrotate tzdata jq rsyslog python3 uuidgen openvpn && \
 	sed -i -e '/^tty*/d' /etc/inittab && \
 	sed -i -e '/^# Set up*/d' /etc/inittab && \
 	sed -i -e '/^::ctrlalt*/d' /etc/inittab && \
@@ -72,7 +71,7 @@ RUN	python3 -m venv /opt/talecaster/venv ; \
 	/opt/talecaster/venv/bin/python3 -m pip install --no-cache-dir --upgrade pip && \
 	/opt/talecaster/venv/bin/pip --no-cache-dir install -r /opt/talecaster/venv/requirements.txt && \
 	## Retrieve license text file direct from CreativeCommons
-	wget -O /LICENSE https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt 
+	wget --progress=dot:giga -O /LICENSE https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt 
 
 
 ONBUILD	COPY [ "application/", "/opt/talecaster/" ]
