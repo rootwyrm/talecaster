@@ -28,8 +28,6 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
         org.opencontainers.image.version="%%RW_VCSHASH%%" \
         org.opencontainers.image.revision="%%GITHUB_SHA%%"
 
-RUN	apk update && apk upgrade && \
-	apk add --no-cache logrotate nginx nginx-mod-http-cache-purge nginx-mod-http-headers-more nginx-mod-http-cookie-flag ; \
-	/sbin/rc-update add nginx default
+RUN	apk add --no-cache logrotate nginx nginx-mod-http-cache-purge nginx-mod-http-headers-more nginx-mod-http-cookie-flag 
 
 COPY [ "etc/", "/etc/" ]
