@@ -16,7 +16,7 @@ jobs:
   linter:
     strategy:
       matrix:
-        lint: [ ./tc_bazarr/Dockerfile, ./tc_docker/Dockerfile, ./tc_frontend/Dockerfile, ./tc_lidarr/Dockerfile, ./tc_mylar/Dockerfile, ./tc_nzbget/Dockerfile, ./tc_prowlarr/Dockerfile, ./tc_qbittorrent/Dockerfile, ./tc_radarr/Dockerfile, ./tc_readarr/Dockerfile, ./tc_sonarr/Dockerfile ]
+        lint: [ tc_bazarr/Dockerfile, tc_docker/Dockerfile, tc_frontend/Dockerfile, tc_lidarr/Dockerfile, tc_mylar/Dockerfile, tc_nzbget/Dockerfile, tc_prowlarr/Dockerfile, tc_qbittorrent/Dockerfile, tc_radarr/Dockerfile, tc_readarr/Dockerfile, tc_sonarr/Dockerfile ]
     runs-on: ubuntu-latest
     steps: 
     - name: Checkout
@@ -29,4 +29,4 @@ jobs:
         TARGET: ${{ matrix.lint }}
       run: |
         echo "Linting $TARGET"
-        docker run --rm -i ghcr.io/hadolint/hadolint < $TARGET
+        docker run --rm -i ghcr.io/hadolint/hadolint < ./container/$TARGET
