@@ -11,6 +11,9 @@
 import os
 import sys
 import requests
+import ipaddress 
+import random
+import re
 import fileinput
 from argparse import ArgumentParser
 from rich import print
@@ -84,6 +87,14 @@ class Application(object):
         self.implementationName = 'SABnzbd'
         self.configContract = 'SABnzbd'
         self.apiKeyType = 'pythongen'
+    
+    def torrent(self):
+        self.application = 'torrent'
+        self.application_port = 8081
+        self.application_sslport = 8082
+        self.implementation = 'qBittorrent'
+        self.implementationName = 'qBittorrent'
+        self.configContract = 'qBittorrentSettings'
 
 def __main__():
     global log_prefix
@@ -103,8 +114,9 @@ def __main__():
             ## Only for Sonarr v4
             configure_servarr(this_application)
         case "nntp":
-            print("nntp testing only")
             configure_sabnzbd()
+        case "torrent":
+            configure_qbittorrent()    
         case default:
             ## Fall-through; unknown application
             print(log_prefix, "[bold red]FATAL[/]: Unknown application", service.application)
@@ -134,9 +146,10 @@ def configure_servarr(this_application):
                 pg_port = "5432"
             ## Test connection
             try:
-                talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass)
                 pg_maindb = "prowlarr"
                 pg_logdb = "prowlarrlog"
+                for db in [pg_maindb, pg_logdb]:
+                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
             except:
                 print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
                 os._exit(100)
@@ -161,9 +174,10 @@ def configure_servarr(this_application):
                 pg_port = "5432"
             ## Test connection
             try:
-                talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass)
                 pg_maindb = "lidarr"
                 pg_logdb = "lidarrlog"
+                for db in [pg_maindb, pg_logdb]:
+                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
             except:
                 print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
                 os._exit(100)
@@ -186,9 +200,10 @@ def configure_servarr(this_application):
                 pg_port = "5432"
             ## Test connection
             try:
-                talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass)
                 pg_maindb = "radarr"
                 pg_logdb = "radarrlog"
+                for db in [pg_maindb, pg_logdb]:
+                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
             except:
                 print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
                 os._exit(100)
@@ -211,10 +226,11 @@ def configure_servarr(this_application):
                 pg_port = "5432"
             ## Test connection
             try:
-                talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass)
                 pg_maindb = "readarr"
                 pg_logdb = "readarrlog"
                 pg_cachedb = "readarrcache"
+                for db in [pg_maindb, pg_logdb, pg_cachedb]:
+                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
             except:
                 print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
                 os._exit(100)
@@ -262,8 +278,8 @@ def configure_servarr(this_application):
     ## XXX: ENABLE_SSL is for nginx only; k8s users will need to fuss with ENABLE_SSL_$APPLICATION
     if f"ENABLE_SSL_{str.upper(service.application)}" in os.environ:
         acf.write("  <EnableSsl>True</EnableSsl>\n")
-        acf.write("  <SslCertPath>", os.environ["SSL_CERT"].read(), "</SslCertPath>\n")
-        acf.write("  <SslCertPassword>", os.environ["SSL_PASSWORD"].read(), "</SslCertPassword>\n")
+        acf.write("  <SslCertPath>", os.environ["SSL_CERT"], "</SslCertPath>\n")
+        acf.write("  <SslCertPassword>", os.environ["SSL_PASSWORD"], "</SslCertPassword>\n")
     else:
         acf.write("  <EnableSsl>False</EnableSsl>\n")
     if pg_host is not None:
@@ -324,17 +340,21 @@ def talecaster_pgpass(pg_host, pg_user, pg_pass, pg_port, database):
     except:
         print(log_prefix, "[bold red]FATAL[/]: could not write to /home/talecaster/.pgpass")
 
-def talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass):
+def talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, database):
     ## Attempt to connect to the provided PostgreSQL database
     import psycopg2
     ## Convert host to str so IP works, and password so that unescaped characters work
-    dbconn = psycopg2.connect(host=str(pg_host), port=int(pg_port), user=str(pg_user), password=str(pg_pass), dbname='template1')
+    if database is None:
+        database = 'template1'
+
     try:
-        print(log_prefix, "Validating database connection to", pg_host)
+        dbconn = psycopg2.connect(host=str(pg_host), port=int(pg_port), user=str(pg_user), password=str(pg_pass), dbname=str(database))
+        print(log_prefix, "Validating connection to", database, "with", pg_user + "@" + pg_host)
         dbconn
         dbconn.close()
-    except:
-        raise ConnectionError
+    except psycopg2.Error as e:
+        print(log_prefix, "[bold red]FATAL[/]: connection to", database, "failed!", e)
+        raise e
 
 def talecaster_pgconnsutest(pg_host, pg_port, pg_user, pg_pass):
     ## Tests if superuser account is working
@@ -482,5 +502,217 @@ def configure_sabnzbd():
     ## Debug section
     ############################################################
     #os.system('cat /tmp/sabnzbd.ini')
+
+def configure_qbittorrent():
+    ## XXX: qbittorrent doesn't provide any sort of APIkey method still
+    if "TORRENT_USER" in os.environ:
+        qbt_user = os.environ["TORRENT_USER"]
+    else:
+        print(log_prefix, "[bold dark_red]FATAL:[/] must provide a TORRENT_USER!")
+        sys.exit(1)
+    if "TORRENT_PASSWORD" in os.environ:
+        qbt_pass = os.environ["TORRENT_PASSWORD"]
+    else:
+        print(log_prefix, "[bold dark_red]FATAL:[/] must provide a TORRENT_PASSWORD!")
+        sys.exit(1)
+
+    import configparser
+    import netifaces
+    ## Make configParser object with case sensitivity
+    runconfig = configparser.ConfigParser()
+    runconfig.optionxform = str
+    runconfig.allow_no_value = False
+    ## NOTE: the defaults in /opt/talecaster/defaults/qBittorrent.conf are only
+    ## minimums.
+    
+    ## TODO: Wireguard and ZeroTier
+    if "TORRENT_VPN_CONFIG" in os.environ:
+        vpn = True
+    else:
+        vpn = False
+
+    defaults = open('/opt/talecaster/defaults/qBittorrent.conf', encoding='utf-8')
+    runconfig.read_file(defaults)
+
+    if os.path.isfile('/talecaster/config/qBittorrent/config/qBittorrent.conf') is True:
+        ## Bail if the config file is empty
+        if os.stat('/talecaster/config/qBittorrent/config/qBittorrent.conf').st_size == 0:
+            print(log_prefix, "Existing configuration is empty, using defaults")
+            return
+        else:
+            print(log_prefix, "Found existing configuration, merging")
+            runconfig.read_file('/talecaster/config/qBittorrent/config/qBittorrent.conf')
+    else: 
+        print(log_prefix, "No existing configuration found, using defaults")
+
+    ## portrange must be above 10000 since TaleCaster ports run up to 9999
+    portrange = random.randint(10000,60000)
+
+    ## Critical for autostart
+    if runconfig.has_section('LegalNotice') is False:
+        runconfig.add_section('LegalNotice')
+    runconfig['LegalNotice']['Accepted'] = 'true'
+
+    ## Torrent tuning pieces
+    if runconfig.has_section('BitTorrent') is False:
+        runconfig.add_section('BitTorrent')
+    runconfig['BitTorrent']['Session\\Port'] = str(portrange)
+    runconfig['BitTorrent']['Session\\QueueingSystemEnabled'] = 'true'
+
+    if runconfig.has_section('Core') is False:
+        runconfig.add_section('Core')
+    runconfig.set('Core', 'AutoDeleteAddedTorrentFile', 'IfAdded')
+
+    if runconfig.has_section('Network') is False:
+        runconfig.add_section('Network')
+    runconfig['Network']['Cookies'] = '@Invalid()'
+
+    ## Preferences
+    if runconfig.has_section('Preferences') is False:
+        runconfig.add_section('Preferences')
+    runconfig.set('Preferences', 'Advanced\\RecheckOnCompletion', 'false')
+    runconfig.set('Preferences', 'Advanced\\ResolvePeerCountries', 'true')
+    ## Connection settings
+    runconfig.set('Preferences', 'Connection\\PortRangeMin', str(portrange))
+    runconfig.set('Preferences', 'Connection\\ResolvePeerCountries', 'true')
+    runconfig.set('Preferences', 'Connection\\UseIncompleteExtension', 'true')
+    ## Download settings
+    runconfig.set('Preferences', 'Downloads\\SavePath', '/talecaster/downloads')
+    runconfig.set('Preferences', 'Downloads\\IncompleteExtensions', 'true')
+
+    ## WebUI
+    runconfig['Preferences']['WebUI\\BanDuration'] = '3600'
+    runconfig['Preferences']['WebUI\\LocalHostAuth'] = 'false'
+    runconfig['Preferences']['WebUI\\Port'] = '9091'
+    ## XXX: UseUPnP doesn't work without host networking
+    runconfig['Preferences']['WebUI\\UseUPnP'] = 'false'
+    runconfig['Preferences']['Queueing\\QueueingEnabled'] = 'true'
+
+    ## Whitelisting
+    whitelist = []
+    whitelist.append("127.0.0.0/8")
+    ## Use netifaces-plus to get the network and subnet mask
+    local_addr = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
+    local_mask = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['netmask']
+    local_net = ipaddress.IPv4Network(f'{local_addr}/{local_mask}', strict=False)
+    whitelist.append(str(local_net))
+    whitelist = str(','.join(whitelist))
+    runconfig['Preferences']['WebUI\\AuthSubnetWhitelistEnabled'] = 'true'
+    runconfig['Preferences']['WebUI\\AuthSubnetWhitelist'] = f"{whitelist}"
+
+    ## Username and password 
+    ## Convert plaintext password to PBKDF2
+    qbt_pass = qbittorrent_password(os.environ["TORRENT_PASSWORD"])
+    runconfig['Preferences']['WebUI\\Username'] = qbt_user
+    runconfig['Preferences']['WebUI\\Password_PBKDF2'] = qbt_pass
+
+    ## Set language since qBittorrent has translations
+    if "LANGUAGE" in os.environ:
+        runconfig.set('Preferences', 'General\\Locale', os.environ["LANGUAGE"])
+
+    ## TODO: Wireguard 
+    if vpn is True:
+        try:
+            interface = netifaces.interfaces('tun0')
+        except interface.DoesNotExist:
+            print(log_prefix, "unable to open tun0 interface, bailing out!")
+            sys.exit(10)
+        if runconfig.has_section('BitTorrent') is False:
+            runconfig.add_section('BitTorrent')
+        runconfig['BitTorrent']['Session\\Interface'] = 'tun0'
+        runconfig['BitTorrent']['Session\\InterfaceName'] = 'tun0'
+        ## Limit to IPv4 only
+        runconfig['BitTorrent']['Session\\InterfaceAddress'] = '0.0.0.0'
+
+    ## XXX: SOCKS5 proxy goes here, NYI
+    ## SOCKS5 settings
+    #if "SOCKS5_PROXY" in os.environ:
+    #    runconfig['Network']['ProxyType'] = 'SOCKS5'
+    #    runconfig['Network']['Proxy\\Type'] = 'SOCKS5'
+    #    ## qBittorrent only uses IP address here
+    #    import socket
+    #    socks5_ip = socket.gethostbyname(os.environ["SOCKS5_PROXY"])
+    #    runconfig['Network']['IP'] = socks5_ip[0]
+    #if "SOCKS5_PORT" in os.environ:
+    ## XXX: This function doesn't work as intended.
+    #    ## This is an '@Variant' type, so we need to convert it
+    #    ## PyQt5's 400MB+ can bite me.
+    #    ## https://gitlab.com/TC01/quasselconf/-/tree/master/quasselconf - for reference if we do use pyqt
+    #    port_int = int(os.environ["SOCKS5_PORT"])
+    #    port_bytes = struct.pack("<i", port_int)
+    #    port_bytes = b"@Variant(\0\0\0" + port_bytes + b"\x1f\x90)"
+    #    port_str = port_bytes.decode('latin-1')
+    #    port_str_printable = re.sub(r'[^\x20-\x7E]', '', port_str)
+    #    #print(port_str_printable.decode('utf-8'))
+    #    runconfig['Network']['Port'] = port_str_printable
+    ## CAUTION: these are stored in plaintext in the config, even if we use secrets
+    #if "SOCKS5_USER" in os.environ:
+    #    runconfig['Network']['Proxy\\Username'] = os.environ["SOCKS5_USER"]
+    #elif "SOCKS5_PASSWORD" and "SOCKS5_USER" in os.environ:
+    #    runconfig['Network']['Proxy\\Password'] = os.environ["SOCKS5_PASSWORD"]
+    
+
+    ## Test if /talecaster/convig/qBittorrent/config exists
+    if os.path.exists('/talecaster/config/qBittorrent') is False:
+        os.makedirs('/talecaster/config/qBittorrent')
+        os.chown('/talecaster/config/qBittorrent', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+    if os.path.exists('/talecaster/config/qBittorrent/config') is False:
+        os.makedirs('/talecaster/config/qBittorrent/config')
+        os.chown('/talecaster/config/qBittorrent/config', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+
+    conf = open('/talecaster/config/qBittorrent/config/qBittorrent.conf', 'w')
+    try:
+        print(log_prefix, "Writing qBittorrent.conf")
+        runconfig.write(conf)
+    except:
+        print(log_prefix, '[bold dark_red]FATAL:[/] Error writing config file!', conf.errors)
+        os._exit(2)
+    finally:
+        conf.close()
+    
+    ## Copy the json files from defaults to /talceaster/config/qBittorrent/config
+    import shutil
+    shutil.copyfile('/opt/talecaster/defaults/watched_folders.json', '/talecaster/config/qBittorrent/config/watched_folders.json')
+    shutil.copyfile('/opt/talecaster/defaults/categories.json', '/talecaster/config/qBittorrent/config/categories.json')
+    os.chown('/talecaster/config/qBittorrent/config/watched_folders.json', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+    os.chown('/talecaster/config/qBittorrent/config/categories.json', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+
+def qbittorrent_password(password):
+    """
+    This is the function in qBittorrent 
+    QByteArray Utils::Password::PBKDF2::generate(const QByteArray &password)
+    {
+        const std::array<uint32_t, 4> salt
+        {{Random::rand(), Random::rand()
+            , Random::rand(), Random::rand()}};
+
+        std::array<unsigned char, 64> outBuf {};
+        const int hmacResult = PKCS5_PBKDF2_HMAC(password.constData(), password.size()
+            , reinterpret_cast<const unsigned char *>(salt.data()), static_cast<int>(sizeof(salt[0]) * salt.size())
+            , hashIterations, hashMethod
+            , static_cast<int>(outBuf.size()), outBuf.data());
+        if (hmacResult != 1)
+            return {};
+
+        const QByteArray saltView = QByteArray::fromRawData(
+            reinterpret_cast<const char *>(salt.data()), static_cast<int>(sizeof(salt[0]) * salt.size()));
+        const QByteArray outBufView = QByteArray::fromRawData(
+            reinterpret_cast<const char *>(outBuf.data()), static_cast<int>(outBuf.size()));
+
+        return (saltView.toBase64() + ':' + outBufView.toBase64());
+    }
+    """
+    import hashlib  
+    import binascii
+    import base64
+    salt = binascii.hexlify(os.urandom(32))
+    hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    hashed = binascii.hexlify(hashed)
+    ## Now convert the hashed password and salt into base64
+    hashed = base64.b64encode(hashed)
+    salt = base64.b64encode(salt)
+    ## Strip the :b from the base64 encoding
+    return f"@ByteArray({hashed.decode('utf-8')}:{salt.decode('utf-8')})"
+
 
 __main__()

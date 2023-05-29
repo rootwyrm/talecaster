@@ -6,8 +6,8 @@
 # Licensed under CC-BY-NC-4.0
 # See /LICENSE for details
 ################################################################################
-ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
-FROM	alpine:3.16 AS pybuild
+#ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
+FROM	alpine:3.17 AS pybuild
 WORKDIR	/opt/bazarr
 RUN		apk update && apk upgrade && \
 	apk add git bash python3 sqlite && \
@@ -23,7 +23,8 @@ RUN		apk update && apk upgrade && \
 	
 	#apk add gcc musl-dev python3-dev libjpeg-turbo-dev zlib-dev tiff-dev libwebp-dev lcms2-dev && \
 
-FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
+FROM	tt_docker
+#FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \

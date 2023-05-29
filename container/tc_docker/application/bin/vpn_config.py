@@ -12,14 +12,14 @@ import os
 import sys
 import rich
 
-def main():
+def __main__():
     application = open('/opt/talecaster/id.provides').read()
     ## Other scripts require the newline.
     application = application.replace('\n', '')
     log_prefix = "[[bold dark_orange]OpenVPN[/]]"
     vpn_config = os.environ[f"{str.upper(application)}_VPN_CONFIG"]
     print('VPN_config is', vpn_config)
-    if os.environ[f"{str.upper(application)}_VPN"] == "true":
+    if os.environ[f"{str.upper(application)}_VPN"] == "true" or [f"{str.upper(application)}_VPN_CONFIG"] in os.environ:
         ## VPN should be enabled for this service, regenerate on every run though.
         try:
             open(vpn_config, 'r')
@@ -51,8 +51,9 @@ def main():
             rich.print(log_prefix, 'WARNING: local networks may require manual configuration.')
         except:
             rich.print(log_prefix, 'FATAL: Could not write', sini)
+    ## NYI: VPN should persist across restarts without rewriting the config.
     else:
-        rich.print(log_prefix, "VPN is not configured for service", application)
+        rich.print(log_prefix, "[bold cyan]INFO:[/] VPN is not configured for service", application)
         pass
             
-main()
+#main()

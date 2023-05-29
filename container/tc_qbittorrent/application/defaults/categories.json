@@ -1,0 +1,18 @@
+{
+    "Television": {
+        "save_path": "/talecaster/downloads/television"
+    },
+	"Movies": {
+		"save_path": "/talecaster/downloads/movies"
+	},
+	"Music": {
+		"save_path": "/talecaster/downloads/music"
+	},
+	"Comics": {
+		"save_path": "/talecaster/downloads/comics"
+	},
+	"Books": {
+		"save_path": "/talecaster/downloads/books"
+	}
+}
+
