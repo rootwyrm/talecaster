@@ -63,9 +63,5 @@ application_install()
 echo "Entering $0"
 load_config
 
-## CLR only
-if [ ! -f /usr/bin/dotnet ]; then
-	/opt/talecaster/bin/install_dotnet.sh
-fi
 LOG "[BUILD] Installing ${app_name}"
 application_install
