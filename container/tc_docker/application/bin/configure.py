@@ -110,7 +110,7 @@ def __main__():
 
     print("service", service.application)
     match service.application:
-        case "indexer" | "movies" | "television" | "music" | "xxx":
+        case "indexer" | "movies" | "television" | "music" | "books" | "xxx":
             ## Only for Sonarr v4
             configure_servarr(this_application)
         case "nntp":
