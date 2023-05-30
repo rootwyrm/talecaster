@@ -52,7 +52,19 @@ application_install()
 	LOG "[BUILD] Installing SABnzbd requirements.txt"
 	. /opt/talecaster/venv/bin/activate
 	/opt/talecaster/venv/bin/pip install --upgrade pip
-	/opt/talecaster/venv/bin/pip install -r $app_destdir/requirements.txt
+	# XXX: cffi doesn't have aarch64 prebuilts :(
+	case $(uname -m) in
+		x86*)
+			/opt/talecaster/venv/bin/pip install -r $app_destdir/requirements.txt
+			;;
+		aarch64*)
+			## Install prereqs to build cffi first
+			apk add --no-cache gcc python3-dev libffi-dev musl-dev
+			/opt/talecaster/venv/bin/pip install -r $app_destdir/requirements.txt
+			apk del gcc python3-dev libffi-dev musl-dev
+			;;
+	esac
+
 	if [ $? -ne 0 ]; then
 		LOG "Error occurred installing SABnzbd requirements" E 10
 		exit 10
