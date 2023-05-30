@@ -389,7 +389,7 @@ def configure_sabnzbd():
 
     runconfig = open(inifile, 'w')
     liveconfig = configparser.ConfigParser()
-    liveconfig.read(baseconfig)
+    liveconfig.read_file(baseconfig)
 
     ## Calculate cache as 10% of system memory - especially important if PostgreSQL is on the same host
     cache_limit = int(os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') * 0.10)
@@ -400,6 +400,14 @@ def configure_sabnzbd():
 
     ## Set cache_limit
     liveconfig['misc']['cache_limit'] = cache_limit
+
+    ## Fix host_whitelist and more
+    liveconfig['misc']['host_whitelist'] = ''
+    liveconfig['misc']['host'] = '0.0.0.0'
+
+    ## Downloads
+    liveconfig['misc']['download_dir'] = '/talecaster/downloads/incomplete'
+    liveconfig['misc']['complete_dir'] = '/talecaster/downloads/complete'
 
     ## Set API key
     if os.path.exists('/talecaster/shared/nntp.api'):
