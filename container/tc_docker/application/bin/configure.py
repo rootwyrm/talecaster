@@ -130,16 +130,10 @@ def configure_servarr(this_application):
         case "indexer":
             if "POSTGRESQL_HOST" in os.environ:
                 pg_host = os.environ["POSTGRESQL_HOST"]
-            else:
-                pg_host = None
             if "POSTGRESQL_USER" in os.environ:
                 pg_user = os.environ["POSTGRESQL_USER"]
-            else:
-                pg_user = None
             if "POSTGRESQL_PASS" in os.environ:
                 pg_pass = os.environ["POSTGRESQL_PASS"]
-            else:
-                pg_pass = None
             if "POSTGRESQL_PORT" in os.environ:
                 pg_port = os.environ["POSTGRESQL_PORT"]
             else:
@@ -158,16 +152,10 @@ def configure_servarr(this_application):
         case "music":
             if "POSTGRESQL_HOST" in os.environ:
                 pg_host = os.environ["POSTGRESQL_HOST"]
-            else:
-                pg_host = None
             if "POSTGRESQL_USER" in os.environ:
                 pg_user = os.environ["POSTGRESQL_USER"]
-            else:
-                pg_user = None
             if "POSTGRESQL_PASS" in os.environ:
                 pg_pass = os.environ["POSTGRESQL_PASS"]
-            else:
-                pg_pass = None
             if "POSTGRESQL_PORT" in os.environ:
                 pg_port = os.environ["POSTGRESQL_PORT"]
             else:
@@ -184,16 +172,10 @@ def configure_servarr(this_application):
         case "movies":
             if "POSTGRESQL_HOST" in os.environ:
                 pg_host = os.environ["POSTGRESQL_HOST"]
-            else:
-                pg_host = None
             if "POSTGRESQL_USER" in os.environ:
                 pg_user = os.environ["POSTGRESQL_USER"]
-            else:
-                pg_user = None
             if "POSTGRESQL_PASS" in os.environ:
                 pg_pass = os.environ["POSTGRESQL_PASS"]
-            else:
-                pg_pass = None
             if "POSTGRESQL_PORT" in os.environ:
                 pg_port = os.environ["POSTGRESQL_PORT"]
             else:
@@ -210,16 +192,10 @@ def configure_servarr(this_application):
         case "books":
             if "POSTGRESQL_HOST" in os.environ:
                 pg_host = os.environ["POSTGRESQL_HOST"]
-            else:
-                pg_host = None
             if "POSTGRESQL_USER" in os.environ:
                 pg_user = os.environ["POSTGRESQL_USER"]
-            else:
-                pg_user = None
             if "POSTGRESQL_PASS" in os.environ:
                 pg_pass = os.environ["POSTGRESQL_PASS"]
-            else:
-                pg_pass = None
             if "POSTGRESQL_PORT" in os.environ:
                 pg_port = os.environ["POSTGRESQL_PORT"]
             else:
