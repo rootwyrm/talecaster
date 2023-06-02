@@ -96,6 +96,12 @@ class Application(object):
         self.implementationName = 'qBittorrent'
         self.configContract = 'qBittorrentSettings'
 
+    def frontend(self):
+        self.application = 'frontend'
+        self.implementation = 'nginx'
+        self.implementationName = 'nginx'
+        self.configContract = 'nginx'
+
 def __main__():
     global log_prefix
     global this_application
@@ -122,101 +128,103 @@ def __main__():
             print(log_prefix, "[bold red]FATAL[/]: Unknown application", service.application)
             os._exit(2) 
 
+def configure_check_postgresql():
+    ## POSTGRESQL_HOST, POSTGRESQL_USER, and POSTGRESQL_PASS must all be present in os.environ
+    if all(key in os.environ for key in ["POSTGRESQL_HOST", "POSTGRESQL_USER", "POSTGRESQL_PASSWORD"]):
+        global pg_host 
+        global pg_user
+        global pg_pass
+        global pg_port
+        pg_host = os.environ["POSTGRESQL_HOST"]
+        pg_user = os.environ["POSTGRESQL_USER"]
+        pg_pass = os.environ["POSTGRESQL_PASS"]
+        if "POSTGRESQL_PORT" in os.environ:
+            pg_port = os.environ["POSTGRESQL_PORT"]
+        else:
+            pg_port = 5432
+        print(log_prefix, f"PostgreSQL configuration: testing {pg_user}@{pg_host}:{pg_port}")
+        try:
+            talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, 'template1')
+            return(True)
+        except Exception as e:
+            print(log_prefix, "[bold red]FATAL[/]: PostgreSQL connection test failed:", e)
+            os._exit(e)
+    else:
+        # Do something else if any key is missing
+        print(log_prefix, "PostgreSQL not configured, using SQLite3 internal storage.")
+        return(False)
+
 def configure_servarr(this_application):
     config_xml = '/talecaster/config/config.xml'
 
+    ## Check for PostgreSQL 
+    pg_enabled = configure_check_postgresql()
+    print(pg_enabled)
     match service.application:
         ## These do not support PostgreSQL backend
         case "indexer":
-            if "POSTGRESQL_HOST" in os.environ:
-                pg_host = os.environ["POSTGRESQL_HOST"]
-            if "POSTGRESQL_USER" in os.environ:
-                pg_user = os.environ["POSTGRESQL_USER"]
-            if "POSTGRESQL_PASS" in os.environ:
-                pg_pass = os.environ["POSTGRESQL_PASS"]
-            if "POSTGRESQL_PORT" in os.environ:
-                pg_port = os.environ["POSTGRESQL_PORT"]
+            if pg_enabled == True:
+                print("entered pg_enabled is true?")
+                try:
+                    pg_maindb = "prowlarr"
+                    pg_logdb = "prowlarrlog"
+                    for db in [pg_maindb, pg_logdb]:
+                        talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
+                    pg_enabled = True
+                    print(log_prefix, "Using PostgreSQL server at", pg_host, "with user", pg_user)
+                except:
+                    print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
+                    os._exit(100)
             else:
-                pg_port = "5432"
-            ## Test connection
-            try:
-                pg_maindb = "prowlarr"
-                pg_logdb = "prowlarrlog"
-                for db in [pg_maindb, pg_logdb]:
-                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
-            except:
-                print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
-                os._exit(100)
+                print(log_prefix, "Using SQLite3 database for Prowlarr")
 
-            print(log_prefix, "Using PostgreSQL server at", pg_host, "with user", pg_user)
         case "music":
-            if "POSTGRESQL_HOST" in os.environ:
-                pg_host = os.environ["POSTGRESQL_HOST"]
-            if "POSTGRESQL_USER" in os.environ:
-                pg_user = os.environ["POSTGRESQL_USER"]
-            if "POSTGRESQL_PASS" in os.environ:
-                pg_pass = os.environ["POSTGRESQL_PASS"]
-            if "POSTGRESQL_PORT" in os.environ:
-                pg_port = os.environ["POSTGRESQL_PORT"]
+            if pg_enabled == True:
+                print("entered pg_enabled is true?")
+                try:
+                    pg_maindb = "prowlarr"
+                    pg_logdb = "prowlarrlog"
+                    for db in [pg_maindb, pg_logdb]:
+                        talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
+                    print(log_prefix, "Using PostgreSQL server at", pg_host, "with user", pg_user)
+                except:
+                    print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
+                    os._exit(100)
             else:
-                pg_port = "5432"
-            ## Test connection
-            try:
-                pg_maindb = "lidarr"
-                pg_logdb = "lidarrlog"
-                for db in [pg_maindb, pg_logdb]:
-                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
-            except:
-                print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
-                os._exit(100)
-        case "movies":
-            if "POSTGRESQL_HOST" in os.environ:
-                pg_host = os.environ["POSTGRESQL_HOST"]
-            if "POSTGRESQL_USER" in os.environ:
-                pg_user = os.environ["POSTGRESQL_USER"]
-            if "POSTGRESQL_PASS" in os.environ:
-                pg_pass = os.environ["POSTGRESQL_PASS"]
-            if "POSTGRESQL_PORT" in os.environ:
-                pg_port = os.environ["POSTGRESQL_PORT"]
-            else:
-                pg_port = "5432"
-            ## Test connection
-            try:
-                pg_maindb = "radarr"
-                pg_logdb = "radarrlog"
-                for db in [pg_maindb, pg_logdb]:
-                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
-            except:
-                print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
-                os._exit(100)
-        case "books":
-            if "POSTGRESQL_HOST" in os.environ:
-                pg_host = os.environ["POSTGRESQL_HOST"]
-            if "POSTGRESQL_USER" in os.environ:
-                pg_user = os.environ["POSTGRESQL_USER"]
-            if "POSTGRESQL_PASS" in os.environ:
-                pg_pass = os.environ["POSTGRESQL_PASS"]
-            if "POSTGRESQL_PORT" in os.environ:
-                pg_port = os.environ["POSTGRESQL_PORT"]
-            else:
-                pg_port = "5432"
-            ## Test connection
-            try:
-                pg_maindb = "readarr"
-                pg_logdb = "readarrlog"
-                pg_cachedb = "readarrcache"
-                for db in [pg_maindb, pg_logdb, pg_cachedb]:
-                    talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
-            except:
-                print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
-                os._exit(100)
+                print(log_prefix, "Using SQLite3 database for Lidarr")
 
+        case "movies":
+            if pg_enabled == True:
+                print("entered pg_enabled is true?")
+                try:
+                    pg_maindb = "radarr"
+                    pg_logdb = "radarrlog"
+                    for db in [pg_maindb, pg_logdb]:
+                        talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
+                    print(log_prefix, "Using PostgreSQL server at", pg_host, "with user", pg_user)
+                except:
+                    print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
+                    os._exit(100)
+            else:
+                print(log_prefix, "Using SQLite3 database for Radarr")
+
+        case "books":
+            if pg_enabled == True:
+                print("entered pg_enabled is true?")
+                try:
+                    pg_maindb = "readarr"
+                    pg_logdb = "readarrlog"
+                    for db in [pg_maindb, pg_logdb]:
+                        talecaster_pgconntest(pg_host, pg_port, pg_user, pg_pass, db)
+                    print(log_prefix, "Using PostgreSQL server at", pg_host, "with user", pg_user)
+                except:
+                    print(log_prefix, "[bold red]FATAL[/]: configuration invalid, aborting!")
+                    os._exit(100)
+            else:
+                print(log_prefix, "Using SQLite3 database for Readarr")
+        
         case default:
             print(log_prefix, service.implementation, "does not support PostgreSQL, ignoring.")
-            pg_host = None
-            pg_user = None
-            pg_pass = None
-            pg_port = None
 
     try:
         os.path.isfile(config_xml)
@@ -258,7 +266,7 @@ def configure_servarr(this_application):
         acf.write("  <SslCertPassword>", os.environ["SSL_PASSWORD"], "</SslCertPassword>\n")
     else:
         acf.write("  <EnableSsl>False</EnableSsl>\n")
-    if pg_host is not None:
+    if pg_enabled is True:
         ## Write the psqlrc since scripts that run as talecaster need to connect to the database.
         acf.write(f"  <PostgresUser>{pg_user}</PostgresUser>\n")
         acf.write(f"  <PostgresPassword>{pg_pass}</PostgresPassword>\n")

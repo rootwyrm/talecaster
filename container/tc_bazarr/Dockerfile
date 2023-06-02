@@ -23,8 +23,7 @@ RUN		apk update && apk upgrade && \
 	
 	#apk add gcc musl-dev python3-dev libjpeg-turbo-dev zlib-dev tiff-dev libwebp-dev lcms2-dev && \
 
-FROM	tt_docker
-#FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
+FROM	ghcr.io/rootwyrm/tc_docker:$TALECASTER_BASE
 
 ## Labels
 LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
