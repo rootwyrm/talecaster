@@ -98,6 +98,10 @@ services:
       - tc-television:/talecaster/television
       - /tmp/tc/config/television:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
   movies:
     container_name: movies
     image: tc_${MOVIE_PROVIDER:-radarr}:latest
@@ -116,6 +120,10 @@ services:
       - tc-movies:/talecaster/movies
       - /tmp/tc/config/movies:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
   music:
     container_name: music
     image: tc_lidarr:latest
@@ -134,6 +142,10 @@ services:
       - tc-music:/talecaster/music
       - /tmp/tc/config/music:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
   books:
     container_name: books
     image: tc_readarr:latest
@@ -152,6 +164,10 @@ services:
       - tc-books:/talecaster/books
       - /tmp/tc/config/books:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
   comics:
     container_name: comics
     image: tc_mylar:latest
@@ -170,6 +186,10 @@ services:
       - tc-comics:/talecaster/comics
       - /tmp/tc/config/comics:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
 
 volumes:
   tc-downloads:

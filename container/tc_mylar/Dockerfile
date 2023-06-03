@@ -7,10 +7,11 @@
 # See /LICENSE for details
 ################################################################################
 ARG		TALECASTER_BASE=${TALECASTER_BASE:-latest}
+## NOTICE: Mylar's dependencies conflict with TaleCaster's base venv, so it needs it's own
 FROM	alpine:3.17 AS pybuild
 WORKDIR	/opt/mylar
 RUN	apk add --no-cache git bash python3 sqlite && \
-	cd /opt/mylar ; git clone https://github.com/mylar3/mylar3.git . && \
+	git clone https://github.com/mylar3/mylar3.git . && \
 	python3 -m venv /opt/mylar/venv && \
 	. /opt/mylar/venv/bin/activate && \
 	/opt/mylar/venv/bin/python3 -m pip install --upgrade pip && \

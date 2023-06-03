@@ -123,6 +123,8 @@ def __main__():
             configure_sabnzbd()
         case "torrent":
             configure_qbittorrent() 
+        case "comics":
+            configure_mylar()
         case "frontend":
             print(log_prefix, "starting TaleCaster frontend")
         case default:
@@ -399,6 +401,7 @@ def configure_sabnzbd():
 
     ## Set API key
     if os.path.exists('/talecaster/shared/nntp.api'):
+        ## XXX: Needs to check if empty
         api_key = open('/talecaster/shared/nntp.api', 'r').read()
         print(log_prefix, "Reusing existing API key", api_key)
         liveconfig['misc']['api_key'] = api_key
@@ -408,6 +411,7 @@ def configure_sabnzbd():
         liveconfig['misc']['api_key'] = api_key
     ## Set NZB key
     if os.path.exists('/talecaster/shared/nntp_nzb.api'):
+        ## XXX: Needs to check if empty
         nzb_key = open('/talecaster/shared/nntp_nzb.api', 'r').read()
         print(log_prefix, "Reusing existing NZB key", nzb_key)
         liveconfig['misc']['nzb_key'] = nzb_key 
@@ -498,6 +502,16 @@ def configure_sabnzbd():
     ## Debug section
     ############################################################
     #os.system('cat /tmp/sabnzbd.ini')
+
+    ############################################################
+    ## Write out API keys
+    ############################################################
+    with open('/talecaster/shared/nntp.api', 'w') as apifile:
+        apifile.write(api_key)
+        apifile.close()
+    with open('/talecaster/shared/nzb.api', 'w') as nzbfile:
+        nzbfile.write(nzb_key)
+        nzbfile.close()
 
 def configure_qbittorrent():
     ## XXX: qbittorrent doesn't provide any sort of APIkey method still
@@ -711,5 +725,86 @@ def qbittorrent_password(password):
     ## Strip the :b from the base64 encoding
     return f"@ByteArray({hashed.decode('utf-8')}:{salt.decode('utf-8')})"
 
+def configure_mylar():
+    ## Mylar config
+    import configparser
+    import shutil
+    inifile = '/talecaster/config/config.ini'
+    runconfig = configparser.ConfigParser()
+    runconfig.optionxform = str
+    runconfig.allow_no_value = False
+    runconfig.default_section = 'General'
+
+    ## Check if the config file exists
+    if os.path.exists(inifile) is not False:
+    ## Check if the config file is empty
+        if os.stat(inifile).st_size == 0:
+            print(log_prefix, "existing config file is empty, using defaults")
+            runconfig.read_file('/talecaster/defaults/config.ini')
+            update = False
+        else:
+            print(log_prefix, "reusing existing Mylar configuration")
+            ## Ingest defaults then overwrite with inifile
+            runconfig.read('/talecaster/defaults/config.ini')
+            runconfig.read(inifile)
+            update = True
+    else:
+        print(log_prefix, "no existing Mylar configuration found, using defaults")
+        os.system('cat /opt/talecaster/defaults/config.ini')
+        runconfig.read('/opt/talecaster/defaults/config.ini')
+        update = False
+
+    ## Set logging up
+    runconfig.set('Logs', 'max_logsize', '10000000')
+    runconfig.set('Logs', 'log_dir', '/talecaster/config/logs')
+    ## Create log directory if it doesn't exist
+    if os.path.exists('/talecaster/config/logs') is False:
+        os.makedirs('/talecaster/config/logs')
+        os.chown('/talecaster/config/logs', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+
+    ## Check for Mylar api key
+    if runconfig.has_option('API', 'api_key') is True and runconfig.get('API', 'api_key') != "" and runconfig.get('API', 'api_key') != "None":
+        print("config section found")
+        print("api_key", runconfig.get('API', 'api_key'))
+        print(log_prefix, "Mylar API key is", apikey)
+        keyfile = open('/talecaster/shared/comics.api', 'w')
+        keyfile.write(apikey)
+        keyfile.close()
+    else:
+        apikey = generate_apikey(service.apiKeyType)
+        print(log_prefix, "Mylar API key is", apikey)
+        keyfile = open('/talecaster/shared/comics.api', 'w')
+        keyfile.write(apikey)
+        keyfile.close()
+    runconfig.set('API', 'api_enabled', 'True')
+    runconfig.set('API', 'api_key', apikey)
+
+    ## XXX: https section would go here
+    runconfig.set('Interface', 'enable_https', 'False')
+    runconfig.set('Interface', 'authentication', '0')
+
+    if "COMICVINE_KEY" in os.environ is not None:
+        runconfig.set('CV', 'comicvine_api', os.environ["COMICVINE_KEY"])
+    else:
+        print(log_prefix, "[bold dark_orange]WARNING:[/] No ComicVine API key set! Mylar will not work without it!")
+        runconfig.set('General', 'comicvine_api', 'None')
+ 
+    ## PostProcessing
+
+    ## Torrent - we'll always have this data available at least
+    runconfig.set('Client', 'torrent_downloader', '5')  ## qBittorrent
+    runconfig.set('qBittorrent', 'qbittorrent_host', 'torrent')
+    ## XXX: These are stored unencrypted in the config file
+    runconfig.set('qBittorrent', 'qbittorrent_username', os.environ["TORRENT_USER"])
+    runconfig.set('qBittorrent', 'qbittorrent_password', os.environ["TORRENT_PASSWORD"])
+
+    sab_apikey = open('/talecaster/shared/nntp.api').read()
+    runconfig.set('SABnzbd', 'sab_host', 'nntp')
+    runconfig.set('SABnzbd', 'sab_apikey', sab_apikey)
+
+    ## Write out the configuration to inifile
+    with open(inifile, 'w') as configfile:
+        runconfig.write(configfile)
+    os.chown(inifile, int(os.environ["tcuid"]), int(os.environ["tcgid"]))
 
 __main__()
