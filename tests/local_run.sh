@@ -26,6 +26,9 @@ set +e
 ## Having now created our dockerfiles, we need to build them all locally.
 ## XXX: don't set -e, errors are normal here on a fresh run
 echo "Cleaning stale images..."
+cd $start
+docker compose -f suite_compose.yml stop 
+docker compose -f suite_compose.yml rm -y
 for img in tc_docker tc_bazarr tc_frontend tc_lidarr tc_mylar tc_prowlarr tc_qbittorrent tc_radarr tc_readarr tc_sabnzbd tc_sonarr; do
 	docker rmi $img:latest
 	docker system prune -f

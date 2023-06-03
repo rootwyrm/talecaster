@@ -19,6 +19,14 @@ services:
       - tc-shared:/talecaster/shared
       - /tmp/tc/config/frontend:/talecaster/config
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+      - books
+      - comics
+      - movies
+      - television
   nntp:
     container_name: nntp
     image: tc_sabnzbd:latest

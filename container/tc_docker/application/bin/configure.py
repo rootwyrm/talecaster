@@ -68,7 +68,7 @@ class Application(object):
         self.implementation = 'Mylar'
         self.implementationName = 'Mylar'
         self.configContract = 'MylarSettings'
-        self.apiKeyType = 'pythongen'
+        self.apiKeyType = 'python'
 
     def indexer(self):
         self.application = 'indexer'
@@ -86,7 +86,7 @@ class Application(object):
         self.implementation = 'SABnzbd'
         self.implementationName = 'SABnzbd'
         self.configContract = 'SABnzbd'
-        self.apiKeyType = 'pythongen'
+        self.apiKeyType = 'python'
     
     def torrent(self):
         self.application = 'torrent'
@@ -122,7 +122,9 @@ def __main__():
         case "nntp":
             configure_sabnzbd()
         case "torrent":
-            configure_qbittorrent()    
+            configure_qbittorrent() 
+        case "frontend":
+            print(log_prefix, "starting TaleCaster frontend")
         case default:
             ## Fall-through; unknown application
             print(log_prefix, "[bold red]FATAL[/]: Unknown application", service.application)
@@ -365,15 +367,17 @@ def configure_sabnzbd():
     categories = '/opt/talecaster/defaults/sabnzbd.categories.ini'
     inifile = '/talecaster/config/sabnzbd.ini'
     try:
-        open(inifile, 'r')
+        fh = open(inifile, 'r')
         print(log_prefix, "Backing up and updating SABnzbd configuration")
-        shutil.copyfileobj(inifile, inifile + '.bak')
+        fh.close()
+        #shutil.copyfileobj(inifile, inifile + '.bak')
     except:
         print(log_prefix, "SABnzbd configuration not found, generating new configuration")
 
     runconfig = open(inifile, 'w')
     liveconfig = configparser.ConfigParser()
-    liveconfig.read_file(baseconfig)
+    liveconfig.allow_no_value = True
+    liveconfig.read(baseconfig)
 
     ## Calculate cache as 10% of system memory - especially important if PostgreSQL is on the same host
     cache_limit = int(os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') * 0.10)
@@ -518,7 +522,8 @@ def configure_qbittorrent():
     ## minimums.
     
     ## TODO: Wireguard and ZeroTier
-    if "TORRENT_VPN_CONFIG" in os.environ:
+    if "TORRENT_VPN_CONFIG" in os.environ and os.environ["TORRENT_VPN_CONFIG"] != "":
+        print(log_prefix, "using VPN configuration", os.environ["TORRENT_VPN_CONFIG"])
         vpn = True
     else:
         vpn = False
