@@ -32,7 +32,8 @@ LABEL	maintainer="Phillip 'RootWyrm' Jaenke <talecaster@rootwyrm.com>" \
 EXPOSE	8081/tcp
 
 ## Retrieve a prebuilt for now
-RUN		wget -qO /usr/local/bin/qbittorrent-nox https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/$(uname -m)-qbittorrent-nox ; chmod +x /usr/local/bin/qbittorrent-nox
+RUN		wget -qO /usr/local/bin/qbittorrent-nox https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/$(uname -m)-qbittorrent-nox && \
+        chmod +x /usr/local/bin/qbittorrent-nox
 
 ## VOLUMES
 VOLUME	[ "/talecaster/shared", "/talecaster/blackhole", "/talecaster/downloads" ]
