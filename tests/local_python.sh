@@ -3,6 +3,16 @@
 start=$PWD
 work=$(dirname $start)
 
+if [ ! -z $1 ]; then
+	echo "********************************************************************************"
+	echo ">>> Cleaning up configuration."
+	echo "********************************************************************************"
+	for x in books comics frontend indexer movies music nntp television; do
+		docker stop $x
+		sudo rm -rf /tmp/tc/config/$x/*
+	done
+fi
+
 echo "********************************************************************************"
 echo ">>> Updating application elements..."
 echo "********************************************************************************"

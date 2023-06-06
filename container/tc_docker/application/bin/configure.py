@@ -14,6 +14,7 @@ import requests
 import ipaddress 
 import random
 import re
+import uuid
 import fileinput
 from argparse import ArgumentParser
 from rich import print
@@ -257,7 +258,11 @@ def configure_servarr(this_application):
     acf.write(f"  <SslPort>{service.application_sslport}</SslPort>\n")
     acf.write(f"  <UrlBase>/{service.application}</UrlBase>\n")
     acf.write(f"  <ApiKey>{apikey}</ApiKey>\n")
-    #acf.write("  <AuthenticationMethod>External</AuthenticationMethod>\n")
+    match service.application:
+        case "indexer" | "movies" | "music" | "books" | "xxx":
+            acf.write("  <AuthenticationMethod>None</AuthenticationMethod>\n")
+        case default:
+            acf.write("  <AuthenticationMethod>Forms</AuthenticationMethod>\n")
     acf.write("  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>\n")
     acf.write("  <LaunchBrowser>False</LaunchBrowser>\n")
     acf.write("  <Branch>master</Branch>\n")
@@ -282,15 +287,76 @@ def configure_servarr(this_application):
             acf.write(f"  <PostgresCacheDb>{pg_cachedb}</PostgresCacheDb>\n")
         talecaster_pgpass(pg_host, pg_user, pg_pass, pg_port, "Prowlarr")
         talecaster_pgpass(pg_host, pg_user, pg_pass, pg_port, "ProwlarrLog")
-    acf.write("</Config>")
+    acf.write(f'  <Username>{os.environ["WEB_USER"]}</Username>\n')
+    acf.write(f'  <Password>{os.environ["WEB_PASSWORD"]}</Password>\n')
+    acf.write('</Config>')
     print(log_prefix, "New configuration generated.")
     acf.close()
     os.chown('/talecaster/config/config.xml', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+    os.system('cat /talecaster/config/config.xml')
 
-    ## NYI - need to think on it more
-    def replace_element(element, value):
-        for line in fileinput.input(config_xml, inplace=True):
-            line.replace(".*{element}.*","  <{element}>{value}</{element}>")
+    #hashed_password, hashed_salt, iterate = generate_user(os.environ["WEB_USER"], os.environ["WEB_PASSWORD"])
+    #print("hashed_password", hashed_password)
+    #print("hashed_salt", hashed_salt)
+    #print("iterate", iterate)
+    #if pg_enabled is True:
+    #    ## XXX: pg_conn and insert goes here
+    #    print(log_prefix, "NOT YET IMPLEMENTED")
+    #else:
+    #    import sqlite3
+    #    ## We're dealing with sqlite3
+    #    if os.path.isfile(f'/talecaster/config/{str.lower(service.implementation)}.db'):
+    #        sqlite3_conn = sqlite3.connect(f'/talecaster/config/{str.lower(service.implementation)}.db')
+    #        sqlite3_cur = sqlite3_conn.cursor()
+    #        try:
+    #            sqlite3_cur.execute("SELECT * FROM Users")
+    #        except:
+    #            ## Users table doesn't exist, so we need to create it.
+    #            sqlite3_cur.execute("CREATE TABLE Users (Identifier TEXT PRIMARY KEY, Username TEXT, Password TEXT, Salt TEXT, Iterations INTEGER)")
+    #        #sqlite3_cur.execute("DROP FROM Users WHERE Username = ?", str.lower(os.environ["WEB_USER"]))
+    #        ## Create a guid
+    #        #print("INSERT INTO Users (Identifier, Username, Password, Salt, Iterations) VALUES (?, ?, ?, ?, ?)", str(guid), str.lower(os.environ["WEB_USER"]), hashed_password, hashed_salt, iterate)
+    #        sqlite3_cur.execute("INSERT INTO Users (Identifier, Username, Password, Salt, Iterations) VALUES (?, ?, ?, ?, ?)", servarr_database_user(os.environ["WEB_USER"], os.environ["WEB_PASSWORD"]))
+    #        sqlite3_conn.commit()
+    #        sqlite3_conn.close()
+    #    else:
+    #        ## We don't have a database yet, that's a problem here.
+    ## XXX: this causes a startup error because the schema is partially complete; may consider upstream fix.
+    #        print(log_prefix, "[bold dark_orange]ERROR:[/] Unable to locate database, creating database.")
+    #        with open(f'/talecaster/config/{str.lower(service.implementation)}.db', 'w') as f:
+    #            f.write('')
+    #            f.close()
+    #            os.chown(f'/talecaster/config/{str.lower(service.implementation)}.db', int(os.environ["tcuid"]), int(os.environ["tcgid"]))
+    #        sqlite3_conn = sqlite3.connect(f'/talecaster/config/{service.application}.db')
+    #        sqlite3_cur = sqlite3_conn.cursor()
+    #        sqlite3_cur.execute("CREATE TABLE Users (Identifier TEXT, Username TEXT, Password TEXT, Salt TEXT, Iterations INTEGER)")
+    #        ## Create a guid
+    #        guid = uuid.uuid4()
+    #        sqlite3_cur.execute("INSERT INTO Users (Identifier, Username, Password, Salt, Iterations) VALUES (?, ?, ?, ?, ?)", guid, str.lower(os.environ["WEB_USER"]), hashed_password, hashed_salt, iterate)
+    #        sqlite3_conn.commit()
+    #        sqlite3_conn.close()
+    
+## We have to set a username and password in the database.
+## It can be set in config.xml, but that stores plaintext and too accessible.
+def servarr_database_user(username, password):
+    import hashlib
+    import base64
+    import binascii
+
+    guid = uuid.uuid4()
+    username = str.lower(os.environ["WEB_USER"])
+    iterate = 10000
+    salt = binascii.hexlify(os.urandom(32))
+    hashed = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'), salt, iterate)
+    hashed = binascii.hexlify(hashed)
+    hashed_password= base64.b64encode(hashed)
+    hashed_salt = base64.b64encode(salt)
+    return str(guid), str(username), str(hashed_password.decode('utf-8')), str(hashed_salt.decode('utf-8')), int(iterate)
+        
+## NYI: need to think on it more
+def replace_element(element, value):
+    for line in fileinput.input(config_xml, inplace=True):
+        line.replace(".*{element}.*","  <{element}>{value}</{element}>")
 
 def generate_apikey(type):
     match type:

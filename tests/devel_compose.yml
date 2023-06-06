@@ -1,0 +1,243 @@
+version: "3.9"
+services:
+  talecaster:
+    container_name: frontend
+    image: ghcr.io/rootwyrm/tc_frontend:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    cap_add:
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    ports:
+      - ${HTTP_PORT:-80}:80
+      - ${HTTPS_PORT:-443}:443
+    volumes:
+      - tc-shared:/talecaster/shared
+      - /tmp/tc/config/frontend:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+      - books
+      - comics
+      - movies
+      - television
+  nntp:
+    container_name: nntp
+    image: ghcr.io/rootwyrm/tc_sabnzbd:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - 6789:6789
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - /tmp/tc/config/nntp:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+  torrent:
+    container_name: torrent
+    image: ghcr.io/rootwyrm/tc_qbittorrent:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${TORRENT_PORT:-9091}:9091"
+      - "${TORRENT_TPORT:-51413}:51413"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - /tmp/tc/config/torrent:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+  indexer:
+    container_name: indexer
+    image: ghcr.io/rootwyrm/tc_prowlarr:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${INDEXER_PORT:-9696}:9696"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - /tmp/tc/config/indexer:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+  television:
+    container_name: television
+    #image: ghcr.io/rootwyrm/tc_${TELEVISION_PROVIDER:-sonarr}:devel
+    image: ghcr.io/rootwyrm/tc_sonarr:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${TELEVISION_PORT:-8989}:8989"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-television:/talecaster/television
+      - /tmp/tc/config/television:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+  movies:
+    container_name: movies
+    image: ghcr.io/rootwyrm/tc_${MOVIE_PROVIDER:-radarr}:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${MOVIE_PORT:-7878}:7878"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-movies:/talecaster/movies
+      - /tmp/tc/config/movies:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+  music:
+    container_name: music
+    image: ghcr.io/rootwyrm/tc_lidarr:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${MUSIC_PORT:-8686}:8686"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-music:/talecaster/music
+      - /tmp/tc/config/music:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+  books:
+    container_name: books
+    image: ghcr.io/rootwyrm/tc_readarr:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${BOOKS_PORT:-8787}:8787"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-books:/talecaster/books
+      - /tmp/tc/config/books:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+  comics:
+    container_name: comics
+    image: ghcr.io/rootwyrm/tc_mylar:devel
+    restart: on-failure
+    env_file:
+      - devel_compose.env
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      - "${COMICS_PORT:-8090}:8090"
+    volumes:
+      - tc-shared:/talecaster/shared
+      - tc-blackhole:/talecaster/blackhole
+      - tc-downloads:/talecaster/downloads
+      - tc-comics:/talecaster/comics
+      - /tmp/tc/config/comics:/talecaster/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - nntp
+      - torrent
+      - indexer
+
+volumes:
+  tc-downloads:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/downloads
+  tc-shared:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/shared
+  tc-blackhole:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/blackhole
+  tc-television:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/television
+  tc-movies:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/movies
+  tc-music:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/music
+  tc-comics:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/comics
+  tc-books:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/tc/books
+
